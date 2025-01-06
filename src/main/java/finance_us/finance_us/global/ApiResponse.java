@@ -1,10 +1,10 @@
-package javalab.umc7th_mission.study.apiPayload;
+package finance_us.finance_us.global;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javalab.umc7th_mission.study.apiPayload.code.BaseCode;
-import javalab.umc7th_mission.study.apiPayload.code.status.SuccessStatus;
+import finance_us.finance_us.global.code.BaseCode;
+import finance_us.finance_us.global.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

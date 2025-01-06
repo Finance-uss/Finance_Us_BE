@@ -1,7 +1,8 @@
-package javalab.umc7th_mission.study.apiPayload.code.status;
+package finance_us.finance_us.global.code.status;
 
-import javalab.umc7th_mission.study.apiPayload.code.BaseCode;
-import javalab.umc7th_mission.study.apiPayload.code.ReasonDTO;
+
+import finance_us.finance_us.global.code.BaseCode;
+import finance_us.finance_us.global.code.ReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

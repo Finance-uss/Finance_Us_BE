@@ -1,10 +1,10 @@
-package javalab.umc7th_mission.study.apiPayload.exception;
+package finance_us.finance_us.global.exception;
 
+import finance_us.finance_us.global.ApiResponse;
+import finance_us.finance_us.global.code.ErrorReasonDTO;
+import finance_us.finance_us.global.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
-import javalab.umc7th_mission.study.apiPayload.ApiResponse;
-import javalab.umc7th_mission.study.apiPayload.code.ErrorReasonDTO;
-import javalab.umc7th_mission.study.apiPayload.code.status.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +18,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,7 +27,8 @@ import java.util.Optional;
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler
+
+    @org.springframework.web.bind.annotation.ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
         String errorMessage = e.getConstraintViolations().stream()
                 .map(constraintViolation -> constraintViolation.getMessage())
@@ -36,8 +38,10 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternalConstraint(e, ErrorStatus.valueOf(errorMessage), HttpHeaders.EMPTY,request);
     }
 
+
     @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    public ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         Map<String, String> errors = new LinkedHashMap<>();
 
@@ -51,7 +55,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternalArgs(e,HttpHeaders.EMPTY,ErrorStatus.valueOf("_BAD_REQUEST"),request,errors);
     }
 
-    @ExceptionHandler
+    @org.springframework.web.bind.annotation.ExceptionHandler
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
         e.printStackTrace();
 
@@ -78,7 +82,6 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 reason.getHttpStatus(),
                 webRequest
         );
-
     }
 
     private ResponseEntity<Object> handleExceptionInternalFalse(Exception e, ErrorStatus errorCommonStatus,

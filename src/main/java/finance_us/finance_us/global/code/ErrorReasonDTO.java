@@ -1,4 +1,4 @@
-package javalab.umc7th_mission.study.apiPayload.code;
+package finance_us.finance_us.global.code;
 
 import lombok.Builder;
 import lombok.Getter;
