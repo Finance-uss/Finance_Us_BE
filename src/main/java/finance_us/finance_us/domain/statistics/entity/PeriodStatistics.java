@@ -2,13 +2,11 @@ package finance_us.finance_us.domain.statistics.entity;
 
 import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;
-import jakarta.annotation.Nullable;
+import finance_us.finance_us.domain.statistics.entity.status.Type;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -23,11 +21,14 @@ public class PeriodStatistics extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Timestamp date;
+    private Long year;
 
-    //@Enumerated(EnumType.STRING)
-    //@Column(nullable = false)
-    //private Type type;
+    @Column(nullable = false)
+    private Long month;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Type type;
 
     @Column(nullable = false)
     private Long totalMoney;
