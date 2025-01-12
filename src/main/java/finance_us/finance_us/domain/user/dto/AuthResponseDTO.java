@@ -4,7 +4,7 @@ import finance_us.finance_us.domain.user.entity.status.Role;
 import lombok.*;
 
 @Builder
-public class UserResponseDTO {
+public class AuthResponseDTO {
 
     @Getter
     @Setter

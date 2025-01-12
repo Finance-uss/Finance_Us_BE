@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class UserRequestDTO {
+public class AuthRequestDTO {
 
     @Getter
     @Setter

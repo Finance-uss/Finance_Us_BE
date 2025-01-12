@@ -1,15 +1,13 @@
 package finance_us.finance_us.domain.user.converter;
 
-import finance_us.finance_us.domain.user.dto.UserRequestDTO;
-import finance_us.finance_us.domain.user.dto.UserResponseDTO;
+import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
+import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.entity.status.Role;
 
-import java.util.ArrayList;
+public class AuthConverter {
 
-public class UserConverter {
-
-    public static User toUser(UserRequestDTO.SignRequestDTO request, Role role){
+    public static User toUser(AuthRequestDTO.SignRequestDTO request, Role role){
 
         return User.builder()
                 .age(request.getAgeGroup())
@@ -23,8 +21,8 @@ public class UserConverter {
 
     }
 
-    public static UserResponseDTO.SignResponseDTO toSigninResponseDTO(User user){
-        return UserResponseDTO.SignResponseDTO.builder()
+    public static AuthResponseDTO.SignResponseDTO toSigninResponseDTO(User user){
+        return AuthResponseDTO.SignResponseDTO.builder()
                 .email(user.getEmail())
                 .name(user.getName())
                 .role(user.getRole())

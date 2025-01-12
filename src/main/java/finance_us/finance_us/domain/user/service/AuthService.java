@@ -1,8 +1,8 @@
 package finance_us.finance_us.domain.user.service;
 
-import finance_us.finance_us.domain.user.converter.UserConverter;
-import finance_us.finance_us.domain.user.dto.UserRequestDTO;
-import finance_us.finance_us.domain.user.dto.UserResponseDTO;
+import finance_us.finance_us.domain.user.converter.AuthConverter;
+import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
+import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class AuthService {
 
     @Autowired
     private UserRepository userRepository;
@@ -26,7 +26,7 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserResponseDTO.SignResponseDTO signUp(User user) {
+    public AuthResponseDTO.SignResponseDTO signUp(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
@@ -37,7 +37,7 @@ public class UserService {
         user.setPassword(encodedPassword);
         userRepository.save(user);
 
-        return UserConverter.toSigninResponseDTO(user);
+        return AuthConverter.toSigninResponseDTO(user);
     }
 
     private void validatePassword(String password) {
@@ -63,7 +63,7 @@ public class UserService {
     }
 
 
-    public UserResponseDTO.LoginResponseDTO login(UserRequestDTO.LoginRequestDTO loginRequestDTO) {
+    public AuthResponseDTO.LoginResponseDTO login(AuthRequestDTO.LoginRequestDTO loginRequestDTO) {
         Optional<User> optionalUser = userRepository.findByName(loginRequestDTO.getUsername());
         if (optionalUser.isEmpty()) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
@@ -75,7 +75,7 @@ public class UserService {
         }
 
         String token = tokenProvider.generateToken(user.getName(), user.getId());
-        return new UserResponseDTO.LoginResponseDTO(token);
+        return new AuthResponseDTO.LoginResponseDTO(token);
     }
 
     public String refreshToken(String token) {
