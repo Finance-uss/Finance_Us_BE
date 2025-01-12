@@ -5,6 +5,8 @@ import finance_us.finance_us.domain.user.dto.UserRequestDTO;
 import finance_us.finance_us.domain.user.dto.UserResponseDTO;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.TokenProvider;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class UserService {
 
     public UserResponseDTO.SignResponseDTO signUp(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("User email already exists");
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
 
         validatePassword(user.getPassword()); // 비밀번호 검증
@@ -41,7 +43,7 @@ public class UserService {
     private void validatePassword(String password) {
         // 길이 검사
         if (password.length() < 8 || password.length() > 12) {
-            throw new RuntimeException("비밀번호는 8자 이상 12자 이내여야 합니다.");
+            throw new GeneralException(ErrorStatus.PASSWORD_VALIDATION_FAILED);
         }
 
         // 영어 대문자, 소문자, 숫자 포함 여부 검사
@@ -56,38 +58,39 @@ public class UserService {
         if (hasDigit) count++;
 
         if (count < 2) {
-            throw new RuntimeException("비밀번호는 영어 대/소문자, 숫자 중 2종류 이상을 조합해야 합니다.");
+            throw new GeneralException(ErrorStatus.PASSWORD_VALIDATION_FAILED);
         }
     }
-
 
 
     public UserResponseDTO.LoginResponseDTO login(UserRequestDTO.LoginRequestDTO loginRequestDTO) {
         Optional<User> optionalUser = userRepository.findByName(loginRequestDTO.getUsername());
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
-                String token = tokenProvider.generateToken(user.getName(), user.getId());
-                return new UserResponseDTO.LoginResponseDTO(token);
-            }
+        if (optionalUser.isEmpty()) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
-        throw new RuntimeException("Invalid username or password");
+
+        User user = optionalUser.get();
+        if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
+            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        String token = tokenProvider.generateToken(user.getName(), user.getId());
+        return new UserResponseDTO.LoginResponseDTO(token);
     }
 
-    public UserResponseDTO.LoginResponseDTO refreshToken(String token) {
+    public String refreshToken(String token) {
         // 토큰에서 클레임 추출
         Claims claims = tokenProvider.extractClaims(token);
 
         // 클레임에서 사용자 정보 추출
         String username = claims.getSubject();
-        Long userId = claims.get("userId", Long.class);
 
         // 사용자 확인
         User user = userRepository.findByName(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 새 토큰 발급
         String newToken = tokenProvider.generateToken(user.getName(), user.getId());
-        return new UserResponseDTO.LoginResponseDTO(newToken);
+        return newToken;
     }
 }
