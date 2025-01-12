@@ -50,7 +50,7 @@ public class WebSecurityConfig {
         // Swagger 경로 인증 비활성화
         http.authorizeHttpRequests(auth -> {
             auth
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**") // Swagger 관련 경로
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/**") // Swagger 관련 경로
                     .permitAll() // 인증 없이 접근 가능
                     .anyRequest() // 그 외 모든 요청
                     .authenticated(); // 인증 필요
