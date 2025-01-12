@@ -31,4 +31,11 @@ public class AccountController {
         return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
     }
 
+    // 가계부 삭제
+    @DeleteMapping("/{accountId}")
+    public ApiResponse<Boolean> deleteAccount(@PathVariable Long accountId){
+        accountService.deleteAccount(accountId);
+        return ApiResponse.onSuccess(true);
+    }
+
 }

@@ -81,7 +81,14 @@ public class AccountService {
         account.setSubCategory(subCategory);
         account.setSubAsset(subAsset);
 
-        // 저장 및 반환
         return accountRepository.save(account);
+    }
+
+    // 가계부 삭제
+    public void deleteAccount(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+        accountRepository.delete(account);
     }
 }
