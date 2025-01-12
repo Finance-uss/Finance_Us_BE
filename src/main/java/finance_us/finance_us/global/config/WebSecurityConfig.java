@@ -46,23 +46,14 @@ public class WebSecurityConfig {
         http.httpBasic(basic -> basic.disable());
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()).disable());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // Swagger 경로 인증 비활성화
         http.authorizeHttpRequests(auth -> {
-            try {
-                auth
-                        .requestMatchers(
-                                new AntPathRequestMatcher("/"),
-                                new AntPathRequestMatcher("/auth/**"),
-                                new AntPathRequestMatcher("/api/**"),
-                                new AntPathRequestMatcher("/ws-stomp/**"),
-                                new AntPathRequestMatcher("/**/*.html"),
-                                new AntPathRequestMatcher("/**/*.css"),
-                                new AntPathRequestMatcher("/**/*.js"),
-                                new AntPathRequestMatcher("/swagger-ui/**"),  // Swagger UI 경로
-                                new AntPathRequestMatcher("/v3/api-docs/**"))  // OpenAPI 경로
-                        .permitAll();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            auth
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**") // Swagger 관련 경로
+                    .permitAll() // 인증 없이 접근 가능
+                    .anyRequest() // 그 외 모든 요청
+                    .authenticated(); // 인증 필요
         });
 
         http.exceptionHandling(except -> {
@@ -78,13 +69,8 @@ public class WebSecurityConfig {
             });
         });
 
-        http.addFilterBefore(jwtAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
-
-        http.authorizeHttpRequests(request -> request.anyRequest().authenticated());
+        // JWT 필터 추가
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -95,8 +81,6 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // "*" 대신에 실제 허용할 도메인을 명시적으로 지정합니다.
-        //config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");

@@ -6,50 +6,67 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-@Slf4j
-@Service
+@Component
 public class TokenProvider {
+
     private static final String SECRET_KEY="NMA8JPctFuna59f5";
 
-    public String create(User user) {
-        Date expireDate=Date.from(
-                Instant.now()
-                        .plus(1, ChronoUnit.DAYS));
+    // JWT 생성 메서드 (로그인 시 사용 예시)
+    public String generateToken(String username, Long userId) {
         return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512,SECRET_KEY)
-                .setSubject(String.valueOf(user.getId()))
-                .setIssuer("todo app")
+                .setSubject(username)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
-                .setExpiration(expireDate)
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))  // 1시간 만료
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
 
-    public String validateAndGetUserId(String token) {
-        Claims claims=Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+    // JWT 토큰 유효성 검사
+    public boolean isValidToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            try {
+                String jwtToken = token.substring(7);  // "Bearer "를 제거하고 JWT 부분만 추출
+                Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwtToken);  // 서명 검증
+                return true;
+            } catch (Exception e) {
+                return false;  // 서명 검증 실패 시
+            }
+        }
+        return false;
     }
 
-    public Claims validateAndGetClaims(String token) {
-        try {
-            // 토큰이 유효할 경우 Claims 반환
-            return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (ExpiredJwtException e) {
-            // 토큰이 만료된 경우에도 Claims 반환 가능
-            return e.getClaims();
-        }
+    // JWT에서 사용자명 추출
+    public String extractUsernameFromToken(String token) {
+        String jwtToken = token.substring(7);
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(jwtToken)
+                .getBody();
+        return claims.getSubject();  // 사용자명을 가져옴 (subject로 저장된 값)
+    }
+
+    // JWT에서 사용자 ID 추출
+    public Long extractUserIdFromToken(String token) {
+        String jwtToken = token.substring(7);
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(jwtToken)
+                .getBody();
+        return claims.get("userId", Long.class);  // userId를 claims에서 추출
     }
 
 }
-
