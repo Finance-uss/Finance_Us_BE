@@ -2,6 +2,8 @@ package finance_us.finance_us.global.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +59,14 @@ public class WebSecurityConfig {
         });
 
         http.exceptionHandling(except -> {
-            except.authenticationEntryPoint((request, response, e) -> {
-                Map<String, Object> data = new HashMap<>();
-                data.put("status", HttpServletResponse.SC_FORBIDDEN);
-                data.put("message", e.getMessage());
+            // 인증 실패 (401)
+            except.authenticationEntryPoint((request, response, authException) -> {
+                throw new GeneralException(ErrorStatus._UNAUTHORIZED); // GeneralException으로 던짐
+            });
 
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-                objectMapper.writeValue(response.getOutputStream(), data);
+            // 인가 실패 (403)
+            except.accessDeniedHandler((request, response, accessDeniedException) -> {
+                throw new GeneralException(ErrorStatus._FORBIDDEN); // GeneralException으로 던짐
             });
         });
 
