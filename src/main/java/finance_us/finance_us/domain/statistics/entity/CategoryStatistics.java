@@ -7,8 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.sql.Timestamp;
+import finance_us.finance_us.domain.statistics.entity.status.Type;
 
 @Entity
 @Getter
@@ -23,11 +22,14 @@ public class CategoryStatistics extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Timestamp date;
+    private Long year;
 
-    //@Enumerated(EnumType.STRING)
-    //@Column(nullable = false)
-    //private Type type;
+    @Column(nullable = false)
+    private Long month;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Type type;
 
     @Column(nullable = false)
     private Long totalMoney;
