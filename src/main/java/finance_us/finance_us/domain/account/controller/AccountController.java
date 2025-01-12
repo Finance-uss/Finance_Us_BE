@@ -7,10 +7,7 @@ import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.account.service.AccountService;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -19,12 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     private final AccountService accountService;
+
+    // 가계부 생성
     @PostMapping
     public ApiResponse<AccountResponse.AccountResponseDTO> createAccount(@RequestBody AccountRequest.AccountRequestDTO request){
-
         Account account = accountService.createAccount(request);
         return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
+    }
 
+    // 가계부 수정
+    @PatchMapping("/{accountId}")
+    public ApiResponse<AccountResponse.AccountResponseDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountRequest.AccountRequestDTO request){
+        Account account = accountService.updateAccount(accountId, request);
+        return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
     }
 
 }
