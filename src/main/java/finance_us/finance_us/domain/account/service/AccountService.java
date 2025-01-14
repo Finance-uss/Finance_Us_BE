@@ -38,7 +38,6 @@ public class AccountService {
         // account 생성
         Account account = Account.builder()
                 .accountType(AccountType.valueOf(request.getAccountType()))
-                .date(request.getDate())
                 .amount(request.getAmount())
                 .title(request.getTitle())
                 .status(request.getStatus())

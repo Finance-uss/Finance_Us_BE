@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.statistics.dto;
 
+import finance_us.finance_us.domain.category.entity.MainCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

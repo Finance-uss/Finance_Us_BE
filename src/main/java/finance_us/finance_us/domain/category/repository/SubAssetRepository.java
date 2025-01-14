@@ -1,6 +1,5 @@
 package finance_us.finance_us.domain.category.repository;
 
-
 import finance_us.finance_us.domain.category.entity.SubAsset;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
