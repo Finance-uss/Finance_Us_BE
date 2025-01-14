@@ -1,4 +1,4 @@
-package finance_us.finance_us.domain.category.entity.category.status;
+package finance_us.finance_us.domain.category.entity.status;
 
 
 public enum CategoryType

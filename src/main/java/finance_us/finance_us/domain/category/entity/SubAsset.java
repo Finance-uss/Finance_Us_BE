@@ -1,4 +1,4 @@
-package finance_us.finance_us.domain.category.entity.asset;
+package finance_us.finance_us.domain.category.entity;
 
 import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;

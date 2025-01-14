@@ -1,17 +1,13 @@
 package finance_us.finance_us.domain.category.service;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import finance_us.finance_us.domain.category.dto.CategoryRequestDto;
 import finance_us.finance_us.domain.category.dto.CategoryResponseDto;
 import finance_us.finance_us.domain.category.dto.converter.CategoryConverter;
-import finance_us.finance_us.domain.category.entity.category.MainCategory;
-import finance_us.finance_us.domain.category.entity.category.status.CategoryType;
-import finance_us.finance_us.domain.category.repository.asset.MainAssetRepository;
-import finance_us.finance_us.domain.category.repository.asset.SubAssetRepository;
-import finance_us.finance_us.domain.category.repository.category.MainCategoryRepository;
-import finance_us.finance_us.domain.category.repository.category.SubCategoryRepository;
+import finance_us.finance_us.domain.category.entity.status.CategoryType;
+import finance_us.finance_us.domain.category.repository.MainAssetRepository;
+import finance_us.finance_us.domain.category.repository.SubAssetRepository;
+import finance_us.finance_us.domain.category.repository.MainCategoryRepository;
+import finance_us.finance_us.domain.category.repository.SubCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

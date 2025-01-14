@@ -1,17 +1,14 @@
 package finance_us.finance_us.domain.category.controller;
 
 import finance_us.finance_us.domain.category.dto.CategoryRequestDto;
-import finance_us.finance_us.domain.category.dto.CategoryResponseDto;
-import finance_us.finance_us.domain.category.entity.category.status.CategoryType;
+import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import finance_us.finance_us.domain.category.service.CategoryService;
 import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 

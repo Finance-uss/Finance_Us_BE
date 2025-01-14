@@ -1,9 +1,7 @@
-package finance_us.finance_us.domain.category.repository.category;
+package finance_us.finance_us.domain.category.repository;
 
-import finance_us.finance_us.domain.category.entity.category.MainCategory;
-import finance_us.finance_us.domain.category.entity.category.status.CategoryType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Tuple;
+import finance_us.finance_us.domain.category.entity.MainCategory;
+import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

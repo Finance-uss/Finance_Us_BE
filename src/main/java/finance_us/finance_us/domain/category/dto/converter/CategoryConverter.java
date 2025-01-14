@@ -2,9 +2,9 @@ package finance_us.finance_us.domain.category.dto.converter;
 
 import finance_us.finance_us.domain.category.dto.CategoryRequestDto;
 import finance_us.finance_us.domain.category.dto.CategoryResponseDto;
-import finance_us.finance_us.domain.category.entity.category.MainCategory;
-import finance_us.finance_us.domain.category.entity.category.SubCategory;
-import finance_us.finance_us.domain.category.entity.category.status.CategoryType;
+import finance_us.finance_us.domain.category.entity.MainCategory;
+import finance_us.finance_us.domain.category.entity.SubCategory;
+import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import finance_us.finance_us.domain.user.entity.User;
 
 import java.util.ArrayList;
