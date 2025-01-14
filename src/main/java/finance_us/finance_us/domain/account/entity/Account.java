@@ -1,14 +1,13 @@
 package finance_us.finance_us.domain.account.entity;
 
-import finance_us.finance_us.domain.category.entity.SubAsset;
-import finance_us.finance_us.domain.category.entity.SubCategory;
+import finance_us.finance_us.domain.category.entity.asset.SubAsset;
+import finance_us.finance_us.domain.category.entity.category.SubCategory;
 import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.w3c.dom.Text;
 
 @Entity
 @Getter

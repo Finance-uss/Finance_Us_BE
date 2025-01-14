@@ -1,6 +1,6 @@
 package finance_us.finance_us.domain.statistics.entity;
 
-import finance_us.finance_us.domain.category.entity.MainCategory;
+import finance_us.finance_us.domain.category.entity.category.MainCategory;
 import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;
 import jakarta.persistence.*;
