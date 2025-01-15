@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class CategoryConverter
 {
-    public static CategoryResponseDto.MainResponseDto mainCategoryToDto(MainCategory mainCategory)
+    public static CategoryResponseDto.MainResponseDto mainCategoryEntityToDto(MainCategory mainCategory)
     {
         return CategoryResponseDto.MainResponseDto.builder()
                 .id(mainCategory.getId())
@@ -20,7 +20,7 @@ public class CategoryConverter
                 .build();
     }
 
-    public static CategoryResponseDto.SubResponseDto subCategoryToDto(SubCategory subCategory)
+    public static CategoryResponseDto.SubResponseDto subCategoryEntityToDto(SubCategory subCategory)
     {
         return CategoryResponseDto.SubResponseDto.builder()
                 .id(subCategory.getId())
@@ -29,7 +29,7 @@ public class CategoryConverter
                 .build();
     }
 
-    public static MainCategory mainRequestToEntity(Long userId, CategoryType type, CategoryRequestDto.MainRequestDto dto)
+    public static MainCategory mainRequestDtoToEntity(Long userId, CategoryType type, CategoryRequestDto.MainRequestDto dto)
     {
         return MainCategory.builder()
                 .mainName(dto.getName())
@@ -38,11 +38,11 @@ public class CategoryConverter
                 .build();
     }
 
-    public static SubCategory subRequestToEntity(Long userId, CategoryRequestDto.SubRequestDto dto)
+    public static SubCategory subRequestDtoToEntity(Long userId, Long mainId, CategoryRequestDto.SubRequestDto dto)
     {
         return SubCategory.builder()
                 .subName(dto.getName())
-                .mainCategory(MainCategory.builder().id(userId).build())
+                .mainCategory(MainCategory.builder().id(mainId).build())
                 .goal(dto.getGoal())
                 .user(User.builder().Id(userId).build())
                 .build();

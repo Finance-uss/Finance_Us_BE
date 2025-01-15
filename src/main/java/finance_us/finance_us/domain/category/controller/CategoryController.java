@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.category.controller;
 
+import finance_us.finance_us.domain.category.dto.AssetRequestDto;
 import finance_us.finance_us.domain.category.dto.CategoryRequestDto;
 import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import finance_us.finance_us.domain.category.service.CategoryService;
@@ -8,9 +9,7 @@ import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,26 +31,42 @@ public class CategoryController
 
         Long userId = 1L; // 유저로직 추가되면 수정
 
-        return ApiResponse.onSuccess(categoryService.getCategory(userId, categoryType));
+        return ApiResponse.onSuccess(categoryService.getCategoryList(userId, categoryType));
     }
 
-    @PostMapping("/api/mypage/category")
-    public ApiResponse<?> updateCategory(String type, List<CategoryRequestDto.MainRequestDto> mainCategories)
+    @PatchMapping("/api/mypage/category")
+    public ApiResponse<?> updateCategory(@RequestBody CategoryRequestDto.UpdateRequestDto dto)
     {
         // ENUM 기준을 틀렸을 경우
         CategoryType categoryType;
         try {
-            categoryType = CategoryType.valueOf(type.toUpperCase());
+            categoryType = CategoryType.valueOf(dto.getType().toUpperCase());
         } catch (Exception e) {
             throw new GeneralException(ErrorStatus.CATEGORY_TYPE_ERROR);
         }
 
-        log.info(mainCategories.toString());
-
         Long userId = 1L; // 유저로직 추가되면 수정
 
-        return ApiResponse.onSuccess(categoryService.updateCategory(userId, categoryType, mainCategories));
+
+        return ApiResponse.onSuccess(categoryService.updateCategory(userId, categoryType, dto.getMainCategories()));
     }
+
+    @GetMapping("/api/mypage/asset")
+    public ApiResponse<?> getAssetList()
+    {
+        Long userId = 1L;
+
+        return ApiResponse.onSuccess(categoryService.getAssetList(userId));
+    }
+
+    @PatchMapping("/api/mypage/asset")
+    public ApiResponse<?> updateAsset(@RequestBody List<AssetRequestDto.MainRequestDto> assetList)
+    {
+        Long userId = 1L;
+
+        return ApiResponse.onSuccess(categoryService.updateAsset(userId, assetList));
+    }
+
 
 }
 

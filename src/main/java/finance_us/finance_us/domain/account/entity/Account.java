@@ -13,6 +13,7 @@ import org.w3c.dom.Text;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder

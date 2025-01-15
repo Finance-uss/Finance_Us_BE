@@ -70,7 +70,6 @@ public class AccountService {
 
         // 필드 업데이트
         account.setAccountType(AccountType.valueOf(request.getAccountType()));
-        account.setDate(request.getDate());
         account.setAmount(request.getAmount());
         account.setTitle(request.getTitle());
         account.setStatus(request.getStatus());
