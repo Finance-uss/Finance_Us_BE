@@ -7,6 +7,7 @@ import finance_us.finance_us.domain.category.dto.CategoryResponseDto;
 import finance_us.finance_us.domain.category.dto.converter.AssetConverter;
 import finance_us.finance_us.domain.category.dto.converter.CategoryConverter;
 import finance_us.finance_us.domain.category.entity.MainAsset;
+import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import finance_us.finance_us.domain.category.repository.MainAssetRepository;
 import finance_us.finance_us.domain.category.repository.SubAssetRepository;
@@ -99,14 +100,22 @@ public class CategoryService
         var deleteList = mainAssetRepository.findByUserId(userId)
                 .stream().map(MainAsset::getId).toList();
         mainAssetRepository.deleteAllById(deleteList);
-        
+
         // SubAsset 로직은 Converter에서 처리
         // dto를 entity로 바꾸어 저장
         var mainList = dtoList.stream()
                         .map(item -> AssetConverter.mainAssetRequestDtoToEntity(userId, item))
                         .toList();
 
-        mainAssetRepository.saveAll(mainList);
+        var mainEntityList = mainAssetRepository.saveAll(mainList);
+
+        // 서브 엔티티 들의 main_asset_id를 추가해주는 과정
+        var subEntityList = new ArrayList<SubAsset>();
+        for(var m : mainEntityList)
+        {
+            subEntityList.addAll(m.getSubAssets().stream().peek((s) -> s.setMainAsset(m)).toList());
+        }
+        subAssetRepository.saveAll(subEntityList);
 
         return getAssetList(userId);
     }
