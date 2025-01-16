@@ -24,4 +24,9 @@ public class UserService {
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
         return email.matches(emailRegex);
     }
+
+    //닉네임 중복 확인
+    public boolean nameCheck(String name){
+        return userRepository.findByName(name).isEmpty();
+    }
 }

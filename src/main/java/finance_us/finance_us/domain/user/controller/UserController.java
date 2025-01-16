@@ -50,5 +50,22 @@ public class UserController {
         }
     }
 
+    @GetMapping("/nameCheck")
+    @Operation(summary = "닉네임 중복확인 API", description = "닉네임을 중복확인 합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<Boolean> nameCheck(@RequestParam String name) {
+
+        boolean isAvailable = userService.nameCheck(name);
+
+        if (isAvailable) {
+            return ApiResponse.onSuccess(true);
+        } else {
+            return ApiResponse.onFailure("COMMON400", "중복된 닉네임입니다.", false);
+        }
+    }
+
 
 }
