@@ -27,9 +27,6 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthResponseDTO.SignResponseDTO signUp(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
-        }
 
         validatePassword(user.getPassword()); // 비밀번호 검증
 
