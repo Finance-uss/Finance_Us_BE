@@ -1,11 +1,14 @@
 package finance_us.finance_us.domain.category.entity;
 
+import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,14 +22,19 @@ public class MainCategory extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //@Enumerated(EnumType.STRING)
-    //@Column(nullable = false)
-    //private MainType mainType;
-
     @Column(nullable = false)
     private String mainName;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CategoryType categoryType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "mainCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<SubCategory> subCategories;
+
+
 }

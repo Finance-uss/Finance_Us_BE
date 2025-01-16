@@ -38,7 +38,6 @@ public class AccountService {
         // account 생성
         Account account = Account.builder()
                 .accountType(AccountType.valueOf(request.getAccountType()))
-                .date(request.getDate())
                 .amount(request.getAmount())
                 .title(request.getTitle())
                 .status(request.getStatus())
@@ -71,7 +70,6 @@ public class AccountService {
 
         // 필드 업데이트
         account.setAccountType(AccountType.valueOf(request.getAccountType()));
-        account.setDate(request.getDate());
         account.setAmount(request.getAmount());
         account.setTitle(request.getTitle());
         account.setStatus(request.getStatus());

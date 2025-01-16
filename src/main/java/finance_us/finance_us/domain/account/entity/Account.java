@@ -3,13 +3,13 @@ package finance_us.finance_us.domain.account.entity;
 import finance_us.finance_us.domain.account.entity.status.AccountType;
 import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.category.entity.SubCategory;
+import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.time.LocalDate;
+import org.w3c.dom.Text;
 
 @Entity
 @Getter
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Account {
+public class Account extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,8 +27,6 @@ public class Account {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccountType accountType;
-
-    private LocalDate date;
 
     @Column(nullable = false)
     private Long amount;
@@ -39,17 +37,16 @@ public class Account {
     @Column(nullable = false)
     private Boolean status;
 
+    private String content;
+
     @Column(nullable = false)
     private int score;
-
-    private String content;
 
     private int totalLike;
 
     private int totalCheer;
 
     private String imageUrl;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
