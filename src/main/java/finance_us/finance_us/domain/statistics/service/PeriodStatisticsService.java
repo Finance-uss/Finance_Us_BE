@@ -38,9 +38,7 @@ public class PeriodStatisticsService {
     public MonthDetailResponse getMonthlyDetail(Long year, Long month, AccountType type){
         LocalDate startDate = LocalDate.of(year.intValue(), month.intValue(), 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-
         List<Account> accounts = accountRepository.findBytDateBetweenAndAccountType(startDate, endDate, type);
-
         List<MonthDetailResponse.Detail> details = accounts.stream()
                 .map(account -> new MonthDetailResponse.Detail(
                         Long.valueOf(account.getDate().getDayOfMonth()),
@@ -48,11 +46,9 @@ public class PeriodStatisticsService {
                         account.getAmount()
                 ))
                 .collect(Collectors.toList());
-
         Long totalMoney = accounts.stream()
                 .mapToLong(Account::getAmount)
                 .sum();
-
         return new MonthDetailResponse(year, month, type.name(), totalMoney, details);
     }
 

@@ -13,10 +13,17 @@ import java.util.List;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    @Query("SELECT a FROM Account a WHERE a.date BETWEEN :startDate AND :endDate AND a.accountType = :accountType AND a.user = :user")
+    @Query("SELECT a FROM Account a WHERE a.date BETWEEN :startDate AND :endDate AND a.accountType = :accountType")
     List<Account> findBytDateBetweenAndAccountType(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
+            @Param("accountType") AccountType accountType
+    );
+
+    @Query("SELECT a FROM Account a WHERE YEAR(a.date) = :year AND MONTH(a.date) = :month AND a.accountType = :accountType AND a.user = :user")
+    List<Account> findByYearAndMonthAndAccountType(
+            @Param("year") Long year,
+            @Param("month") Long month,
             @Param("accountType") AccountType accountType,
             @Param("user")User user
     );
