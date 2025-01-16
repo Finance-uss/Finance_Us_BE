@@ -37,7 +37,7 @@ public class AuthService {
         return AuthConverter.toSigninResponseDTO(user);
     }
 
-    private void validatePassword(String password) {
+    public void validatePassword(String password) {
         // 길이 검사
         if (password.length() < 8 || password.length() > 12) {
             throw new GeneralException(ErrorStatus.PASSWORD_VALIDATION_FAILED);
@@ -57,6 +57,14 @@ public class AuthService {
         if (count < 2) {
             throw new GeneralException(ErrorStatus.PASSWORD_VALIDATION_FAILED);
         }
+    }
+
+    // 이메일 형식 검증
+    public void isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+        if(!email.matches(emailRegex))
+            throw new GeneralException(ErrorStatus.EMAIL_VALIDATION_FAILED);
+
     }
 
 

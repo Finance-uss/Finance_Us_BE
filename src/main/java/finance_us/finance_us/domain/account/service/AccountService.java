@@ -25,7 +25,7 @@ public class AccountService {
     public Account createAccount(AccountRequest.AccountRequestDTO request) {
 
         // 임의로 1번 사용자 조회 (수정 필요)
-        User user = userRepository.findById(1L);
+        User user = userRepository.findById(1L).get();
 
         // SubCategory 조회
         SubCategory subCategory = subCategoryRepository.findBySubName(request.getSubName())
