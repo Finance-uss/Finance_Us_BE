@@ -48,7 +48,7 @@ public class UserService {
     }
 
     //비밀번호 변경
-    public boolean changePassword(Long userId, String password){
+    public void changePassword(Long userId, String password){
         // 사용자 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -58,6 +58,12 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
         userRepository.save(user);
-        return true;
+    }
+
+    //회원탈퇴
+    public void deleteUser(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        userRepository.delete(user);
     }
 }

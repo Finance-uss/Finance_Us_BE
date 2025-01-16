@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.stream.events.EntityReference;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -67,8 +69,63 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/resetMail")
+    @Operation(summary = "이메일 변경 API", description = "이메일을 변경합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<Map<String,Object>> resetMail(@RequestHeader("Authorization") String token, @RequestParam String email) {
 
-    //회원탈퇴 Delete /api/user
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
+        userService.mailCheck(email);
+        userService.changeMail(userId, email);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", userId);
+        response.put("updatedField", "email");
+
+        return ApiResponse.onSuccess(response);
+
+    }
+
+    @PatchMapping("/resetPassword")
+    @Operation(summary = "비밀번호 변경 API", description = "비밀번호를 변경합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<Map<String,Object>> resetPassword(@RequestHeader("Authorization") String token, @RequestParam String password) {
+
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        userService.changePassword(userId, password);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", userId);
+        response.put("updatedField", "password");
+
+        return ApiResponse.onSuccess(response);
+    }
+
+    //회원탈퇴 Delete / api/user/
+    @DeleteMapping()
+    @Operation(summary = "회원 탈퇴 API", description = "회원 탈퇴합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<String> withDrawUser(@RequestHeader("Authorization") String token) {
+
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        userService.deleteUser(userId);
+        return ApiResponse.onSuccess("삭제 완료되었습니다. ");
+    }
 
 }
