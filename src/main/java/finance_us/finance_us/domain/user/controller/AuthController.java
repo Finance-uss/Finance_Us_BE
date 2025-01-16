@@ -19,6 +19,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Auth API", description = "인증 관련 API")
@@ -73,11 +76,18 @@ public class AuthController {
     @Parameters({
             @Parameter(name = "Authorization", description = "Bearer access 토큰", required = true)
     })
-    public ApiResponse<String> refreshToken(@RequestHeader("Authorization") String token) {
+    public ApiResponse<Map<String, String>> refreshToken(@RequestHeader("Authorization") String token) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        return ApiResponse.onSuccess(authService.refreshToken(token));
+
+        String newToken = authService.refreshToken(token);
+
+        // 응답 데이터 구성
+        Map<String, String> response = new HashMap<>();
+        response.put("token", newToken);
+
+        return ApiResponse.onSuccess(response);
     }
 
     @PostMapping("/mailSend")
@@ -92,5 +102,17 @@ public class AuthController {
         }
 //        mailService.sendMail(email);
         return ApiResponse.onSuccess("인증 코드가 이메일로 전송되었습니다.");
+    }
+
+    @PatchMapping("/{userId}")
+    @Operation(summary = "사용자 인증", description = "사용자의 권한을 인증합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<AuthResponseDTO.UserResponseDTO> authUser(@PathVariable Long userId) {
+        return ApiResponse.onSuccess(authService.authUser(userId));
     }
 }

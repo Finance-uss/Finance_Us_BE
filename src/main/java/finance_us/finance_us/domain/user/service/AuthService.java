@@ -67,7 +67,7 @@ public class AuthService {
 
     }
 
-
+    //로그인
     public AuthResponseDTO.LoginResponseDTO login(AuthRequestDTO.LoginRequestDTO loginRequestDTO) {
         Optional<User> optionalUser = userRepository.findByName(loginRequestDTO.getUsername());
         if (optionalUser.isEmpty()) {
@@ -83,6 +83,7 @@ public class AuthService {
         return new AuthResponseDTO.LoginResponseDTO(token);
     }
 
+    //토큰 재발행
     public String refreshToken(String token) {
         // 토큰에서 클레임 추출
         Claims claims = tokenProvider.extractClaims(token);
@@ -97,5 +98,16 @@ public class AuthService {
         // 새 토큰 발급
         String newToken = tokenProvider.generateToken(user.getName(), user.getId());
         return newToken;
+    }
+
+    //사용자 인증
+    public AuthResponseDTO.UserResponseDTO authUser(Long userId){
+        //사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        user.setAuthenticated(true);
+        userRepository.save(user);
+
+        return AuthConverter.toUserResponseDTO(user);
     }
 }
