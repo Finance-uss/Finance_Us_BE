@@ -69,7 +69,7 @@ public class AuthService {
 
     //로그인
     public AuthResponseDTO.LoginResponseDTO login(AuthRequestDTO.LoginRequestDTO loginRequestDTO) {
-        Optional<User> optionalUser = userRepository.findByName(loginRequestDTO.getUsername());
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDTO.getEmail());
         if (optionalUser.isEmpty()) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
