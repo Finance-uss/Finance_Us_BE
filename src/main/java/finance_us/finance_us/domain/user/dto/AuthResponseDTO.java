@@ -26,4 +26,15 @@ public class AuthResponseDTO {
         private Long id;
         private Role role;
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UserResponseDTO{
+        private Long userId;
+        private boolean isAuthenticated;
+    }
+
 }

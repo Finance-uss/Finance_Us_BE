@@ -27,9 +27,6 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthResponseDTO.SignResponseDTO signUp(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
-        }
 
         validatePassword(user.getPassword()); // 비밀번호 검증
 
@@ -40,7 +37,7 @@ public class AuthService {
         return AuthConverter.toSigninResponseDTO(user);
     }
 
-    private void validatePassword(String password) {
+    public void validatePassword(String password) {
         // 길이 검사
         if (password.length() < 8 || password.length() > 12) {
             throw new GeneralException(ErrorStatus.PASSWORD_VALIDATION_FAILED);
@@ -62,9 +59,17 @@ public class AuthService {
         }
     }
 
+    // 이메일 형식 검증
+    public void isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+        if(!email.matches(emailRegex))
+            throw new GeneralException(ErrorStatus.EMAIL_VALIDATION_FAILED);
 
+    }
+
+    //로그인
     public AuthResponseDTO.LoginResponseDTO login(AuthRequestDTO.LoginRequestDTO loginRequestDTO) {
-        Optional<User> optionalUser = userRepository.findByName(loginRequestDTO.getUsername());
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDTO.getEmail());
         if (optionalUser.isEmpty()) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
@@ -78,6 +83,7 @@ public class AuthService {
         return new AuthResponseDTO.LoginResponseDTO(token);
     }
 
+    //토큰 재발행
     public String refreshToken(String token) {
         // 토큰에서 클레임 추출
         Claims claims = tokenProvider.extractClaims(token);
@@ -92,5 +98,16 @@ public class AuthService {
         // 새 토큰 발급
         String newToken = tokenProvider.generateToken(user.getName(), user.getId());
         return newToken;
+    }
+
+    //사용자 인증
+    public AuthResponseDTO.UserResponseDTO authUser(Long userId){
+        //사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        user.setAuthenticated(true);
+        userRepository.save(user);
+
+        return AuthConverter.toUserResponseDTO(user);
     }
 }
