@@ -1,4 +1,17 @@
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: financeus77@gmail.com
+    password: mvfs flhb mfxl ifmg
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    default-encoding: UTF-8
   datasource:
     url: jdbc:mysql://localhost:3306/finance
     username: root

@@ -11,6 +11,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.w3c.dom.Text;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -47,6 +49,8 @@ public class Account extends BaseEntity {
     private int totalCheer;
 
     private String imageUrl;
+
+    private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
