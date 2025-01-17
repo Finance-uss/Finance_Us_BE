@@ -96,7 +96,7 @@ public class AuthController {
     }
 
     @GetMapping("/numberCheck")
-    @Operation(summary = "이메일 인증코드 전송", description = "이메일 인증코드를 전송합니다.")
+    @Operation(summary = "이메일 인증코드 번호 체크", description = "전송된 이메일 인증코드와 번호를 체크합니다. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))

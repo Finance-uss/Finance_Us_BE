@@ -25,7 +25,7 @@ public class MailService {
 
     @Async
     public void sendMail(String mail) {
-        authService.validateEmail(mail);
+        authService.isValidEmail(mail);
         int number = createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
 
