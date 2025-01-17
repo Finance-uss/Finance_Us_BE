@@ -30,4 +30,11 @@ public class AuthConverter {
                 .build();
 
     }
+
+    public static AuthResponseDTO.UserResponseDTO toUserResponseDTO(User user){
+        return AuthResponseDTO.UserResponseDTO.builder()
+                .userId(user.getId())
+                .isAuthenticated(user.isAuthenticated())
+                .build();
+    }
 }
