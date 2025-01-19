@@ -70,4 +70,15 @@ public class CalendarService {
         // DTO 반환
         return CalendarConverter.toCalendarResponseDTO(totalScore, totalExpense, totalIncome, calendar);
     }
+
+
+    // 가계부 달별 일별 조회
+    public List<Account> getCalendarDetail(Integer year, Integer month, Integer day, Authentication authentication) {
+        // userId 추출
+        Long userId = (Long) authentication.getPrincipal();
+
+        // 해당 년도, 월, 일에 해당하는 Account 데이터를 조회
+        return accountRepository.findByUserIdAndYearAndMonthAndDay(userId, year, month, day);
+    }
+
 }

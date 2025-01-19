@@ -6,6 +6,7 @@ import java.util.List;
 
 public class CalendarResponse {
 
+    // 가계부 달력 조회
     @Getter
     @Setter
     @NoArgsConstructor
@@ -26,4 +27,5 @@ public class CalendarResponse {
     public static class CalendarDTO {
         private String date;
     }
+
 }
