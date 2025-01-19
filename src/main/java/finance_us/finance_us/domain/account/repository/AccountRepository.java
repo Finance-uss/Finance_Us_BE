@@ -28,4 +28,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             @Param("user")User user
     );
 
+    // 년도와 월을 기준으로 데이터 조회
+    @Query("SELECT a FROM Account a WHERE a.user.id = :userId AND YEAR(a.date) = :year AND MONTH(a.date) = :month")
+    List<Account> findByUserIdAndYearAndMonth(Long userId, Integer year, Integer month);
 }
+
