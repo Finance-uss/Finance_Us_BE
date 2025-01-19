@@ -3,7 +3,6 @@ package finance_us.finance_us.domain.account.entity;
 import finance_us.finance_us.domain.account.entity.status.AccountType;
 import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.category.entity.SubCategory;
-import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.w3c.dom.Text;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -21,7 +20,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Account extends BaseEntity {
+public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +28,8 @@ public class Account extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccountType accountType;
+
+    private LocalDate date;
 
     @Column(nullable = false)
     private Long amount;
@@ -39,10 +40,10 @@ public class Account extends BaseEntity {
     @Column(nullable = false)
     private Boolean status;
 
-    private String content;
-
     @Column(nullable = false)
     private int score;
+
+    private String content;
 
     private int totalLike;
 
@@ -50,7 +51,6 @@ public class Account extends BaseEntity {
 
     private String imageUrl;
 
-    private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
