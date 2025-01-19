@@ -11,6 +11,9 @@ import finance_us.finance_us.domain.category.repository.SubCategoryRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,10 +25,19 @@ public class AccountService {
     private final SubAssetRepository subAssetRepository;
 
     // 가계부 생성
-    public Account createAccount(AccountRequest.AccountRequestDTO request) {
+    public Account createAccount(AccountRequest.AccountRequestDTO request, Authentication auth) {
 
-        // 임의로 1번 사용자 조회 (수정 필요)
-        User user = userRepository.findById(1L).get();
+        // 사용자 ID 가져오기
+        Long userId;
+        if (auth.getPrincipal() instanceof UserDetails) {
+            userId = Long.valueOf(((UserDetails) auth.getPrincipal()).getUsername());
+        } else {
+            userId = Long.valueOf(auth.getPrincipal().toString());
+        }
+
+        // ID로 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         // SubCategory 조회
         SubCategory subCategory = subCategoryRepository.findBySubName(request.getSubName())
@@ -38,6 +50,7 @@ public class AccountService {
         // account 생성
         Account account = Account.builder()
                 .accountType(AccountType.valueOf(request.getAccountType()))
+                .date(request.getDate())
                 .amount(request.getAmount())
                 .title(request.getTitle())
                 .status(request.getStatus())
