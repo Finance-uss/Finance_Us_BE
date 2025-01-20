@@ -8,10 +8,11 @@ import finance_us.finance_us.domain.account.service.AccountService;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/api/account")
 @RequiredArgsConstructor
 public class AccountController {
 
@@ -19,8 +20,8 @@ public class AccountController {
 
     // 가계부 생성
     @PostMapping
-    public ApiResponse<AccountResponse.AccountResponseDTO> createAccount(@RequestBody AccountRequest.AccountRequestDTO request){
-        Account account = accountService.createAccount(request);
+    public ApiResponse<AccountResponse.AccountResponseDTO> createAccount(@RequestBody AccountRequest.AccountRequestDTO request, Authentication authentication) {
+        Account account = accountService.createAccount(request, authentication);
         return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
     }
 
