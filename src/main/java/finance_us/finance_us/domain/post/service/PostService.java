@@ -1,6 +1,5 @@
 package finance_us.finance_us.domain.post.service;
 
-import finance_us.finance_us.domain.post.converter.PostConverter;
 import finance_us.finance_us.domain.post.dto.PostRequest;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.entity.status.Category;
@@ -10,9 +9,6 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +18,16 @@ public class PostService {
 
     // 게시글 생성
     public Post createPost(PostRequest.PostRequestDTO request) {
+        // 사용자 유효성 검증
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(()->new IllegalArgumentException("User not found"));
+
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .postType(PostType.valueOf(request.getPostType()))
                 .category(Category.valueOf(request.getCategory()))
                 .imageUrl(request.getImageUrl())
-                .createdAt(LocalDateTime.now())
                 //.user(user)
                 .build();
 
@@ -45,7 +44,6 @@ public class PostService {
         post.setPostType(PostType.valueOf(request.getPostType()));
         post.setCategory(Category.valueOf(request.getCategory()));
         post.setImageUrl(request.getImageUrl());
-        post.setUpdatedAt(LocalDateTime.now());
 
         return postRepository.save(post);
     }

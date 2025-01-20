@@ -9,8 +9,6 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -30,7 +28,6 @@ public class CommentService {
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
-                .createdAt(LocalDateTime.now())
                 .post(post)
                 //.user(user)
                 .build();
@@ -44,7 +41,6 @@ public class CommentService {
                 .orElseThrow(()-> new IllegalArgumentException("Comment not found"));
 
         comment.setContent(request.getContent());
-        comment.setUpdatedAt(LocalDateTime.now());
 
         return commentRepository.save(comment);
     }
