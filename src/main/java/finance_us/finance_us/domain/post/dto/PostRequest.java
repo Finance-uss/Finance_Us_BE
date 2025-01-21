@@ -1,7 +1,5 @@
 package finance_us.finance_us.domain.post.dto;
 
-import finance_us.finance_us.domain.post.entity.status.Category;
-import finance_us.finance_us.domain.post.entity.status.PostType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
