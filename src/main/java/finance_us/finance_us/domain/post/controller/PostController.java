@@ -36,4 +36,20 @@ public class PostController {
         postService.deletePost(postId);
         return ApiResponse.onSuccess(true);
     }
+
+    @GetMapping("/posted-post/{userId}")
+    public ApiResponse<?> getPostedPostList(@PathVariable("userId") Long userId)
+    {
+
+        return ApiResponse.onSuccess(postService.getPostedPostList(userId));
+    }
+
+    @GetMapping("/liked-post/{userId}")
+    public ApiResponse<?> getLikedPostList(@PathVariable("userId") Long userId)
+    {
+
+        return ApiResponse.onSuccess(postService.getLikedPostList(userId));
+    }
+
+
 }

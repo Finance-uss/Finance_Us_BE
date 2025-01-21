@@ -18,4 +18,14 @@ public class PostResponse {
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private LocalDateTime updatedAt;
     }
+
+    @Builder @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+    public static class PostListDto{
+        // 게시물 목록을 반환할때 사용합니다.
+
+        String category;
+        String imgUrl;
+        String title;
+        String content;
+    }
 }

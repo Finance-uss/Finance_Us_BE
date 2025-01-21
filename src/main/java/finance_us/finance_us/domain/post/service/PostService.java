@@ -2,6 +2,7 @@ package finance_us.finance_us.domain.post.service;
 
 import finance_us.finance_us.domain.post.converter.PostConverter;
 import finance_us.finance_us.domain.post.dto.PostRequest;
+import finance_us.finance_us.domain.post.dto.PostResponse;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.entity.status.Category;
 import finance_us.finance_us.domain.post.entity.status.PostType;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,5 +58,22 @@ public class PostService {
                 .orElseThrow(()-> new IllegalArgumentException("Post not found"));
 
         postRepository.delete(post);
+    }
+
+    // 유저가 게시한 게시물 조회
+    public List<PostResponse.PostListDto> getPostedPostList(Long userId) {
+
+        var postList = postRepository.findByUserId(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
+    }
+    // 유저가 좋아요 누른 게시물 조회
+    public List<PostResponse.PostListDto> getLikedPostList(Long userId) {
+
+        var postList = postRepository.findByUserLiked(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
     }
 }
