@@ -116,12 +116,12 @@ public class AccountService {
         List<Account> accounts = accountRepository.findByUserIdAndYearAndMonth(userId, year, month);
 
         // 데이터를 점수에 따라 그룹화
-        List<AccountReportResponse.AccountReportDTO> reduceActivity = new ArrayList<>();
-        List<AccountReportResponse.AccountReportDTO> satisfactoryActivity = new ArrayList<>();
-        List<AccountReportResponse.AccountReportDTO> maintainActivity = new ArrayList<>();
+        List<AccountReportResponse.AccountReportResponseDTO> reduceActivity = new ArrayList<>();
+        List<AccountReportResponse.AccountReportResponseDTO> satisfactoryActivity = new ArrayList<>();
+        List<AccountReportResponse.AccountReportResponseDTO> maintainActivity = new ArrayList<>();
 
         for (Account account : accounts) {
-            AccountReportResponse.AccountReportDTO dto = new AccountReportResponse.AccountReportDTO(
+            AccountReportResponse.AccountReportResponseDTO dto = new AccountReportResponse.AccountReportResponseDTO(
                     account.getId(),
                     account.getScore(),
                     account.getTitle(),

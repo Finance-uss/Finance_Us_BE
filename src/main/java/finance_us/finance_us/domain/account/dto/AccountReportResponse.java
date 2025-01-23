@@ -13,15 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountReportResponse {
-    private List<AccountReportDTO> reduceActivity;
-    private List<AccountReportDTO> satisfactoryActivity;
-    private List<AccountReportDTO> maintainActivity;
+    private List<AccountReportResponseDTO> reduceActivity;
+    private List<AccountReportResponseDTO> satisfactoryActivity;
+    private List<AccountReportResponseDTO> maintainActivity;
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AccountReportDTO {
+    public static class AccountReportResponseDTO {
         private Long accountId;
         private Integer score;
         private String title;
