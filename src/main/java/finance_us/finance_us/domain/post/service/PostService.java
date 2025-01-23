@@ -37,7 +37,7 @@ public class PostService {
     // 게시글 수정
     public Post updatePost(Long postId, PostRequest.PostRequestDTO request) {
         Post post = postRepository.findById(postId)
-                        .orElseThrow(()-> new IllegalArgumentException("Post no found"));
+                        .orElseThrow(()-> new IllegalArgumentException("Post not found"));
 
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());

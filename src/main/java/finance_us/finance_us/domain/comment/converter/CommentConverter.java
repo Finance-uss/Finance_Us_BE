@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.comment.converter;
 
+import finance_us.finance_us.domain.comment.dto.CommentLikeResponse;
 import finance_us.finance_us.domain.comment.dto.CommentResponse;
 import finance_us.finance_us.domain.comment.entity.Comment;
 
