@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/like")
+@RequestMapping("/api/like/post/{postId}")
 public class PostLikeController {
     private final PostLikeService postLikeService;
 
-    @PostMapping("/{postId}")
+    @PostMapping
     public ApiResponse<PostLikeResponse.PostLikeResponseDTO> likePost(@PathVariable Long postId, @AuthenticationPrincipal User user) {
         PostLikeResponse.PostLikeResponseDTO likeResponseDTO = postLikeService.likePost(postId, user);
 
