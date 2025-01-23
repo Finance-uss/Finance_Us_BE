@@ -10,6 +10,8 @@ import finance_us.finance_us.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static finance_us.finance_us.domain.post.entity.QPostLike.postLike;
+
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
@@ -38,5 +40,16 @@ public class PostLikeService {
         Long likesCount = postLikeRepository.countLikesByPostId(postId);
 
         return PostLikeConverter.toPostLikeResponseDTO(postLike, likesCount);
+    }
+
+    // 게시글 좋아요 갯수 반환
+    public PostLikeResponse.PostLikeResponseDTO getPostLikes(Long postId) {
+        // 게시글 유효성 검증
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()-> new IllegalArgumentException("Post not found"));
+
+        Long likesCount = postLikeRepository.countLikesByPostId(postId);
+
+        return PostLikeConverter.toGetPostLikesResponseDTO(postId, likesCount);
     }
 }

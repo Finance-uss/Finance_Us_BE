@@ -11,4 +11,11 @@ public class PostLikeConverter {
                 .createdAt(postLike.getCreatedAt())
                 .build();
     }
+
+    public static PostLikeResponse.PostLikeResponseDTO toGetPostLikesResponseDTO(Long postId, Long likesCount) {
+        return PostLikeResponse.PostLikeResponseDTO.builder()
+                .postId(postId)
+                .likesCount(likesCount)
+                .build();
+    }
 }
