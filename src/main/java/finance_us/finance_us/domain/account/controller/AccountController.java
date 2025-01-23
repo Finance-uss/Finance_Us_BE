@@ -1,6 +1,7 @@
 package finance_us.finance_us.domain.account.controller;
 
 import finance_us.finance_us.domain.account.converter.AccountConverter;
+import finance_us.finance_us.domain.account.dto.AccountReportResponse;
 import finance_us.finance_us.domain.account.dto.AccountRequest;
 import finance_us.finance_us.domain.account.dto.AccountResponse;
 import finance_us.finance_us.domain.account.entity.Account;
@@ -37,6 +38,13 @@ public class AccountController {
     public ApiResponse<Boolean> deleteAccount(@PathVariable Long accountId){
         accountService.deleteAccount(accountId);
         return ApiResponse.onSuccess(true);
+    }
+
+    // 가계부 활동 만족도 레포트
+    @GetMapping("/report/{year}/{month}")
+    public ApiResponse<AccountReportResponse> getReport(@PathVariable Integer year, @PathVariable Integer month, Authentication authentication) {
+        AccountReportResponse response = accountService.getReport(year, month, authentication);
+        return ApiResponse.onSuccess(response);
     }
 
 }

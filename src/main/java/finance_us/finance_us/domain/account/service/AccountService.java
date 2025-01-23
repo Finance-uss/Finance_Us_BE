@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.account.service;
 
+import finance_us.finance_us.domain.account.dto.AccountReportResponse;
 import finance_us.finance_us.domain.account.dto.AccountRequest;
 import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.account.entity.status.AccountType;
@@ -15,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -102,4 +106,43 @@ public class AccountService {
 
         accountRepository.delete(account);
     }
+
+    // 가계부 레포트 조회
+    public AccountReportResponse getReport(Integer year, Integer month, Authentication authentication) {
+        // userId 추출
+        Long userId = (Long) authentication.getPrincipal();
+
+        // 해당 월의 Account 데이터 조회
+        List<Account> accounts = accountRepository.findByUserIdAndYearAndMonth(userId, year, month);
+
+        // 데이터를 점수에 따라 그룹화
+        List<AccountReportResponse.AccountReportDTO> reduceActivity = new ArrayList<>();
+        List<AccountReportResponse.AccountReportDTO> satisfactoryActivity = new ArrayList<>();
+        List<AccountReportResponse.AccountReportDTO> maintainActivity = new ArrayList<>();
+
+        for (Account account : accounts) {
+            AccountReportResponse.AccountReportDTO dto = new AccountReportResponse.AccountReportDTO(
+                    account.getId(),
+                    account.getScore(),
+                    account.getTitle(),
+                    account.getAmount(),
+                    account.getDate(),
+                    account.getSubCategory().getSubName(),
+                    account.getImageUrl()
+            );
+
+            // 점수별로 분류
+            if (account.getScore() <= 2) {
+                reduceActivity.add(dto);
+            } else if (account.getScore() == 3) {
+                maintainActivity.add(dto);
+            } else if (account.getScore() >= 4) {
+                satisfactoryActivity.add(dto);
+            }
+        }
+
+        // 결과 반환
+        return new AccountReportResponse(reduceActivity, satisfactoryActivity, maintainActivity);
+    }
+
 }
