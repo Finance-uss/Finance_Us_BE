@@ -1,6 +1,7 @@
 package finance_us.finance_us.domain.account.controller;
 
 import finance_us.finance_us.domain.account.converter.AccountConverter;
+import finance_us.finance_us.domain.account.dto.AccountFollowResponse;
 import finance_us.finance_us.domain.account.dto.AccountReportResponse;
 import finance_us.finance_us.domain.account.dto.AccountRequest;
 import finance_us.finance_us.domain.account.dto.AccountResponse;
@@ -44,6 +45,12 @@ public class AccountController {
     @GetMapping("/report/{year}/{month}")
     public ApiResponse<AccountReportResponse> getReport(@PathVariable Integer year, @PathVariable Integer month, Authentication authentication) {
         AccountReportResponse response = accountService.getReport(year, month, authentication);
+        return ApiResponse.onSuccess(response);
+    }
+
+    @GetMapping("/follow/{followId}")
+    public ApiResponse<AccountFollowResponse> getPublicAccountsByFollowId(@PathVariable Long followId) {
+        AccountFollowResponse response = accountService.getFollow(followId);
         return ApiResponse.onSuccess(response);
     }
 

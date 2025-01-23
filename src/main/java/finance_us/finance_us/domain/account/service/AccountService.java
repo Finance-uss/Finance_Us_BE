@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.account.service;
 
+import finance_us.finance_us.domain.account.dto.AccountFollowResponse;
 import finance_us.finance_us.domain.account.dto.AccountReportResponse;
 import finance_us.finance_us.domain.account.dto.AccountRequest;
 import finance_us.finance_us.domain.account.entity.Account;
@@ -9,8 +10,11 @@ import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.category.entity.SubCategory;
 import finance_us.finance_us.domain.category.repository.SubAssetRepository;
 import finance_us.finance_us.domain.category.repository.SubCategoryRepository;
+import finance_us.finance_us.domain.follows.entity.Follow;
+import finance_us.finance_us.domain.follows.repository.FollowRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +31,7 @@ public class AccountService {
     private final UserRepository userRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final SubAssetRepository subAssetRepository;
+    private final FollowRepository followRepository;
 
     // 가계부 생성
     public Account createAccount(AccountRequest.AccountRequestDTO request, Authentication auth) {
@@ -143,6 +148,47 @@ public class AccountService {
 
         // 결과 반환
         return new AccountReportResponse(reduceActivity, satisfactoryActivity, maintainActivity);
+    }
+
+    // 가계부 특정 팔로우 조회
+    public AccountFollowResponse getFollow(Long followId) {
+
+        // followId로 Follow 객체 조회
+        Follow follow = followRepository.findById(followId)
+                .orElseThrow(() -> new IllegalArgumentException("Follow not found")); // Follow가 없으면 예외 처리
+
+        // Follow에서 followingId 조회
+        Long followingId = follow.getFollowingId();
+
+        // User의 name을 가져오기
+        User User = userRepository.findById(followingId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found")); // User가 없으면 예외 처리
+
+        String name = User.getName();
+
+        System.out.println("followingId"+followingId);
+
+        // Repository를 호출하여 데이터 조회
+        List<Account> accounts = accountRepository.findPublicAccountsByFollowingId(followingId);
+
+        // DTO 리스트 생성
+        List<AccountFollowResponse.AccountFollowResponseDTO> accountDTOs = new ArrayList<>();
+        for (Account account : accounts) {
+            AccountFollowResponse.AccountFollowResponseDTO dto = new AccountFollowResponse.AccountFollowResponseDTO(
+                    account.getId(),
+                    account.getScore(),
+                    account.getTitle(),
+                    account.getAmount(),
+                    account.getDate(),
+                    account.getSubCategory().getSubName(),
+                    account.getImageUrl(),
+                    account.getTotalLike(),
+                    account.getTotalCheer()
+            );
+            accountDTOs.add(dto);
+        }
+
+        return new AccountFollowResponse(name, accountDTOs);
     }
 
 }
