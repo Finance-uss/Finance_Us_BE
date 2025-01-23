@@ -2,15 +2,11 @@ package finance_us.finance_us.domain.comment.controller;
 
 import finance_us.finance_us.domain.comment.dto.CommentLikeResponse;
 import finance_us.finance_us.domain.comment.service.CommentLikeService;
-import finance_us.finance_us.domain.comment.service.CommentService;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +19,12 @@ public class CommentLikeController {
         CommentLikeResponse.CommentLikeResponseDTO likeResponseDTO = commentLikeService.likeComment(commentId, user);
 
         return ApiResponse.onSuccess(likeResponseDTO);
+    }
+
+    @GetMapping
+    public ApiResponse<CommentLikeResponse.CommentLikeResponseDTO> getCommentLikes(@PathVariable Long commentId) {
+        CommentLikeResponse.CommentLikeResponseDTO commentLikeResponseDTO = commentLikeService.getCommentLikes(commentId);
+
+        return ApiResponse.onSuccess(commentLikeResponseDTO);
     }
 }

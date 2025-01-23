@@ -11,4 +11,11 @@ public class CommentLikeConverter {
                 .createdAt(commentLike.getCreatedAt())
                 .build();
     }
+
+    public static CommentLikeResponse.CommentLikeResponseDTO toGetCommentLikesResponseDTO(Long commentId, Long likesCount) {
+        return CommentLikeResponse.CommentLikeResponseDTO.builder()
+                .commentId(commentId)
+                .likesCount(likesCount)
+                .build();
+    }
 }

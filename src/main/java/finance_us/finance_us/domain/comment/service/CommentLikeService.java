@@ -7,6 +7,9 @@ import finance_us.finance_us.domain.comment.entity.Comment;
 import finance_us.finance_us.domain.comment.entity.CommentLike;
 import finance_us.finance_us.domain.comment.repository.CommentLikeRepository;
 import finance_us.finance_us.domain.comment.repository.CommentRepository;
+import finance_us.finance_us.domain.post.converter.PostLikeConverter;
+import finance_us.finance_us.domain.post.dto.PostLikeResponse;
+import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,5 +42,16 @@ public class CommentLikeService {
         Long likesCount = commentLikeRepository.countLikesByCommentId(commentId);
 
         return CommentLikeConverter.toCommentLikeResponseDTO(commentLike, likesCount);
+    }
+
+    // 댓글 좋아요 갯수 반환
+    public CommentLikeResponse.CommentLikeResponseDTO getCommentLikes(Long commentId) {
+        // 댓글 유효성 검증
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()-> new IllegalArgumentException("Comment not found"));
+
+        Long likesCount = commentLikeRepository.countLikesByCommentId(commentId);
+
+        return CommentLikeConverter.toGetCommentLikesResponseDTO(commentId, likesCount);
     }
 }
