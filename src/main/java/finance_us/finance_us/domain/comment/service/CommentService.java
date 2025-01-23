@@ -1,11 +1,12 @@
 package finance_us.finance_us.domain.comment.service;
 
+import finance_us.finance_us.domain.comment.converter.CommentConverter;
+import finance_us.finance_us.domain.comment.dto.CommentLikeResponse;
 import finance_us.finance_us.domain.comment.dto.CommentRequest;
 import finance_us.finance_us.domain.comment.entity.Comment;
 import finance_us.finance_us.domain.comment.repository.CommentRepository;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.repository.PostRepository;
-import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
