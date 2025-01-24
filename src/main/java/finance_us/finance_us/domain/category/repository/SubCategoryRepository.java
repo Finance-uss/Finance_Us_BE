@@ -17,5 +17,8 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
     @Query(value = "SELECT * FROM sub_category WHERE user_id=:userId AND main_category_id=:mainCategoryId;", nativeQuery = true)
     public List<SubCategory> findByUserIdAndMainCategoryId(@Param("userId") Long userId, @Param("mainCategoryId") Long mainCategoryId);
 
+    @Query("SELECT s FROM SubCategory s WHERE s.user.id = :userId")
+    List<SubCategory> findByUserId(Long userId);
+
 
 }
