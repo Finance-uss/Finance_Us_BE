@@ -37,8 +37,13 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByUserIdAndYearAndMonthAndDay(Long userId, Integer year, Integer month, Integer day);
 
     // followingId로 데이터 조회
-    @Query("SELECT a FROM Account a WHERE a.user.Id = :followingId AND a.status = true ORDER BY a.date DESC")
-    List<Account> findPublicAccountsByFollowingId(Long followingId);
+    @Query("SELECT a FROM Account a WHERE a.user.Id = :followingId AND a.status = true " +
+            "AND FUNCTION('YEAR', a.date) = :year " +
+            "AND FUNCTION('MONTH', a.date) = :month " +
+            "ORDER BY a.date DESC")
+    List<Account> findAccountsByYearAndMonth(Long followingId,
+                                             int year,
+                                             int month);
 
 }
 

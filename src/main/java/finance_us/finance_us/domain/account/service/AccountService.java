@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,10 +167,13 @@ public class AccountService {
 
         String name = User.getName();
 
-        System.out.println("followingId"+followingId);
+        // 현재 날짜 불러오기
+        LocalDate now = LocalDate.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
 
         // Repository를 호출하여 데이터 조회
-        List<Account> accounts = accountRepository.findPublicAccountsByFollowingId(followingId);
+        List<Account> accounts = accountRepository.findAccountsByYearAndMonth(followingId, currentYear, currentMonth);
 
         // DTO 리스트 생성
         List<AccountFollowResponse.AccountFollowResponseDTO> accountDTOs = new ArrayList<>();
