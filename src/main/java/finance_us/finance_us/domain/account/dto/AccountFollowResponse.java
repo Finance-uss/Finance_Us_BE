@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class AccountFollowResponse {
     private String name;
+    private Object expenseRate;
     private List<AccountFollowResponseDTO> accounts;
 
     @Getter

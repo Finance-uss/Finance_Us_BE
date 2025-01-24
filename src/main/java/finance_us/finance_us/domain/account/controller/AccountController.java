@@ -49,7 +49,7 @@ public class AccountController {
     }
 
     @GetMapping("/follow/{followId}")
-    public ApiResponse<AccountFollowResponse> getPublicAccountsByFollowId(@PathVariable Long followId) {
+    public ApiResponse<AccountFollowResponse> getFollow(@PathVariable Long followId) {
         AccountFollowResponse response = accountService.getFollow(followId);
         return ApiResponse.onSuccess(response);
     }

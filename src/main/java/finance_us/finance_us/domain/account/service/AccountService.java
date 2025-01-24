@@ -14,7 +14,6 @@ import finance_us.finance_us.domain.follows.entity.Follow;
 import finance_us.finance_us.domain.follows.repository.FollowRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
-import finance_us.finance_us.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -154,14 +154,14 @@ public class AccountService {
     // 가계부 특정 팔로우 조회
     public AccountFollowResponse getFollow(Long followId) {
 
-        // followId로 Follow 객체 조회
+        // Follow 객체 조회
         Follow follow = followRepository.findById(followId)
                 .orElseThrow(() -> new IllegalArgumentException("Follow not found")); // Follow가 없으면 예외 처리
 
-        // Follow에서 followingId 조회
+        // followingId 조회
         Long followingId = follow.getFollowingId();
 
-        // User의 name을 가져오기
+        // name 가져오기
         User User = userRepository.findById(followingId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found")); // User가 없으면 예외 처리
 
@@ -172,8 +172,35 @@ public class AccountService {
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
 
-        // Repository를 호출하여 데이터 조회
+        // 가계부 데이터 조회
         List<Account> accounts = accountRepository.findAccountsByYearAndMonth(followingId, currentYear, currentMonth);
+
+        // 소분류 목표금액 조회
+        List<SubCategory> subCategories = subCategoryRepository.findByUserId(followingId);
+
+       // 소비량 계산
+        Object expenseRate;
+        if (subCategories.isEmpty()) {
+            expenseRate = "목표 금액이 설정되지 않았어요. 함께 응원하며 기다려볼까요?";
+        } else {
+            // 목표 금액 합산
+            int totalGoal = subCategories.stream()
+                    .mapToInt(SubCategory::getGoal)
+                    .sum();
+
+            long totalAmount = accounts.stream()
+                    .mapToLong(Account::getAmount)
+                    .sum();
+
+            // 총 소비량이 크면 0으로 설정
+            if (totalAmount > totalGoal) {
+                expenseRate = 0;
+            } else {
+                // 계산된 퍼센트 반환
+                int calculatedRate = (int) ((totalAmount * 100) / totalGoal);
+                expenseRate = calculatedRate;
+            }
+        }
 
         // DTO 리스트 생성
         List<AccountFollowResponse.AccountFollowResponseDTO> accountDTOs = new ArrayList<>();
@@ -192,7 +219,7 @@ public class AccountService {
             accountDTOs.add(dto);
         }
 
-        return new AccountFollowResponse(name, accountDTOs);
+        return new AccountFollowResponse(name, expenseRate, accountDTOs);
     }
 
 }
