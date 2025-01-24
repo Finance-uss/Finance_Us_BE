@@ -51,5 +51,19 @@ public class PostController {
         return ApiResponse.onSuccess(postService.getLikedPostList(userId));
     }
 
+    @GetMapping("/commented-post/{userId}")
+    public ApiResponse<?> getCommentedPostList(@PathVariable("userId") Long userId)
+    {
+
+        return ApiResponse.onSuccess(postService.getCommentedPostList(userId));
+    }
+
+    @GetMapping("/scraped-post/{userId}")
+    public ApiResponse<?> getScrapedPostList(@PathVariable("userId") Long userId)
+    {
+
+        return ApiResponse.onSuccess(postService.getScrapedPostList(userId));
+    }
+
 
 }

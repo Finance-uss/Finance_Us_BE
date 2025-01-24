@@ -76,4 +76,26 @@ public class PostService {
 
         return dtoList;
     }
+
+    // 유저가 댓글을 단 게시물 조회
+    public List<PostResponse.PostListDto> getCommentedPostList(Long userId) {
+
+        var postList = postRepository.findByUserCommented(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
+    }
+
+    // 유저가 댓글을 단 게시물 조회
+    public List<PostResponse.PostListDto> getScrapedPostList(Long userId) {
+
+        var postList = postRepository.findByUserScraped(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
+    }
+
+
+
+
 }

@@ -17,4 +17,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value="select p.* from post_like pl inner join post p on p.id=pl.post_id where pl.user_id=:userId;", nativeQuery=true)
     public List<Post> findByUserLiked(@Param("userId") Long userId);
 
+    @Query(value="select DISTINCT p.* from comment c inner join post p on p.id=c.post_id where c.user_id=:userId ;", nativeQuery=true)
+    public List<Post> findByUserCommented(@Param("userId") Long userId);
+
+    @Query(value="select p.* from post_scrap ps inner join post p on p.id=ps.post_id where ps.user_id=:userId ;", nativeQuery=true)
+    public List<Post> findByUserScraped(@Param("userId") Long userId);
+
 }
