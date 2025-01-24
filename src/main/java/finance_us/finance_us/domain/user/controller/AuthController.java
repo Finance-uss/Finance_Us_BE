@@ -6,6 +6,7 @@ import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.entity.status.Role;
 import finance_us.finance_us.domain.user.service.AuthService;
+import finance_us.finance_us.domain.user.service.MailService;
 import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
@@ -30,8 +31,8 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-//    @Autowired
-//    private MailService mailService;
+    @Autowired
+    private MailService mailService;
 
     @PostMapping("/login")
     @Operation(summary = "사용자 로그인 API", description = "사용자가 이메일과 비밀번호를 사용하여 로그인합니다.")
@@ -100,8 +101,23 @@ public class AuthController {
         if (email == null || email.isEmpty()) {
             throw new GeneralException(ErrorStatus.EMAIL_NOT_FOUND);
         }
-//        mailService.sendMail(email);
+        mailService.sendMail(email);
         return ApiResponse.onSuccess("인증 코드가 이메일로 전송되었습니다.");
+    }
+
+
+    @GetMapping("/numberCheck")
+    @Operation(summary = "이메일 인증코드 번호 체크", description = "전송된 이메일 인증코드와 번호를 체크합니다. ")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<Boolean> numberCheck(@RequestParam String email, Integer number) {
+
+        if (mailService.checkVerificationNumber(email, number))
+            return ApiResponse.onSuccess(true);
+
+        return ApiResponse.onFailure("COMMON400", "이메일 인증번호와 다릅니다.", false);
     }
 
     @PatchMapping("/{userId}")
@@ -114,5 +130,6 @@ public class AuthController {
     })
     public ApiResponse<AuthResponseDTO.UserResponseDTO> authUser(@PathVariable Long userId) {
         return ApiResponse.onSuccess(authService.authUser(userId));
+
     }
 }
