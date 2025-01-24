@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +36,8 @@ public class AccountService {
     // 가계부 생성
     public Account createAccount(AccountRequest.AccountRequestDTO request, Authentication auth) {
 
-        // 사용자 ID 가져오기
-        Long userId;
-        if (auth.getPrincipal() instanceof UserDetails) {
-            userId = Long.valueOf(((UserDetails) auth.getPrincipal()).getUsername());
-        } else {
-            userId = Long.valueOf(auth.getPrincipal().toString());
-        }
+        // userId 추출
+        Long userId = (Long) auth.getPrincipal();
 
         // ID로 사용자 조회
         User user = userRepository.findById(userId)
@@ -77,7 +71,10 @@ public class AccountService {
 
 
     // 가계부 수정
-    public Account updateAccount(Long accountId, AccountRequest.AccountRequestDTO request) {
+    public Account updateAccount(Long accountId, AccountRequest.AccountRequestDTO request, Authentication auth) {
+        if (auth == null) {
+            throw new IllegalArgumentException("토큰이 전달되지 않았습니다.");
+        }
 
         // 기존 계좌 조회
         Account account = accountRepository.findById(accountId)
@@ -106,7 +103,11 @@ public class AccountService {
     }
 
     // 가계부 삭제
-    public void deleteAccount(Long accountId) {
+    public void deleteAccount(Long accountId,  Authentication auth) {
+        if (auth == null) {
+            throw new IllegalArgumentException("토큰이 전달되지 않았습니다.");
+        }
+
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
@@ -114,9 +115,9 @@ public class AccountService {
     }
 
     // 가계부 레포트 조회
-    public AccountReportResponse getReport(Integer year, Integer month, Authentication authentication) {
+    public AccountReportResponse getReport(Integer year, Integer month, Authentication auth) {
         // userId 추출
-        Long userId = (Long) authentication.getPrincipal();
+        Long userId = (Long) auth.getPrincipal();
 
         // 해당 월의 Account 데이터 조회
         List<Account> accounts = accountRepository.findByUserIdAndYearAndMonth(userId, year, month);
@@ -152,18 +153,20 @@ public class AccountService {
     }
 
     // 가계부 특정 팔로우 조회
-    public AccountFollowResponse getFollow(Long followId) {
-
+    public AccountFollowResponse getFollow(Long followId,  Authentication auth) {
+        if (auth == null) {
+            throw new IllegalArgumentException("토큰이 전달되지 않았습니다.");
+        }
         // Follow 객체 조회
         Follow follow = followRepository.findById(followId)
-                .orElseThrow(() -> new IllegalArgumentException("Follow not found")); // Follow가 없으면 예외 처리
+                .orElseThrow(() -> new IllegalArgumentException("Follow not found"));
 
         // followingId 조회
         Long followingId = follow.getFollowingId();
 
         // name 가져오기
         User User = userRepository.findById(followingId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found")); // User가 없으면 예외 처리
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String name = User.getName();
 
@@ -172,7 +175,7 @@ public class AccountService {
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
 
-        // 가계부 데이터 조회
+        // 가계부 데이터 조회 (이번 달)
         List<Account> accounts = accountRepository.findAccountsByYearAndMonth(followingId, currentYear, currentMonth);
 
         // 소분류 목표금액 조회

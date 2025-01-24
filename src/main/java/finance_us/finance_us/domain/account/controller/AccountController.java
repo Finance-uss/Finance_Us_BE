@@ -29,15 +29,15 @@ public class AccountController {
 
     // 가계부 수정
     @PatchMapping("/{accountId}")
-    public ApiResponse<AccountResponse.AccountResponseDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountRequest.AccountRequestDTO request){
-        Account account = accountService.updateAccount(accountId, request);
+    public ApiResponse<AccountResponse.AccountResponseDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountRequest.AccountRequestDTO request, Authentication authentication){
+        Account account = accountService.updateAccount(accountId, request, authentication);
         return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
     }
 
     // 가계부 삭제
     @DeleteMapping("/{accountId}")
-    public ApiResponse<Boolean> deleteAccount(@PathVariable Long accountId){
-        accountService.deleteAccount(accountId);
+    public ApiResponse<Boolean> deleteAccount(@PathVariable Long accountId, Authentication authentication){
+        accountService.deleteAccount(accountId, authentication);
         return ApiResponse.onSuccess(true);
     }
 
@@ -48,9 +48,10 @@ public class AccountController {
         return ApiResponse.onSuccess(response);
     }
 
+    // 가계부 특정 팔로우 조회
     @GetMapping("/follow/{followId}")
-    public ApiResponse<AccountFollowResponse> getFollow(@PathVariable Long followId) {
-        AccountFollowResponse response = accountService.getFollow(followId);
+    public ApiResponse<AccountFollowResponse> getFollow(@PathVariable Long followId, Authentication authentication) {
+        AccountFollowResponse response = accountService.getFollow(followId, authentication);
         return ApiResponse.onSuccess(response);
     }
 
