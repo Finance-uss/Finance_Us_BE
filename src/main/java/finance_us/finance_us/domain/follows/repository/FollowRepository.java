@@ -24,3 +24,4 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             @Param("lastFollowingId") Long lastFollowingId,
             Pageable pageable);
 }
+
