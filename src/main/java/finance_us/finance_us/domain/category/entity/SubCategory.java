@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder
@@ -22,7 +23,8 @@ public class SubCategory extends BaseEntity {
     @Column(nullable = false)
     private String subName;
 
-    private int goal;
+    @Column(nullable = true)
+    private Integer goal;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -32,3 +34,4 @@ public class SubCategory extends BaseEntity {
     @JoinColumn(name = "main_category_id")
     private MainCategory mainCategory;
 }
+
