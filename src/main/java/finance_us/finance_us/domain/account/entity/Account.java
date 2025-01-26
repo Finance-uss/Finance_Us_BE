@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.w3c.dom.Text;
 
 import java.time.LocalDate;
 
@@ -63,4 +62,6 @@ public class Account {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_asset_id")
     private SubAsset subAsset;
+
+
 }
