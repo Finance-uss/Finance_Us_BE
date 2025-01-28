@@ -10,8 +10,6 @@ import finance_us.finance_us.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static finance_us.finance_us.domain.post.entity.QPostLike.postLike;
-
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
