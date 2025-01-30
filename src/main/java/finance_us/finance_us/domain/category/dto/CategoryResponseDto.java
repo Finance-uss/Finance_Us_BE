@@ -22,4 +22,11 @@ public class CategoryResponseDto
         int goal;
     }
 
+    @Getter @Setter @RequiredArgsConstructor @AllArgsConstructor @ToString @Builder
+    public static class GoalResponseDto
+    {
+        Integer monthlyGoal;
+        List<SubResponseDto> subCategories;
+    }
+
 }

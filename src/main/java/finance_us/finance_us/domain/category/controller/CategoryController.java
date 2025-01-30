@@ -67,6 +67,33 @@ public class CategoryController
         return ApiResponse.onSuccess(categoryService.updateAsset(userId, assetList));
     }
 
+    @GetMapping("/api/mypage/goal-asset/{userId}")
+    public ApiResponse<?> getGoalAsset(@PathVariable Long userId, String type)
+    {
+        CategoryType categoryType;
+        try {
+            categoryType = CategoryType.valueOf(type.toUpperCase());
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.CATEGORY_TYPE_ERROR);
+        }
+        return ApiResponse.onSuccess(categoryService.getGoalList(userId, categoryType));
+    }
+
+    @PatchMapping("/api/mypage/goal-asset")
+    public ApiResponse<?> updateCategoryGoal(@RequestBody CategoryRequestDto.UpdateGoalDto dto)
+    {
+        // ENUM 기준을 틀렸을 경우
+        CategoryType categoryType;
+        try {
+            categoryType = CategoryType.valueOf(dto.getType().toUpperCase());
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.CATEGORY_TYPE_ERROR);
+        }
+
+        Long userId = 1L; // 유저로직 추가되면 수정
+
+        return ApiResponse.onSuccess(categoryService.updateCategoryGoal(userId, categoryType, dto.getSubCategories()));
+    }
 
 }
 

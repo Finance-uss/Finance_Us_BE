@@ -4,7 +4,10 @@ import finance_us.finance_us.domain.notifications.dto.NotificationListResponse;
 import finance_us.finance_us.domain.notifications.dto.NotificationResponse;
 import finance_us.finance_us.domain.notifications.dto.UnreadNotificationsResponse;
 import finance_us.finance_us.domain.notifications.entity.Notification;
+import finance_us.finance_us.domain.notifications.entity.status.Type;
 import finance_us.finance_us.domain.notifications.repository.NotificationRepository;
+import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public NotificationListResponse getNotifications(Long lastNotificationId, int size, Long userId) {
@@ -56,5 +60,24 @@ public class NotificationService {
     public UnreadNotificationsResponse hasUnreadNotifications(Long userId) {
         boolean hasUnread = notificationRepository.existsUnreadNotificationsForUserId(userId);
         return new UnreadNotificationsResponse(hasUnread);
+    }
+
+    public void addFollowNotification(Long targetUserId, Long followerId){
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        User follower = userRepository.findById(followerId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        String message = follower.getName() + "님이 팔로우 했습니다.";
+
+        Notification notification = Notification.builder()
+                .type(Type.FOLLOW)
+                .message(message)
+                .isRead(false)
+                .user(targetUser)
+                .build();
+
+        notificationRepository.save(notification);
+
     }
 }

@@ -28,10 +28,8 @@ public class Notification extends BaseEntity {
     private String message;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ResourceType resourceType;
 
-    @Column(nullable = false)
     private Long resourceId;
 
     @Column(nullable = false)

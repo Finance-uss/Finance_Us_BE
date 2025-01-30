@@ -1,6 +1,8 @@
 package finance_us.finance_us.domain.post.service;
 
+import finance_us.finance_us.domain.post.converter.PostConverter;
 import finance_us.finance_us.domain.post.dto.PostRequest;
+import finance_us.finance_us.domain.post.dto.PostResponse;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.entity.status.Category;
 import finance_us.finance_us.domain.post.entity.status.PostType;
@@ -9,6 +11,11 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -55,4 +62,43 @@ public class PostService {
 
         postRepository.delete(post);
     }
+
+    // 유저가 게시한 게시물 조회
+    public List<PostResponse.PostListDto> getPostedPostList(Long userId) {
+
+        var postList = postRepository.findByUserId(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
+    }
+    // 유저가 좋아요 누른 게시물 조회
+    public List<PostResponse.PostListDto> getLikedPostList(Long userId) {
+
+        var postList = postRepository.findByUserLiked(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
+    }
+
+    // 유저가 댓글을 단 게시물 조회
+    public List<PostResponse.PostListDto> getCommentedPostList(Long userId) {
+
+        var postList = postRepository.findByUserCommented(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
+    }
+
+    // 유저가 댓글을 단 게시물 조회
+    public List<PostResponse.PostListDto> getScrapedPostList(Long userId) {
+
+        var postList = postRepository.findByUserScraped(userId);
+        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+
+        return dtoList;
+    }
+
+
+
+
 }
