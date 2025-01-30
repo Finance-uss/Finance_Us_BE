@@ -7,6 +7,7 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.entity.status.Role;
 import finance_us.finance_us.domain.user.service.AuthService;
 import finance_us.finance_us.domain.user.service.MailService;
+import finance_us.finance_us.domain.user.service.UserService;
 import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +27,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 @Tag(name = "Auth API", description = "인증 관련 API")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private MailService mailService;
+    private final AuthService authService;
+    private final MailService mailService;
+    private final UserService userService;
 
     @PostMapping("/login")
     @Operation(summary = "사용자 로그인 API", description = "사용자가 이메일과 비밀번호를 사용하여 로그인합니다.")

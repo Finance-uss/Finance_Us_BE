@@ -48,9 +48,11 @@ public class UserService {
     }
 
     //비밀번호 변경
-    public void changePassword(Long userId, String password){
+    public void changePassword(String email, String password){
+
+        authService.isValidEmail(email);
         // 사용자 조회
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         authService.validatePassword(password); // 비밀번호 검증
@@ -58,6 +60,14 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
         userRepository.save(user);
+    }
+
+    //사용자 이메일 찾기
+    public String findEmail(String name){
+        //사용자 조회
+        User user = userRepository.findByName(name)
+                .orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+        return user.getEmail();
     }
 
     //회원탈퇴

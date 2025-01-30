@@ -100,14 +100,29 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    public ApiResponse<Map<String,Object>> resetPassword(@RequestHeader("Authorization") String token, @RequestParam String password) {
+    public ApiResponse<Map<String,Object>> resetPassword(@RequestParam String email, String password) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-        userService.changePassword(userId, password);
+        userService.changePassword(email, password);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("userId", userId);
         response.put("updatedField", "password");
+
+        return ApiResponse.onSuccess(response);
+    }
+
+    @GetMapping("/findMail")
+    @Operation(summary = "이메일 찾기 API", description = "사용자의 이메일을 찾습니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<Map<String,Object>> findMail(@RequestParam String name) {
+
+        String email = userService.findEmail(name);
+        Map<String, Object> response = new HashMap<>();
+        response.put("Email",email);
 
         return ApiResponse.onSuccess(response);
     }
