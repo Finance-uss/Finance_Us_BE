@@ -63,6 +63,8 @@ public class AuthController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     public ApiResponse<AuthResponseDTO.SignResponseDTO> userSignin(@RequestBody AuthRequestDTO.SignRequestDTO signRequestDTO) {
+        userService.nameCheck(signRequestDTO.getUsername());
+        userService.mailCheck(signRequestDTO.getEmail());
         User user = AuthConverter.toUser(signRequestDTO, Role.USER);
         return ApiResponse.onSuccess(authService.signUp(user));
     }

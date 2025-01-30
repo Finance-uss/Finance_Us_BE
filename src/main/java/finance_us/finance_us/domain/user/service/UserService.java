@@ -21,14 +21,16 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     //이메일 중복 확인
-    public boolean mailCheck(String email) {
+    public void mailCheck(String email) {
         authService.isValidEmail(email);
-        return userRepository.findByEmail(email).isEmpty();
+        if(!userRepository.findByEmail(email).isEmpty())
+            throw new GeneralException(ErrorStatus.EMAIL_EXIST);
     }
 
     //닉네임 중복 확인
-    public boolean nameCheck(String name){
-        return userRepository.findByName(name).isEmpty();
+    public void nameCheck(String name){
+        if(!userRepository.findByName(name).isEmpty())
+            throw new GeneralException(ErrorStatus.NICKNAME_EXIST);
     }
 
     //이메일 변경

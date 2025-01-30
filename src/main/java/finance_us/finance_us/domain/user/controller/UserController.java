@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +24,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 @Tag(name = "User API", description = "사용자 관련 API")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private TokenProvider tokenProvider;
-
-    @Autowired
-    private AuthService authService;
+    private final UserService userService;
+    private final TokenProvider tokenProvider;
+    private final AuthService authService;
 
     @GetMapping("/mailCheck")
     @Operation(summary = "이메일 중복확인 API", description = "이메일을 중복확인 합니다.")
@@ -41,15 +38,11 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    public ApiResponse<Boolean> mailCheck(@RequestParam String email) {
+    public ApiResponse<String> mailCheck(@RequestParam String email) {
 
-        boolean isAvailable = userService.mailCheck(email);
+       userService.mailCheck(email);
 
-        if (isAvailable) {
-            return ApiResponse.onSuccess(true);
-        } else {
-            return ApiResponse.onFailure("COMMON400", "중복된 이메일입니다.", false);
-        }
+       return ApiResponse.onSuccess("사용가능한 이메일 입니다.");
     }
 
     @GetMapping("/nameCheck")
@@ -58,15 +51,12 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    public ApiResponse<Boolean> nameCheck(@RequestParam String name) {
+    public ApiResponse<String> nameCheck(@RequestParam String name) {
 
-        boolean isAvailable = userService.nameCheck(name);
+        userService.nameCheck(name);
 
-        if (isAvailable) {
-            return ApiResponse.onSuccess(true);
-        } else {
-            return ApiResponse.onFailure("COMMON400", "중복된 닉네임입니다.", false);
-        }
+        return ApiResponse.onSuccess("사용가능한 닉네임 입니다.");
+
     }
 
     @PatchMapping("/resetMail")
