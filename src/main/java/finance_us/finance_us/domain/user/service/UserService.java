@@ -21,14 +21,16 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     //이메일 중복 확인
-    public boolean mailCheck(String email) {
+    public void mailCheck(String email) {
         authService.isValidEmail(email);
-        return userRepository.findByEmail(email).isEmpty();
+        if(!userRepository.findByEmail(email).isEmpty())
+            throw new GeneralException(ErrorStatus.EMAIL_EXIST);
     }
 
     //닉네임 중복 확인
-    public boolean nameCheck(String name){
-        return userRepository.findByName(name).isEmpty();
+    public void nameCheck(String name){
+        if(!userRepository.findByName(name).isEmpty())
+            throw new GeneralException(ErrorStatus.NICKNAME_EXIST);
     }
 
     //이메일 변경
@@ -48,9 +50,11 @@ public class UserService {
     }
 
     //비밀번호 변경
-    public void changePassword(Long userId, String password){
+    public void changePassword(String email, String password){
+
+        authService.isValidEmail(email);
         // 사용자 조회
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         authService.validatePassword(password); // 비밀번호 검증
@@ -58,6 +62,14 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
         userRepository.save(user);
+    }
+
+    //사용자 이메일 찾기
+    public String findEmail(String name){
+        //사용자 조회
+        User user = userRepository.findByName(name)
+                .orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+        return user.getEmail();
     }
 
     //회원탈퇴
