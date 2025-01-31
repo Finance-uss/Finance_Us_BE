@@ -19,12 +19,12 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
     EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4003", "이메일이 없습니다."),
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
-    EMAIL_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4004","이메일 전송에 실패하였습니다"),
-    EMAIL_EXIST(HttpStatus.BAD_REQUEST,"MEMBER4005","이메일이 이미 존재합니다"),
-    NICKNAME_EXIST(HttpStatus.BAD_REQUEST,"MEMBER4006","닉네임이 이미 존재합니다"),
+    EMAIL_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4004","이메일 전송에 실패하였습니다."),
+    EMAIL_EXIST(HttpStatus.BAD_REQUEST,"MEMBER4005","이메일이 이미 존재합니다."),
+    NICKNAME_EXIST(HttpStatus.BAD_REQUEST,"MEMBER4006","닉네임이 이미 존재합니다."),
 
-    PASSWORD_VALIDATION_FAILED(HttpStatus.BAD_REQUEST,"PASSWORD4001","비밀번호는 영어 대/소문자, 숫자 중 2종류 이상을 조합해야 합니다."),
-    EMAIL_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4005","올바르지 않은 이메일 형식입니다."),
+    PASSWORD_VALIDATION_FAILED(HttpStatus.BAD_REQUEST,"MEMBER4007","비밀번호는 영어 대/소문자, 숫자 중 2종류 이상을 조합해야 합니다."),
+    EMAIL_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4008","올바르지 않은 이메일 형식입니다."),
 
     JWT_SIGNATURE_INVALID(HttpStatus.UNAUTHORIZED, "AUTH001", "JWT 서명이 올바르지 않습니다."),
     JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH002", "JWT 토큰이 만료되었습니다."),
@@ -48,6 +48,13 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
     CATEGORY_TYPE_ERROR(HttpStatus.BAD_REQUEST,"CATEGORY4001", "카테고리의 타입 문자열이 잘못되었습니다."),
+
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION4001", "조회할 알림 목록이 없습니다."),
+    NOTIFICATION_ALREADY_READ(HttpStatus.BAD_REQUEST, "NOTIFICATION4002", "이미 읽음처리 된 알람입니다."),
+
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW4001", "팔로우 되지 않은 사용자입니다."),
+    ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우 된 사용자입니다."),
+
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "이거는 테스트");
 
 

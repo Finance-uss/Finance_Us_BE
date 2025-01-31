@@ -8,6 +8,7 @@ import finance_us.finance_us.domain.category.dto.converter.AssetConverter;
 import finance_us.finance_us.domain.category.dto.converter.CategoryConverter;
 import finance_us.finance_us.domain.category.entity.MainAsset;
 import finance_us.finance_us.domain.category.entity.SubAsset;
+import finance_us.finance_us.domain.category.entity.SubCategory;
 import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import finance_us.finance_us.domain.category.repository.MainAssetRepository;
 import finance_us.finance_us.domain.category.repository.SubAssetRepository;
@@ -75,6 +76,7 @@ public class CategoryService
 
             for(var subItem : mainItem.getSubCategories())
             {
+                subItem.setGoal(-1);
                 subCategoryRepository.save(CategoryConverter.subRequestDtoToEntity(userId, main.getId(), subItem));
             }
         }
@@ -118,6 +120,51 @@ public class CategoryService
         subAssetRepository.saveAll(subEntityList);
 
         return getAssetList(userId);
+    }
+
+    // 이번 달 목표 금액 / 카테고리별 목표 금액 조회
+    public CategoryResponseDto.GoalResponseDto getGoalList(Long userId, CategoryType type)
+    {
+        var categoryList = subCategoryRepository.findByGoal(userId, type);
+
+        var monthlyGoal = categoryList.stream()
+                        .mapToInt(SubCategory::getGoal)
+                        .sum();
+        var subCategoryList = categoryList.stream()
+                .map(CategoryConverter::subCategoryEntityToDto)
+                .toList();
+
+
+        return CategoryResponseDto.GoalResponseDto.builder()
+                .monthlyGoal(monthlyGoal)
+                .subCategories(subCategoryList)
+                .build();
+    }
+
+    // 목표 금액 업데이트 로직
+    public CategoryResponseDto.GoalResponseDto updateCategoryGoal(Long userId, CategoryType type, List<CategoryRequestDto.SubRequestDto> subCategories)
+    {
+        // GOAL 값 초기화( 꼴값 초기화 )
+        var categoryList = subCategoryRepository.findByType(userId, type);
+        categoryList = categoryList.stream()
+                    .peek(s -> s.setGoal(-1))
+                    .toList();
+
+        var updatedList = new ArrayList<SubCategory>();
+        // GOAL 다시 박아주기
+        for(var s : subCategories)
+        {
+            var entity = categoryList.stream()
+                        .filter(e -> e.getId().equals(s.getId()))
+                        .findFirst().orElseThrow();
+            entity.setGoal(s.getGoal());
+            updatedList.add(entity);
+        }
+
+        // 수정된 요소 반영
+        subCategoryRepository.saveAll(updatedList);
+
+        return getGoalList(userId, type);
     }
 
 

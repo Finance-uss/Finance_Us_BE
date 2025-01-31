@@ -1,6 +1,8 @@
 package finance_us.finance_us.domain.notifications.entity;
 
 import finance_us.finance_us.domain.common.entity.BaseEntity;
+import finance_us.finance_us.domain.notifications.entity.status.ResourceType;
+import finance_us.finance_us.domain.notifications.entity.status.Type;
 import finance_us.finance_us.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,6 +11,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder
@@ -19,16 +22,14 @@ public class Notification extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //@Enumerated(EnumType.STRING)
-    //private Type type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     private String message;
 
-    //@Enumerated(EnumType.STRING)
-    //@Column(nullable = false)
-    //private ResourceType resourceType;
+    @Enumerated(EnumType.STRING)
+    private ResourceType resourceType;
 
-    @Column(nullable = false)
     private Long resourceId;
 
     @Column(nullable = false)

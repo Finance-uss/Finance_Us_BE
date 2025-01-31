@@ -18,7 +18,14 @@ public class CategoryRequestDto
         List<MainRequestDto> mainCategories;
     }
 
-
+    @Getter
+    @Setter @AllArgsConstructor @RequiredArgsConstructor
+    @ToString @Builder
+    public static class UpdateGoalDto
+    {
+        String type;
+        List<SubRequestDto> subCategories;
+    }
 
     @Getter
     @Setter @AllArgsConstructor @RequiredArgsConstructor

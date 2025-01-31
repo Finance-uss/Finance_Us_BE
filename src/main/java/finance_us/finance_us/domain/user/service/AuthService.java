@@ -27,7 +27,6 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthResponseDTO.SignResponseDTO signUp(User user) {
-
         validatePassword(user.getPassword()); // 비밀번호 검증
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());
@@ -36,6 +35,8 @@ public class AuthService {
 
         return AuthConverter.toSigninResponseDTO(user);
     }
+
+
 
     public void validatePassword(String password) {
         // 길이 검사
