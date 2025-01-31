@@ -10,6 +10,7 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,15 +24,18 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
 
     @Transactional(readOnly = true)
-    public NotificationListResponse getNotifications(Long lastNotificationId, int size, Long userId) {
+    public NotificationListResponse getNotifications(String token, Long lastNotificationId, int size) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         List<Notification> notifications;
         PageRequest pageRequest = PageRequest.of(0, size);
 
         if (lastNotificationId == null) {
             // 첫 조회: 최신 알림부터 가져오기
-            notifications = notificationRepository.findTopByUserIdAAndIsReadFalseOrderByCreatedAtDescOrderByCreatedAtDesc(userId, pageRequest);
+            notifications = notificationRepository.findTopByUserIdAAndIsReadFalseOrderByCreatedAtDesc(userId, pageRequest);
         } else {
             // 스크롤: 특정 ID 이후의 알림 가져오기
             notifications = notificationRepository.findByUserIdAndIdANDIsReadFalseLessThanOrderByCreatedAtDesc(userId, lastNotificationId, pageRequest);
@@ -41,7 +45,8 @@ public class NotificationService {
     }
 
     @Transactional
-    public void markAsRead(Long notificationId, Long userId) {
+    public void markAsRead(String token, Long notificationId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOTIFICATION_NOT_FOUND));
 
@@ -57,7 +62,8 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
-    public UnreadNotificationsResponse hasUnreadNotifications(Long userId) {
+    public UnreadNotificationsResponse hasUnreadNotifications(String token) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         boolean hasUnread = notificationRepository.existsUnreadNotificationsForUserId(userId);
         return new UnreadNotificationsResponse(hasUnread);
     }

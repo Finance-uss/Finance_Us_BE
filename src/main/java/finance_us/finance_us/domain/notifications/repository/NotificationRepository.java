@@ -21,7 +21,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     // 첫 조회: 최신 알림
     @Query("SELECT n FROM Notification n WHERE n.user.Id = :userId AND n.isRead = false ORDER BY n.createdAt DESC")
-    List<Notification> findTopByUserIdAAndIsReadFalseOrderByCreatedAtDescOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
+    List<Notification> findTopByUserIdAAndIsReadFalseOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
 
     // 스크롤: 특정 ID 이후 알림
     @Query("SELECT n FROM Notification n WHERE n.user.Id = :userId AND n.id < :lastNotificationId AND n.isRead = false ORDER BY n.createdAt DESC")
