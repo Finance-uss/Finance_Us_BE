@@ -16,22 +16,22 @@ public class PeriodStatisticsController {
 
     @GetMapping("/")
     public ApiResponse<PeriodStatisticsResponse> getYearlyStatistics(
+            @RequestParam("Authorization") String token,
             @RequestParam Long year,
             @RequestParam String type)
-        //  @RequestHeader("Authorization") String accessToken
     {
-        PeriodStatisticsResponse response = periodStatisticsService.getYearlyStatistics(year, type);
+        PeriodStatisticsResponse response = periodStatisticsService.getYearlyStatistics(token, year, type);
         return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("/details")
     public ApiResponse<MonthDetailResponse> getMonthlyDetails(
+            @RequestParam("Authorization") String token,
             @RequestParam Long year,
             @RequestParam Long month,
             @RequestParam AccountType type)
-            //@RequestHeader("Authorization") String accessToken
     {
-        MonthDetailResponse response = periodStatisticsService.getMonthlyDetail(year, month, type);
+        MonthDetailResponse response = periodStatisticsService.getMonthlyDetail(token, year, month, type);
 
         return ApiResponse.onSuccess(response);
     }
