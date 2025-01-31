@@ -13,19 +13,22 @@ import java.util.List;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    @Query("SELECT a FROM Account a WHERE a.date BETWEEN :startDate AND :endDate AND a.accountType = :accountType")
-    List<Account> findBytDateBetweenAndAccountType(
+    @Query("SELECT a FROM Account a WHERE a.date BETWEEN :startDate AND :endDate " +
+            "AND a.accountType = :accountType AND a.user.Id = :userId")
+    List<Account> findByDateBetweenAndAccountTypeAndUserId(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
-            @Param("accountType") AccountType accountType
+            @Param("accountType") AccountType accountType,
+            @Param("userId") Long userId
     );
 
-    @Query("SELECT a FROM Account a WHERE YEAR(a.date) = :year AND MONTH(a.date) = :month AND a.accountType = :accountType AND a.user = :user")
-    List<Account> findByYearAndMonthAndAccountType(
+    @Query("SELECT a FROM Account a WHERE YEAR(a.date) = :year AND MONTH(a.date) = :month " +
+            "AND a.accountType = :accountType AND a.user.Id = :userId")
+    List<Account> findByYearAndMonthAndAccountTypeAndUserId(
             @Param("year") Long year,
             @Param("month") Long month,
             @Param("accountType") AccountType accountType,
-            @Param("user")User user
+            @Param("userId") Long userId
     );
 
     // 년도와 월을 기준으로 데이터 조회
