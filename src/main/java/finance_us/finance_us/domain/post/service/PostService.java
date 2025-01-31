@@ -54,7 +54,7 @@ public class PostService {
 
         // 작성자 검증
         if (!post.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("You are not authorized to delete this post.");
+            throw new IllegalArgumentException("You are not authorized to update this post.");
         }
 
         post.setTitle(request.getTitle());
