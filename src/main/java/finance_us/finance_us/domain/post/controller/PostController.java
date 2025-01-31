@@ -6,6 +6,7 @@ import finance_us.finance_us.domain.post.dto.PostResponse;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.service.PostService;
 import finance_us.finance_us.global.ApiResponse;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,22 @@ public class PostController {
 
     // 게시글 생성
     @PostMapping
-    public ApiResponse<PostResponse.PostResponseDTO> createPost(@RequestBody PostRequest.PostRequestDTO request) {
-        Post post = postService.createPost(request);
+    public ApiResponse<PostResponse.PostResponseDTO> createPost(@RequestHeader("Authorization") String token, @RequestBody PostRequest.PostRequestDTO request) {
+        Post post = postService.createPost(token, request);
         return ApiResponse.onSuccess(PostConverter.toPostResponseDTO(post));
     }
 
     // 게시글 수정
     @PatchMapping("/{postId}")
-    public ApiResponse<PostResponse.PostResponseDTO> updatePost(@PathVariable Long postId, @RequestBody PostRequest.PostRequestDTO request) {
-        Post post = postService.updatePost(postId, request);
+    public ApiResponse<PostResponse.PostResponseDTO> updatePost(@RequestHeader("Authorization") String token, @PathVariable Long postId, @RequestBody PostRequest.PostRequestDTO request) {
+        Post post = postService.updatePost(token, postId, request);
         return ApiResponse.onSuccess(PostConverter.toPostResponseDTO(post));
     }
     
     // 게시글 삭제
     @DeleteMapping("/{postId}")
-    public ApiResponse<Boolean> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
+    public ApiResponse<Boolean> deletePost(@RequestHeader("Authorization") String token, @PathVariable Long postId) {
+        postService.deletePost(token, postId);
         return ApiResponse.onSuccess(true);
     }
 

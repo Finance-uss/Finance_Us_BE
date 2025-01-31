@@ -9,6 +9,7 @@ import finance_us.finance_us.domain.post.entity.status.PostType;
 import finance_us.finance_us.domain.post.repository.PostRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +23,15 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
 
     // 게시글 생성
-    public Post createPost(PostRequest.PostRequestDTO request) {
+    public Post createPost(String token, PostRequest.PostRequestDTO request) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         // 사용자 유효성 검증
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(()->new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("User not found"));
 
         Post post = Post.builder()
                 .title(request.getTitle())
@@ -35,16 +39,23 @@ public class PostService {
                 .postType(PostType.valueOf(request.getPostType()))
                 .category(Category.valueOf(request.getCategory()))
                 .imageUrl(request.getImageUrl())
-                //.user(user)
+                .user(user)
                 .build();
 
         return postRepository.save(post);
     }
 
     // 게시글 수정
-    public Post updatePost(Long postId, PostRequest.PostRequestDTO request) {
+    public Post updatePost(String token, Long postId, PostRequest.PostRequestDTO request) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         Post post = postRepository.findById(postId)
                         .orElseThrow(()-> new IllegalArgumentException("Post not found"));
+
+        // 작성자 검증
+        if (!post.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("You are not authorized to delete this post.");
+        }
 
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
@@ -56,9 +67,16 @@ public class PostService {
     }
 
     // 게시글 삭제
-    public void deletePost(Long postId) {
+    public void deletePost(String token, Long postId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(()-> new IllegalArgumentException("Post not found"));
+
+        // 작성자 검증
+        if (!post.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("You are not authorized to delete this post.");
+        }
 
         postRepository.delete(post);
     }
