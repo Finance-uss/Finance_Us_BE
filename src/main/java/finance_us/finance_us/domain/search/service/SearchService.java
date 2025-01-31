@@ -11,6 +11,7 @@ import finance_us.finance_us.domain.search.dto.UserResponse;
 import finance_us.finance_us.domain.search.dto.UserSearchResponse;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class SearchService {
     private final UserRepository userRepository;
     private final FollowService followService;
     private final FollowRepository followRepository;
+    private final TokenProvider tokenProvider;
 
     public PostSearchResponse searchPosts(
             PostType boardType, Long lastId, String keyword, int size){
@@ -50,18 +52,19 @@ public class SearchService {
     }
 
     public UserSearchResponse searchUsers(
-            String keyword, Long lastId, Long currentUserId, int size){
+            String token, String keyword, Long lastId, int size){
 
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         lastId = (lastId == null) ? 0 : lastId;
         PageRequest pageRequest = PageRequest.of(0, size);
 
-        List<User> users = userRepository.findByNameContainingWithPagingAndExcludeSelf(keyword, lastId, currentUserId, pageRequest);
+        List<User> users = userRepository.findByNameContainingWithPagingAndExcludeSelf(keyword, lastId, userId, pageRequest);
 
         List<UserResponse> userDtos = users.stream()
                 .map(user -> new UserResponse(
                         user.getId(),
                         user.getName(),
-                        followRepository.existsByUserIdAndFollowingId(currentUserId, user.getId())))
+                        followRepository.existsByUserIdAndFollowingId(userId, user.getId())))
                 .collect(Collectors.toList());
 
         Long newLastId = users.isEmpty() ? null : users.get(users.size() - 1).getId();
