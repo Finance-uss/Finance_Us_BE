@@ -12,22 +12,24 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountReportResponse {
-    private List<AccountReportResponseDTO> reduceActivity;
-    private List<AccountReportResponseDTO> satisfactoryActivity;
-    private List<AccountReportResponseDTO> maintainActivity;
+public class FollowResponse {
+    private String name;
+    private Object expenseRate;
+    private List<FollowResponseDTO> accounts;
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AccountReportResponseDTO {
+    public static class FollowResponseDTO {
         private Long accountId;
-        private Integer score;
+        private int score;
         private String title;
         private Long amount;
         private LocalDate date;
         private String subName;
         private String imageUrl;
+        private int totalLike;
+        private int totalCheer;
     }
 }

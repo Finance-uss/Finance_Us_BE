@@ -1,12 +1,10 @@
 package finance_us.finance_us.domain.account.controller;
 
 import finance_us.finance_us.domain.account.converter.AccountConverter;
-import finance_us.finance_us.domain.account.dto.AccountFollowResponse;
-import finance_us.finance_us.domain.account.dto.AccountReportResponse;
-import finance_us.finance_us.domain.account.dto.AccountRequest;
-import finance_us.finance_us.domain.account.dto.AccountResponse;
+import finance_us.finance_us.domain.account.dto.*;
 import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.account.service.AccountService;
+import finance_us.finance_us.domain.account.service.LikeService;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +17,7 @@ import org.springframework.security.core.Authentication;
 public class AccountController {
 
     private final AccountService accountService;
+    private final LikeService likeService;
 
     // 가계부 생성
     @PostMapping
@@ -43,15 +42,29 @@ public class AccountController {
 
     // 가계부 활동 만족도 레포트
     @GetMapping("/report/{year}/{month}")
-    public ApiResponse<AccountReportResponse> getReport(@PathVariable Integer year, @PathVariable Integer month, Authentication authentication) {
-        AccountReportResponse response = accountService.getReport(year, month, authentication);
+    public ApiResponse<ReportResponse> getReport(@PathVariable Integer year, @PathVariable Integer month, Authentication authentication) {
+        ReportResponse response = accountService.getReport(year, month, authentication);
         return ApiResponse.onSuccess(response);
     }
 
     // 가계부 특정 팔로우 조회
     @GetMapping("/follow/{followId}")
-    public ApiResponse<AccountFollowResponse> getFollow(@PathVariable Long followId, Authentication authentication) {
-        AccountFollowResponse response = accountService.getFollow(followId, authentication);
+    public ApiResponse<FollowResponse> getFollow(@PathVariable Long followId, Authentication authentication) {
+        FollowResponse response = accountService.getFollow(followId, authentication);
+        return ApiResponse.onSuccess(response);
+    }
+
+    // 좋아요 추가
+    @PostMapping("/like")
+    public ApiResponse<LikeResponse.LikeResponseDTO> createLike(@RequestBody LikeRequest.LikeRequestDTO request, Authentication authentication) {
+        LikeResponse.LikeResponseDTO response = likeService.createLike(request, authentication);
+        return ApiResponse.onSuccess(response);
+    }
+
+    // 응원해요 추가
+    @PostMapping("/cheer")
+    public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, Authentication authentication) {
+        CheerResponse.CheerResponseDTO response = likeService.createCheer(request, authentication);
         return ApiResponse.onSuccess(response);
     }
 

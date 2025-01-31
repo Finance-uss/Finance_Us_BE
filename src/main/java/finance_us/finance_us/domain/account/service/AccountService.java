@@ -1,7 +1,7 @@
 package finance_us.finance_us.domain.account.service;
 
-import finance_us.finance_us.domain.account.dto.AccountFollowResponse;
-import finance_us.finance_us.domain.account.dto.AccountReportResponse;
+import finance_us.finance_us.domain.account.dto.FollowResponse;
+import finance_us.finance_us.domain.account.dto.ReportResponse;
 import finance_us.finance_us.domain.account.dto.AccountRequest;
 import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.account.entity.status.AccountType;
@@ -16,7 +16,6 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -115,7 +114,7 @@ public class AccountService {
     }
 
     // 가계부 레포트 조회
-    public AccountReportResponse getReport(Integer year, Integer month, Authentication auth) {
+    public ReportResponse getReport(Integer year, Integer month, Authentication auth) {
         // userId 추출
         Long userId = (Long) auth.getPrincipal();
 
@@ -123,12 +122,12 @@ public class AccountService {
         List<Account> accounts = accountRepository.findByUserIdAndYearAndMonth(userId, year, month);
 
         // 데이터를 점수에 따라 그룹화
-        List<AccountReportResponse.AccountReportResponseDTO> reduceActivity = new ArrayList<>();
-        List<AccountReportResponse.AccountReportResponseDTO> satisfactoryActivity = new ArrayList<>();
-        List<AccountReportResponse.AccountReportResponseDTO> maintainActivity = new ArrayList<>();
+        List<ReportResponse.ReportResponseDTO> reduceActivity = new ArrayList<>();
+        List<ReportResponse.ReportResponseDTO> satisfactoryActivity = new ArrayList<>();
+        List<ReportResponse.ReportResponseDTO> maintainActivity = new ArrayList<>();
 
         for (Account account : accounts) {
-            AccountReportResponse.AccountReportResponseDTO dto = new AccountReportResponse.AccountReportResponseDTO(
+            ReportResponse.ReportResponseDTO dto = new ReportResponse.ReportResponseDTO(
                     account.getId(),
                     account.getScore(),
                     account.getTitle(),
@@ -149,11 +148,11 @@ public class AccountService {
         }
 
         // 결과 반환
-        return new AccountReportResponse(reduceActivity, satisfactoryActivity, maintainActivity);
+        return new ReportResponse(reduceActivity, satisfactoryActivity, maintainActivity);
     }
 
     // 가계부 특정 팔로우 조회
-    public AccountFollowResponse getFollow(Long followId,  Authentication auth) {
+    public FollowResponse getFollow(Long followId, Authentication auth) {
         if (auth == null) {
             throw new IllegalArgumentException("토큰이 전달되지 않았습니다.");
         }
@@ -206,9 +205,9 @@ public class AccountService {
         }
 
         // DTO 리스트 생성
-        List<AccountFollowResponse.AccountFollowResponseDTO> accountDTOs = new ArrayList<>();
+        List<FollowResponse.FollowResponseDTO> accountDTOs = new ArrayList<>();
         for (Account account : accounts) {
-            AccountFollowResponse.AccountFollowResponseDTO dto = new AccountFollowResponse.AccountFollowResponseDTO(
+            FollowResponse.FollowResponseDTO dto = new FollowResponse.FollowResponseDTO(
                     account.getId(),
                     account.getScore(),
                     account.getTitle(),
@@ -222,7 +221,7 @@ public class AccountService {
             accountDTOs.add(dto);
         }
 
-        return new AccountFollowResponse(name, expenseRate, accountDTOs);
+        return new FollowResponse(name, expenseRate, accountDTOs);
     }
 
 }

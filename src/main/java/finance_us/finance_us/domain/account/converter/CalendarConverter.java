@@ -16,7 +16,7 @@ public class CalendarConverter {
                 .totalScore(totalScore)
                 .totalExpense(totalExpense)
                 .totalIncome(totalIncome)
-                 .calendar(calendar)
+                .calendar(calendar)
                 .build();
     }
 
