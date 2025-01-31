@@ -21,32 +21,29 @@ public class FollowController {
 
     @PostMapping("/{followingId}")
     public ApiResponse<Void> addFollow(
-            @PathVariable Long followingId,
-            @RequestParam Long userId
-            //@RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long followingId
     ) {
-        followService.addFollow(userId, followingId);
+        followService.addFollow(token, followingId);
         return ApiResponse.onSuccess(null);
     }
 
     @DeleteMapping("/{followingId}")
     public ApiResponse<Void> removeFollow(
-            @PathVariable Long followingId,
-            @RequestParam Long userId
-            //@RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long followingId
     ) {
-        followService.removeFollow(userId, followingId);
+        followService.removeFollow(token, followingId);
         return ApiResponse.onSuccess(null);
     }
 
     @GetMapping
     public ApiResponse<FollowResponseWithLastId> getFollows(
-            @RequestParam Long userId,
+            @RequestHeader("Authorization") String token,
             @RequestParam(required = false) Long lastfollowingId,
             @RequestParam(defaultValue = "10") int size
-            //@RequestHeader("Authorization") String token
     ) {
-        FollowResponseWithLastId follows = followService.getFollows(userId, lastfollowingId, size);
+        FollowResponseWithLastId follows = followService.getFollows(token, lastfollowingId, size);
         return ApiResponse.onSuccess(follows);
     }
 }

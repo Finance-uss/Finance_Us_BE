@@ -9,6 +9,7 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +25,11 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final TokenProvider tokenProvider;
 
     @Transactional
-    public void addFollow(Long userId, Long followingId){
+    public void addFollow(String token, Long followingId){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         boolean alreadyFollowing = followRepository.existsByUserIdAndFollowingId(userId, followingId);
@@ -46,8 +49,8 @@ public class FollowService {
     }
 
     @Transactional
-    public void removeFollow(Long userId, Long followingId){
-
+    public void removeFollow(String token, Long followingId){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         boolean alreadyFollowing = followRepository.existsByUserIdAndFollowingId(userId, followingId);
         if (!alreadyFollowing) {
             throw new GeneralException(ErrorStatus.FOLLOW_NOT_FOUND);
@@ -55,8 +58,8 @@ public class FollowService {
         followRepository.deleteByUserIdAndFollowingId(userId, followingId);
     }
 
-    public FollowResponseWithLastId getFollows(Long userId, Long lastFollowingId, int size) {
-
+    public FollowResponseWithLastId getFollows(String token, Long lastFollowingId, int size) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         lastFollowingId = (lastFollowingId == null) ? 0 : lastFollowingId;
 
         PageRequest pageRequest = PageRequest.of(0, size);
@@ -64,9 +67,15 @@ public class FollowService {
         List<Follow> follows = followRepository.findByUserIdAndIdGreaterThan(userId, lastFollowingId, pageRequest);
 
         List<FollowResponse> response = follows.stream()
-                .map(follow -> new FollowResponse(
-                        follow.getFollowingId(),
-                        follow.getUser().getName()))
+                .map(follow -> {
+                    User followingUser = userRepository.findById(follow.getFollowingId())
+                            .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+                    return new FollowResponse(
+                            follow.getFollowingId(),
+                            followingUser.getName()
+                    );
+                })
                 .collect(Collectors.toList());
 
         Long lastId = follows.isEmpty() ? null : follows.get(follows.size() -1).getFollowingId();
