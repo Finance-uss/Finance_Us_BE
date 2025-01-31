@@ -61,4 +61,11 @@ public class AccountController {
         return ApiResponse.onSuccess(response);
     }
 
+    // 응원해요 추가
+    @PostMapping("/cheer")
+    public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, Authentication authentication) {
+        CheerResponse.CheerResponseDTO response = likeService.createCheer(request, authentication);
+        return ApiResponse.onSuccess(response);
+    }
+
 }
