@@ -20,31 +20,28 @@ public class NotificationController {
 
     @GetMapping
     public ApiResponse<NotificationListResponse> getNotifications(
+            @RequestHeader("Authorization") String token,
             @RequestParam(required = false) Long lastNotificationId,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam Long userId
-            //@RequestHeader("Authorization") String token
+            @RequestParam(defaultValue = "10") int size
     ) {
-        NotificationListResponse response = notificationService.getNotifications(lastNotificationId, size, userId);
+        NotificationListResponse response = notificationService.getNotifications(token, lastNotificationId, size);
         return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("/unread")
     public ApiResponse<UnreadNotificationsResponse> hasUnreadNotifications(
-            @RequestParam Long userId
-            //@RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token
     ){
-        UnreadNotificationsResponse response = notificationService.hasUnreadNotifications(userId);
+        UnreadNotificationsResponse response = notificationService.hasUnreadNotifications(token);
         return ApiResponse.onSuccess(response);
     }
 
     @PatchMapping("/{notificationId}")
     public ApiResponse<Void> markAsRead(
-            @PathVariable Long notificationId,
-            @RequestParam Long userId
-            //@RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long notificationId
     ){
-        notificationService.markAsRead(notificationId, userId);
+        notificationService.markAsRead(token, notificationId);
         return ApiResponse.onSuccess(null);
     }
 }

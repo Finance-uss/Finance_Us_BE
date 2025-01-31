@@ -31,5 +31,5 @@ public interface CategoryStatisticsRepository extends JpaRepository<CategoryStat
             " AND cs.type = :type")
     void updateTotalWithTimeStamp(Long userId, Long mainCategoryId, Long year, Long month, String type, Long totalMoney);
 
-    List<CategoryStatistics> findByYearAndMonthAndType(Long year, Long month, Type type);
+    List<CategoryStatistics> findByYearAndMonthAndTypeAndUserId(Long year, Long month, Type type, Long userId);
 }

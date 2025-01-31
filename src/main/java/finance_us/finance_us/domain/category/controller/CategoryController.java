@@ -115,11 +115,11 @@ public class CategoryController
     }
 
     @DeleteMapping("/api/test/file")
-    public ApiResponse<?> fileDel(String name)
-    {
+    public ApiResponse<?> fileDel(String name) {
         s3FileService.deleteImage(name);
 
         return ApiResponse.onSuccess("success");
+    }
 
     @GetMapping("/api/mypage/goal-asset/{userId}")
     public ApiResponse<?> getGoalAsset(@PathVariable Long userId, String type)

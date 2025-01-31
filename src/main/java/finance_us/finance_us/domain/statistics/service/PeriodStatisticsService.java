@@ -9,6 +9,7 @@ import finance_us.finance_us.domain.statistics.entity.PeriodStatistics;
 import finance_us.finance_us.domain.statistics.entity.status.Type;
 import finance_us.finance_us.domain.statistics.repository.PeriodStatisticsRepository;
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +23,13 @@ import java.util.stream.Collectors;
 public class PeriodStatisticsService {
     private final PeriodStatisticsRepository periodStatisticsRepository;
     private final AccountRepository accountRepository;
+    private final TokenProvider tokenProvider;
 
-    public PeriodStatisticsResponse getYearlyStatistics(Long year, String type){
+    public PeriodStatisticsResponse getYearlyStatistics(String token, Long year, String type){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         Type statisticsType = Type.valueOf(type.toUpperCase());
-        List<PeriodStatistics> statistics = periodStatisticsRepository.findByYearAndType(year, statisticsType);
+
+        List<PeriodStatistics> statistics = periodStatisticsRepository.findByYearAndTypeAndUserId(year, statisticsType, userId);
 
         List<PeriodStatisticsResponse.MonthData> monthlyData = statistics.stream()
                 .map(stat -> new PeriodStatisticsResponse.MonthData(stat.getMonth(), stat.getTotalMoney()))
@@ -35,10 +39,11 @@ public class PeriodStatisticsService {
     }
 
     @Transactional(readOnly = true)
-    public MonthDetailResponse getMonthlyDetail(Long year, Long month, AccountType type){
+    public MonthDetailResponse getMonthlyDetail(String token, Long year, Long month, AccountType type){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         LocalDate startDate = LocalDate.of(year.intValue(), month.intValue(), 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-        List<Account> accounts = accountRepository.findBytDateBetweenAndAccountType(startDate, endDate, type);
+        List<Account> accounts = accountRepository.findByDateBetweenAndAccountTypeAndUserId(startDate, endDate, type, userId);
         List<MonthDetailResponse.Detail> details = accounts.stream()
                 .map(account -> new MonthDetailResponse.Detail(
                         Long.valueOf(account.getDate().getDayOfMonth()),
@@ -53,14 +58,15 @@ public class PeriodStatisticsService {
     }
 
     @Transactional
-    public void updatePeriodStatistics(Long year, Long month, AccountType accountType, User user) {
+    public void updatePeriodStatistics(String token, Long year, Long month, AccountType accountType) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         Type type = accountType == AccountType.expense ? Type.EXPENSE : Type.INCOME;
 
-        Long totalMoney = accountRepository.findByYearAndMonthAndAccountType(year, month, accountType, user)
+        Long totalMoney = accountRepository.findByYearAndMonthAndAccountTypeAndUserId(year, month, accountType, userId)
                 .stream()
                 .mapToLong(Account::getAmount)
                 .sum();
 
-        periodStatisticsRepository.updateTotalMoney(year, month, type, totalMoney, user);
+        periodStatisticsRepository.updateTotalMoney(year, month, type, totalMoney, userId);
     }
 }

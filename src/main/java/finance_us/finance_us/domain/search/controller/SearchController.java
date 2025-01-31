@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/search")
@@ -34,13 +31,13 @@ public class SearchController {
 
     @GetMapping("/users")
     public ApiResponse<UserSearchResponse> searchUsers(
+            @RequestHeader("Authorization") String token,
             @RequestParam String keyword,
             @RequestParam(required = false) Long lastId,
-            @RequestParam Long currentUserId,
             @RequestParam(defaultValue = "10") int size)
     {
 
-        UserSearchResponse response = searchService.searchUsers(keyword, lastId, currentUserId, size);
+        UserSearchResponse response = searchService.searchUsers(token, keyword, lastId, size);
         return ApiResponse.onSuccess(response);
     }
 }

@@ -6,6 +6,7 @@ import finance_us.finance_us.domain.statistics.dto.GoalStatisticsResponse;
 import finance_us.finance_us.domain.statistics.entity.CategoryStatistics;
 import finance_us.finance_us.domain.statistics.entity.status.Type;
 import finance_us.finance_us.domain.statistics.repository.CategoryStatisticsRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +17,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryStatisticsService {
     private final CategoryStatisticsRepository categoryStatisticsRepository;
+    private final TokenProvider tokenProvider;
 
-    public CategoryStatisticsResponse getCategoryStatistics(Long year, Long month, String type){
+    public CategoryStatisticsResponse getCategoryStatistics(String token, Long year, Long month, String type){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         Type statisticsType = Type.valueOf(type.toUpperCase());
 
-        List<CategoryStatistics> statistics = categoryStatisticsRepository.findByYearAndMonthAndType(year, month, statisticsType);
+        List<CategoryStatistics> statistics = categoryStatisticsRepository.findByYearAndMonthAndTypeAndUserId(year, month, statisticsType,  userId);
 
         double totalSpent = statistics.stream().mapToDouble(CategoryStatistics::getTotalMoney).sum();
 
         List<CategoryStatisticsResponse.CategoryData> categoryData = statistics.stream()
                 .map(stat -> new CategoryStatisticsResponse.CategoryData(
-                        stat.getMainCategory().getMainName(),
+                        stat.getMainCategory().getMainName(),+
                         stat.getTotalMoney(),
                         (int)(((double) stat.getTotalMoney() / totalSpent) * 100)
                 ))
@@ -51,10 +55,12 @@ public class CategoryStatisticsService {
 
     }
 
-    public GoalStatisticsResponse getGoalStatistics(Long year, Long month, String type){
+    public GoalStatisticsResponse getGoalStatistics(String token, Long year, Long month, String type){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         Type statisticsType = Type.valueOf(type.toUpperCase());
 
-        List<CategoryStatistics> statistics = categoryStatisticsRepository.findByYearAndMonthAndType(year, month, statisticsType);
+        List<CategoryStatistics> statistics = categoryStatisticsRepository.findByYearAndMonthAndTypeAndUserId(year, month, statisticsType, userId);
 
         double totalSpent = statistics.stream().mapToDouble(CategoryStatistics::getTotalMoney).sum();
         double totalGoal = statistics.stream().mapToDouble(CategoryStatistics::getTotalGoal).sum();
@@ -64,10 +70,12 @@ public class CategoryStatisticsService {
         return new GoalStatisticsResponse(year, month, type, (long) totalSpent, (long) totalGoal, percentage);
     }
 
-    public CategoryGoalStatisticsResponse getCategoryGoalStatistics(Long year, Long month, String type){
+    public CategoryGoalStatisticsResponse getCategoryGoalStatistics(String token, Long year, Long month, String type){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         Type statisticsType = Type.valueOf(type.toUpperCase());
 
-        List<CategoryStatistics> statistics = categoryStatisticsRepository.findByYearAndMonthAndType(year, month, statisticsType);
+        List<CategoryStatistics> statistics = categoryStatisticsRepository.findByYearAndMonthAndTypeAndUserId(year, month, statisticsType, userId);
 
         List<CategoryGoalStatisticsResponse.CategoryGoalData> categoryGoalData = statistics.stream()
                 .map(stat -> new CategoryGoalStatisticsResponse.CategoryGoalData(
