@@ -7,6 +7,8 @@ import finance_us.finance_us.domain.post.entity.PostScrap;
 import finance_us.finance_us.domain.post.repository.PostRepository;
 import finance_us.finance_us.domain.post.repository.PostScrapRepository;
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +19,21 @@ import java.util.Optional;
 public class PostScrapService {
     private final PostScrapRepository postScrapRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
 
     @Transactional
     // 게시글 스크랩 추가 및 삭제
-    public PostScrapResponse.PostScrapResponseDTO scrapPost(Long postId, User user) {
+    public PostScrapResponse.PostScrapResponseDTO scrapPost(String token, Long postId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         // 게시글 유효성 검증
         Post post = postRepository.findById(postId)
                 .orElseThrow(()-> new IllegalArgumentException("Post not found"));
+
+        // 사용자 유효성 검증
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Optional<PostScrap> existingScrap = postScrapRepository.findByPostAndUser(post, user);
 
