@@ -12,4 +12,14 @@ public class CommentConverter {
                 .updatedAt(comment.getUpdatedAt())
                 .build();
     }
+
+    public static CommentResponse.CommentDTO toCommentDTO(Comment comment) {
+        return CommentResponse.CommentDTO.builder()
+                .commentId(comment.getId())
+                .userId(comment.getUser().getId())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .updatedAt(comment.getUpdatedAt())
+                .build();
+    }
 }
