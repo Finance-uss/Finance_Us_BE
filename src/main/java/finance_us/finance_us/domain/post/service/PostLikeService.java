@@ -7,6 +7,8 @@ import finance_us.finance_us.domain.post.entity.PostLike;
 import finance_us.finance_us.domain.post.repository.PostLikeRepository;
 import finance_us.finance_us.domain.post.repository.PostRepository;
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +17,23 @@ import org.springframework.stereotype.Service;
 public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
 
     // 게시글에 좋아요 추가
-    public PostLikeResponse.PostLikeResponseDTO likePost(Long postId, User user) {
+    public PostLikeResponse.PostLikeResponseDTO likePost(String token, Long postId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         // 게시글 유효성 검증
         Post post = postRepository.findById(postId)
                 .orElseThrow(()-> new IllegalArgumentException("Post not found"));
 
+        // 사용자 유효성 검증
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         // 이미 좋아요가 눌렸는지 확인
-        if (postLikeRepository.existsByPostAndUser(post, user)) {
+        if (postLikeRepository.existsByPostIdAndUserId(postId, userId)) {
             throw new IllegalArgumentException("You already liked this post");
         }
     
