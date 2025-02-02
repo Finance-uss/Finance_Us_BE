@@ -9,6 +9,9 @@ import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comment")
@@ -34,5 +37,24 @@ public class CommentController {
     public ApiResponse<Boolean> deleteComment(@RequestHeader("Authorization") String token, @PathVariable Long commentId) {
         commentService.deleteComment(token, commentId);
         return ApiResponse.onSuccess(true);
+    }
+
+    // 댓글 갯수 및 목록 반환
+    @GetMapping("/{postId}")
+    public ApiResponse<CommentResponse.CommentResultDTO> getCommentsByPost(@PathVariable Long postId) {
+        List<Comment> commentsList = commentService.getCommentsByPost(postId);
+        int commentCount = commentService.getCommentCount(postId);
+
+        List<CommentResponse.CommentDTO> commentDTOS = commentsList.stream()
+                .map(CommentConverter::toCommentDTO)
+                .collect(Collectors.toList());
+
+        CommentResponse.CommentResultDTO commentResultDTO = CommentResponse.CommentResultDTO.builder()
+                .commentId(postId)
+                .commentCount(commentCount)
+                .commentsList(commentDTOS)
+                .build();
+
+        return ApiResponse.onSuccess(commentResultDTO);
     }
 }

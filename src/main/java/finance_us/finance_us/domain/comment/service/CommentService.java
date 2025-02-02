@@ -11,6 +11,8 @@ import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -71,4 +73,15 @@ public class CommentService {
 
         commentRepository.delete(comment);
     }
+
+    // 댓글 목록 반환
+    public List<Comment> getCommentsByPost(Long postId) {
+        return commentRepository.findByPostIdOrderByCreatedAtDesc(postId);
+    }
+
+    // 댓글 갯수 반환
+    public int getCommentCount(Long postId) {
+        return commentRepository.countByPostId(postId);
+    }
+
 }
