@@ -5,6 +5,7 @@ import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,15 @@ public class UserService {
         User user = userRepository.findByName(name)
                 .orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
         return user.getEmail();
+    }
+
+    //이미지 저장
+    @Transactional
+    public void saveImage(Long userId, String url){
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+        user.setImage(url);
+        userRepository.save(user);
     }
 
     //회원탈퇴
