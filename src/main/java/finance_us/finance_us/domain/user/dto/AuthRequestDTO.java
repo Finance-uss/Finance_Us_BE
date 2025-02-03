@@ -2,6 +2,7 @@ package finance_us.finance_us.domain.user.dto;
 
 import finance_us.finance_us.domain.user.entity.status.AgeGroup;
 import finance_us.finance_us.domain.user.entity.status.JobCategory;
+import finance_us.finance_us.domain.user.entity.status.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,5 +31,18 @@ public class AuthRequestDTO {
         private JobCategory jobCategory;
         private AgeGroup ageGroup;
         private String one_liner;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateRequestDTO{
+        private String name;
+        private JobCategory jobCategory;
+        private AgeGroup ageGroup;
+        private String one_liner;
+
+        String imgUrl;
     }
 }

@@ -37,4 +37,18 @@ public class AuthResponseDTO {
         private boolean isAuthenticated;
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ReadResponseDTO{
+        private String email;
+        private String name;
+        private Long id;
+        private String one_liner;
+        private String imgUrl;
+        private Role role;
+    }
+
 }
