@@ -14,8 +14,8 @@ import finance_us.finance_us.domain.follows.entity.Follow;
 import finance_us.finance_us.domain.follows.repository.FollowRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +31,14 @@ public class AccountService {
     private final SubCategoryRepository subCategoryRepository;
     private final SubAssetRepository subAssetRepository;
     private final FollowRepository followRepository;
+    private final TokenProvider tokenProvider;
+
 
     // 가계부 생성
-    public Account createAccount(AccountRequest.AccountRequestDTO request, Authentication auth) {
+    public Account createAccount(AccountRequest.AccountRequestDTO request, String token) {
 
         // userId 추출
-        Long userId = (Long) auth.getPrincipal();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
         // ID로 사용자 조회
         User user = userRepository.findById(userId)
@@ -70,10 +72,8 @@ public class AccountService {
 
 
     // 가계부 수정
-    public Account updateAccount(Long accountId, AccountRequest.AccountRequestDTO request, Authentication auth) {
-        if (auth == null) {
-            throw new IllegalArgumentException("토큰이 전달되지 않았습니다.");
-        }
+    public Account updateAccount(Long accountId, AccountRequest.AccountRequestDTO request, String token) {
+        tokenProvider.extractUserIdFromToken(token);
 
         // 기존 계좌 조회
         Account account = accountRepository.findById(accountId)
@@ -102,10 +102,8 @@ public class AccountService {
     }
 
     // 가계부 삭제
-    public void deleteAccount(Long accountId,  Authentication auth) {
-        if (auth == null) {
-            throw new IllegalArgumentException("토큰이 전달되지 않았습니다.");
-        }
+    public void deleteAccount(Long accountId, String token) {
+        tokenProvider.extractUserIdFromToken(token);
 
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
@@ -114,9 +112,9 @@ public class AccountService {
     }
 
     // 가계부 레포트 조회
-    public ReportResponse getReport(Integer year, Integer month, Authentication auth) {
+    public ReportResponse getReport(Integer year, Integer month, String token) {
         // userId 추출
-        Long userId = (Long) auth.getPrincipal();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
         // 해당 월의 Account 데이터 조회
         List<Account> accounts = accountRepository.findByUserIdAndYearAndMonth(userId, year, month);
@@ -152,10 +150,8 @@ public class AccountService {
     }
 
     // 가계부 특정 팔로우 조회
-    public FollowResponse getFollow(Long followId, Authentication auth) {
-        if (auth == null) {
-            throw new IllegalArgumentException("토큰이 전달되지 않았습니다.");
-        }
+    public FollowResponse getFollow(Long followId, String token) {
+        tokenProvider.extractUserIdFromToken(token);
         // Follow 객체 조회
         Follow follow = followRepository.findById(followId)
                 .orElseThrow(() -> new IllegalArgumentException("Follow not found"));

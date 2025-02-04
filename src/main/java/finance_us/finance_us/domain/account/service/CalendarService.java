@@ -5,8 +5,8 @@ import finance_us.finance_us.domain.account.dto.CalendarResponse;
 import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.account.entity.status.AccountType;
 import finance_us.finance_us.domain.account.repository.AccountRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -17,11 +17,12 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CalendarService {
     private final AccountRepository accountRepository;
+    private final TokenProvider tokenProvider;
 
     // 가계부 달력 조회
-    public CalendarResponse.CalendarResponseDTO getCalendar(Integer year, Integer month, Authentication auth) {
+    public CalendarResponse.CalendarResponseDTO getCalendar(Integer year, Integer month, String token) {
         // userId 추출
-        Long userId = (Long) auth.getPrincipal();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
         // 해당 년도와 월에 해당하는 Account 데이터 조회
         List<Account> accounts = accountRepository.findByUserIdAndYearAndMonth(userId, year, month);
@@ -73,9 +74,9 @@ public class CalendarService {
 
 
     // 가계부 달별 일별 조회
-    public List<Account> getCalendarDetail(Integer year, Integer month, Integer day, Authentication authentication) {
+    public List<Account> getCalendarDetail(Integer year, Integer month, Integer day, String token) {
         // userId 추출
-        Long userId = (Long) authentication.getPrincipal();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
         // 해당 년도, 월, 일에 해당하는 Account 데이터를 조회
         return accountRepository.findByUserIdAndYearAndMonthAndDay(userId, year, month, day);

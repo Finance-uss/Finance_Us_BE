@@ -8,7 +8,6 @@ import finance_us.finance_us.domain.account.service.LikeService;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 
 
 @RestController
@@ -21,50 +20,50 @@ public class AccountController {
 
     // 가계부 생성
     @PostMapping
-    public ApiResponse<AccountResponse.AccountResponseDTO> createAccount(@RequestBody AccountRequest.AccountRequestDTO request, Authentication authentication) {
-        Account account = accountService.createAccount(request, authentication);
+    public ApiResponse<AccountResponse.AccountResponseDTO> createAccount(@RequestBody AccountRequest.AccountRequestDTO request, @RequestHeader("Authorization") String token) {
+        Account account = accountService.createAccount(request, token);
         return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
     }
 
     // 가계부 수정
     @PatchMapping("/{accountId}")
-    public ApiResponse<AccountResponse.AccountResponseDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountRequest.AccountRequestDTO request, Authentication authentication){
-        Account account = accountService.updateAccount(accountId, request, authentication);
+    public ApiResponse<AccountResponse.AccountResponseDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountRequest.AccountRequestDTO request, @RequestHeader("Authorization") String token){
+        Account account = accountService.updateAccount(accountId, request, token);
         return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
     }
 
     // 가계부 삭제
     @DeleteMapping("/{accountId}")
-    public ApiResponse<Boolean> deleteAccount(@PathVariable Long accountId, Authentication authentication){
-        accountService.deleteAccount(accountId, authentication);
+    public ApiResponse<Boolean> deleteAccount(@PathVariable Long accountId, @RequestHeader("Authorization") String token){
+        accountService.deleteAccount(accountId, token);
         return ApiResponse.onSuccess(true);
     }
 
     // 가계부 활동 만족도 레포트
     @GetMapping("/report/{year}/{month}")
-    public ApiResponse<ReportResponse> getReport(@PathVariable Integer year, @PathVariable Integer month, Authentication authentication) {
-        ReportResponse response = accountService.getReport(year, month, authentication);
+    public ApiResponse<ReportResponse> getReport(@PathVariable Integer year, @PathVariable Integer month,  @RequestHeader("Authorization") String token) {
+        ReportResponse response = accountService.getReport(year, month, token);
         return ApiResponse.onSuccess(response);
     }
 
     // 가계부 특정 팔로우 조회
     @GetMapping("/follow/{followId}")
-    public ApiResponse<FollowResponse> getFollow(@PathVariable Long followId, Authentication authentication) {
-        FollowResponse response = accountService.getFollow(followId, authentication);
+    public ApiResponse<FollowResponse> getFollow(@PathVariable Long followId,  @RequestHeader("Authorization") String token) {
+        FollowResponse response = accountService.getFollow(followId, token);
         return ApiResponse.onSuccess(response);
     }
 
     // 좋아요 추가
     @PostMapping("/like")
-    public ApiResponse<LikeResponse.LikeResponseDTO> createLike(@RequestBody LikeRequest.LikeRequestDTO request, Authentication authentication) {
-        LikeResponse.LikeResponseDTO response = likeService.createLike(request, authentication);
+    public ApiResponse<LikeResponse.LikeResponseDTO> createLike(@RequestBody LikeRequest.LikeRequestDTO request, @RequestHeader("Authorization") String token) {
+        LikeResponse.LikeResponseDTO response = likeService.createLike(request, token);
         return ApiResponse.onSuccess(response);
     }
 
     // 응원해요 추가
     @PostMapping("/cheer")
-    public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, Authentication authentication) {
-        CheerResponse.CheerResponseDTO response = likeService.createCheer(request, authentication);
+    public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, @RequestHeader("Authorization") String token) {
+        CheerResponse.CheerResponseDTO response = likeService.createCheer(request, token);
         return ApiResponse.onSuccess(response);
     }
 
