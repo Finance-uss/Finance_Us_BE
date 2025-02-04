@@ -12,8 +12,8 @@ import finance_us.finance_us.domain.account.repository.CheerRepository;
 import finance_us.finance_us.domain.account.repository.LikeRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,11 +25,12 @@ public class LikeService {
     private final AccountRepository accountRepository;
     private final LikeRepository likeRepository;
     private final CheerRepository cheerRepository;
+    private final TokenProvider tokenProvider;
 
 
-    public LikeResponse.LikeResponseDTO createLike(LikeRequest.LikeRequestDTO request, Authentication auth) {
+    public LikeResponse.LikeResponseDTO createLike(LikeRequest.LikeRequestDTO request, String token) {
         // userId 추출
-        Long userId = (Long) auth.getPrincipal();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
         // userId로 사용자 조회
         User user = userRepository.findById(userId)
@@ -65,9 +66,9 @@ public class LikeService {
     }
 
     // 응원해요 추가
-    public CheerResponse.CheerResponseDTO createCheer(CheerRequest.CheerRequestDTO request, Authentication auth) {
+    public CheerResponse.CheerResponseDTO createCheer(CheerRequest.CheerRequestDTO request, String token) {
         // userId 추출
-        Long userId = (Long) auth.getPrincipal();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
         // userId로 사용자 조회
         User user = userRepository.findById(userId)
