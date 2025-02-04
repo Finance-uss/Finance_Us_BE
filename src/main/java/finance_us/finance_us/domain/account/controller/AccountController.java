@@ -8,7 +8,6 @@ import finance_us.finance_us.domain.account.service.LikeService;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 
 
 @RestController
@@ -56,15 +55,15 @@ public class AccountController {
 
     // 좋아요 추가
     @PostMapping("/like")
-    public ApiResponse<LikeResponse.LikeResponseDTO> createLike(@RequestBody LikeRequest.LikeRequestDTO request, Authentication authentication) {
-        LikeResponse.LikeResponseDTO response = likeService.createLike(request, authentication);
+    public ApiResponse<LikeResponse.LikeResponseDTO> createLike(@RequestBody LikeRequest.LikeRequestDTO request, @RequestHeader("Authorization") String token) {
+        LikeResponse.LikeResponseDTO response = likeService.createLike(request, token);
         return ApiResponse.onSuccess(response);
     }
 
     // 응원해요 추가
     @PostMapping("/cheer")
-    public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, Authentication authentication) {
-        CheerResponse.CheerResponseDTO response = likeService.createCheer(request, authentication);
+    public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, @RequestHeader("Authorization") String token) {
+        CheerResponse.CheerResponseDTO response = likeService.createCheer(request, token);
         return ApiResponse.onSuccess(response);
     }
 
