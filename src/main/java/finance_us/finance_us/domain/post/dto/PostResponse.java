@@ -27,5 +27,9 @@ public class PostResponse {
         String imgUrl;
         String title;
         String content;
+
+        Long likeCnt;
+        int commentCnt;
+
     }
 }

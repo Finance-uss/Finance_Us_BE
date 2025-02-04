@@ -1,11 +1,13 @@
 package finance_us.finance_us.domain.post.service;
 
+import finance_us.finance_us.domain.comment.repository.CommentRepository;
 import finance_us.finance_us.domain.post.converter.PostConverter;
 import finance_us.finance_us.domain.post.dto.PostRequest;
 import finance_us.finance_us.domain.post.dto.PostResponse;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.entity.status.Category;
 import finance_us.finance_us.domain.post.entity.status.PostType;
+import finance_us.finance_us.domain.post.repository.PostLikeRepository;
 import finance_us.finance_us.domain.post.repository.PostRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
@@ -24,6 +26,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
 
     // 게시글 생성
     public Post createPost(String token, PostRequest.PostRequestDTO request) {
@@ -84,8 +88,13 @@ public class PostService {
     // 유저가 게시한 게시물 조회
     public List<PostResponse.PostListDto> getPostedPostList(Long userId) {
 
-        var postList = postRepository.findByUserId(userId);
-        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+        var postList = postRepository.findByUserLiked(userId);
+        var dtoList = postList.stream().map(p -> {
+            var likeCnt = postLikeRepository.countLikesByPostId(p.getId());
+            var commentCnt = commentRepository.countByPostId(p.getId());
+            return PostConverter.toPostListDto(p, likeCnt, commentCnt);
+
+        }).toList();
 
         return dtoList;
     }
@@ -93,7 +102,12 @@ public class PostService {
     public List<PostResponse.PostListDto> getLikedPostList(Long userId) {
 
         var postList = postRepository.findByUserLiked(userId);
-        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+        var dtoList = postList.stream().map(p -> {
+            var likeCnt = postLikeRepository.countLikesByPostId(p.getId());
+            var commentCnt = commentRepository.countByPostId(p.getId());
+            return PostConverter.toPostListDto(p, likeCnt, commentCnt);
+
+        }).toList();
 
         return dtoList;
     }
@@ -101,8 +115,13 @@ public class PostService {
     // 유저가 댓글을 단 게시물 조회
     public List<PostResponse.PostListDto> getCommentedPostList(Long userId) {
 
-        var postList = postRepository.findByUserCommented(userId);
-        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+        var postList = postRepository.findByUserLiked(userId);
+        var dtoList = postList.stream().map(p -> {
+            var likeCnt = postLikeRepository.countLikesByPostId(p.getId());
+            var commentCnt = commentRepository.countByPostId(p.getId());
+            return PostConverter.toPostListDto(p, likeCnt, commentCnt);
+
+        }).toList();
 
         return dtoList;
     }
@@ -110,8 +129,13 @@ public class PostService {
     // 유저가 댓글을 단 게시물 조회
     public List<PostResponse.PostListDto> getScrapedPostList(Long userId) {
 
-        var postList = postRepository.findByUserScraped(userId);
-        var dtoList = postList.stream().map(PostConverter::toPostListDto).toList();
+        var postList = postRepository.findByUserLiked(userId);
+        var dtoList = postList.stream().map(p -> {
+            var likeCnt = postLikeRepository.countLikesByPostId(p.getId());
+            var commentCnt = commentRepository.countByPostId(p.getId());
+            return PostConverter.toPostListDto(p, likeCnt, commentCnt);
+
+        }).toList();
 
         return dtoList;
     }

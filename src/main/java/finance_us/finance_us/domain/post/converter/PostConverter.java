@@ -14,12 +14,14 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponse.PostListDto toPostListDto(Post post) {
+    public static PostResponse.PostListDto toPostListDto(Post post, Long likeCnt, int commentCnt) {
         return PostResponse.PostListDto.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .imgUrl(post.getImageUrl())
                 .category(post.getCategory().toString())
+                .likeCnt(likeCnt)
+                .commentCnt(commentCnt)
                 .build();
 
     }

@@ -134,7 +134,6 @@ public class CategoryService
                 .map(CategoryConverter::subCategoryEntityToDto)
                 .toList();
 
-
         return CategoryResponseDto.GoalResponseDto.builder()
                 .monthlyGoal(monthlyGoal)
                 .subCategories(subCategoryList)
