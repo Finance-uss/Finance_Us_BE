@@ -8,7 +8,6 @@ import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.account.service.CalendarService;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +20,8 @@ public class CalendarController {
 
     // 가계부 달력 조회
     @GetMapping("/{year}/{month}")
-    public ApiResponse<CalendarResponse.CalendarResponseDTO> getCalendar(@PathVariable Integer year, @PathVariable Integer month, Authentication authentication) {
-        CalendarResponse.CalendarResponseDTO response = calendarService.getCalendar(year, month, authentication);
+    public ApiResponse<CalendarResponse.CalendarResponseDTO> getCalendar(@PathVariable Integer year, @PathVariable Integer month,@RequestHeader("Authorization") String token) {
+        CalendarResponse.CalendarResponseDTO response = calendarService.getCalendar(year, month, token);
         return ApiResponse.onSuccess(response);
     }
 
@@ -32,9 +31,9 @@ public class CalendarController {
             @PathVariable Integer year,
             @PathVariable Integer month,
             @PathVariable Integer day,
-            Authentication authentication) {
+            @RequestHeader("Authorization") String token) {
 
-        List<Account> accounts = calendarService.getCalendarDetail(year, month, day, authentication);
+        List<Account> accounts = calendarService.getCalendarDetail(year, month, day, token);
         return ApiResponse.onSuccess(CalendarConverter.toCalendarDetailResponseDTOList(accounts));
     }
 
