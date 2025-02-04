@@ -37,4 +37,30 @@ public class AuthConverter {
                 .isAuthenticated(user.isAuthenticated())
                 .build();
     }
+
+    public static AuthResponseDTO.ReadResponseDTO toReadResponseDTO(User user){
+        return AuthResponseDTO.ReadResponseDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .imgUrl(null)               // 유저로직에 이미지 들어오면 반드시 수정할 것!!
+                .one_liner(user.getOne_liner())
+                .role(user.getRole())
+                .build();
+
+
+    }
+
+    public static User toUser(AuthRequestDTO.UpdateRequestDTO request)
+    {
+        return User.builder()
+                .name(request.getName())
+                .job(request.getJobCategory())
+                .age(request.getAgeGroup())
+                .one_liner(request.getOne_liner())
+                // 이미지 URL 들어가야함.
+                .build();
+
+    }
+
 }
