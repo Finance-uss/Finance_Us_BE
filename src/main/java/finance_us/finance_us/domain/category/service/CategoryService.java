@@ -7,6 +7,7 @@ import finance_us.finance_us.domain.category.dto.CategoryResponseDto;
 import finance_us.finance_us.domain.category.dto.converter.AssetConverter;
 import finance_us.finance_us.domain.category.dto.converter.CategoryConverter;
 import finance_us.finance_us.domain.category.entity.MainAsset;
+import finance_us.finance_us.domain.category.entity.MainCategory;
 import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.category.entity.SubCategory;
 import finance_us.finance_us.domain.category.entity.status.CategoryType;
@@ -14,6 +15,9 @@ import finance_us.finance_us.domain.category.repository.MainAssetRepository;
 import finance_us.finance_us.domain.category.repository.SubAssetRepository;
 import finance_us.finance_us.domain.category.repository.MainCategoryRepository;
 import finance_us.finance_us.domain.category.repository.SubCategoryRepository;
+import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,28 +66,51 @@ public class CategoryService
         return array;
     }
 
-    // 유저의 모든 카테고리를 삭제 후, 요청 받은 목록을 기반으로 다시 카테고리 생성
-    public List<CategoryResponseDto.MainResponseDto> updateCategory(Long userId, CategoryType type, List<CategoryRequestDto.MainRequestDto> categories)
+    // 카테고리를 생성하는 부분
+    public CategoryResponseDto.MainResponseDto createMainCategory(CategoryRequestDto.MainRequestDto dto, Long userId)
     {
-        List<Long> deleteIds = mainCategoryRepository.findByUserIdAndCategoryType(userId, type)
-                                                        .stream().map(m -> m.getId())
-                                                        .collect(Collectors.toList());
-        mainCategoryRepository.deleteAllById(deleteIds);
+        var category = CategoryConverter.mainRequestDtoToEntity(dto, userId);
 
-        for(var mainItem : categories)
-        {
-            var main = mainCategoryRepository.save(CategoryConverter.mainRequestDtoToEntity(userId, type, mainItem));
-
-            for(var subItem : mainItem.getSubCategories())
-            {
-                subItem.setGoal(-1);
-                subCategoryRepository.save(CategoryConverter.subRequestDtoToEntity(userId, main.getId(), subItem));
-            }
-        }
-
-        return getCategoryList(userId, type);
+        var c = mainCategoryRepository.save(category);
+        return CategoryConverter.mainCategoryEntityToDto(c);
     }
 
+    public CategoryResponseDto.SubResponseDto createSubCategory(CategoryRequestDto.SubRequestDto dto, Long userId) {
+
+        var category = CategoryConverter.subRequestDtoToEntity(dto, userId);
+        var c = subCategoryRepository.save(category);
+
+        return CategoryConverter.subCategoryEntityToDto(c);
+    }
+
+    // 카테고리를 수정하는 부분
+    public void updateMainCategory(Long mainId, String mainName)
+    {
+        var mainCategory = mainCategoryRepository.findById(mainId).orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
+        mainCategory.setMainName(mainName);
+        mainCategoryRepository.save(mainCategory);
+
+    }
+
+    public void updateSubCategory(Long subId, String subName)
+    {
+        var subCategory = subCategoryRepository.findById(subId).orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
+        subCategory.setSubName(subName);
+        subCategoryRepository.save(subCategory);
+    }
+
+    // 카테고리를 삭제하는 부분
+    public Long deleteMainCategory(Long mainId)
+    {
+        mainCategoryRepository.deleteById(mainId);
+        return mainId;
+    }
+
+    public Long deleteSubCategory(Long subId)
+    {
+        subCategoryRepository.deleteById(subId);
+        return subId;
+    }
 
     // 유저의 자산을 목록화하여 반환
     public List<AssetResponseDto.MainResponseDto> getAssetList(Long userId)
@@ -96,30 +123,57 @@ public class CategoryService
 
         return mainDtoArray;
     }
-
-    public List<AssetResponseDto.MainResponseDto> updateAsset(Long userId, List<AssetRequestDto.MainRequestDto> dtoList)
+    // 자산을 생성하는 부분
+    public AssetResponseDto.MainResponseDto createMainAsset(String mainName, Long userId)
     {
-        var deleteList = mainAssetRepository.findByUserId(userId)
-                .stream().map(MainAsset::getId).toList();
-        mainAssetRepository.deleteAllById(deleteList);
+        var mainAsset = MainAsset.builder()
+                    .mainName(mainName)
+                    .user(User.builder().Id(userId).build())
+                    .build();
 
-        // SubAsset 로직은 Converter에서 처리
-        // dto를 entity로 바꾸어 저장
-        var mainList = dtoList.stream()
-                        .map(item -> AssetConverter.mainAssetRequestDtoToEntity(userId, item))
-                        .toList();
+        var c = mainAssetRepository.save(mainAsset);
+        return AssetConverter.mainAssetEntityToDto(c);
+    }
 
-        var mainEntityList = mainAssetRepository.saveAll(mainList);
+    public AssetResponseDto.SubResponseDto createSubAsset(String subName, Long mainId, Long userId) {
 
-        // 서브 엔티티 들의 main_asset_id를 추가해주는 과정
-        var subEntityList = new ArrayList<SubAsset>();
-        for(var m : mainEntityList)
-        {
-            subEntityList.addAll(m.getSubAssets().stream().peek((s) -> s.setMainAsset(m)).toList());
-        }
-        subAssetRepository.saveAll(subEntityList);
+        var subAsset = SubAsset.builder()
+                .subName(subName)
+                .mainAsset(MainAsset.builder().id(mainId).build())
+                .user(User.builder().Id(userId).build())
+                .build();
 
-        return getAssetList(userId);
+        var c = subAssetRepository.save(subAsset);
+        return AssetConverter.subAssetEntityToDto(c);
+    }
+
+    // 자산을 수정하는 부분
+    public void updateMainAsset(Long mainId, String mainName)
+    {
+        var mainAsset = mainAssetRepository.findById(mainId).orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
+        mainAsset.setMainName(mainName);
+        mainAssetRepository.save(mainAsset);
+
+    }
+
+    public void updateSubAsset(Long subId, String subName)
+    {
+        var subAsset = subAssetRepository.findById(subId).orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
+        subAsset.setSubName(subName);
+        subAssetRepository.save(subAsset);
+    }
+
+    // 자산을 삭제하는 부분
+    public Long deleteMainAsset(Long mainId)
+    {
+        mainAssetRepository.deleteById(mainId);
+        return mainId;
+    }
+
+    public Long deleteSubAsset(Long subId)
+    {
+        mainAssetRepository.deleteById(subId);
+        return subId;
     }
 
     // 이번 달 목표 금액 / 카테고리별 목표 금액 조회
@@ -140,8 +194,10 @@ public class CategoryService
                 .build();
     }
 
+
+
     // 목표 금액 업데이트 로직
-    public CategoryResponseDto.GoalResponseDto updateCategoryGoal(Long userId, CategoryType type, List<CategoryRequestDto.SubRequestDto> subCategories)
+    public CategoryResponseDto.GoalResponseDto updateCategoryGoal(Long userId, CategoryType type, List<CategoryRequestDto.GoalRequestDto> subGoals)
     {
         // GOAL 값 초기화( 꼴값 초기화 )
         var categoryList = subCategoryRepository.findByType(userId, type);
@@ -151,11 +207,12 @@ public class CategoryService
 
         var updatedList = new ArrayList<SubCategory>();
         // GOAL 다시 박아주기
-        for(var s : subCategories)
+        for(var s : subGoals)
         {
             var entity = categoryList.stream()
                         .filter(e -> e.getId().equals(s.getId()))
                         .findFirst().orElseThrow();
+
             entity.setGoal(s.getGoal());
             updatedList.add(entity);
         }

@@ -48,6 +48,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
     CATEGORY_TYPE_ERROR(HttpStatus.BAD_REQUEST,"CATEGORY4001", "카테고리의 타입 문자열이 잘못되었습니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"CATEGORY4002", "카테고리를 찾을 수 없습니다."),
 
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION4001", "조회할 알림 목록이 없습니다."),
     NOTIFICATION_ALREADY_READ(HttpStatus.BAD_REQUEST, "NOTIFICATION4002", "이미 읽음처리 된 알람입니다."),
