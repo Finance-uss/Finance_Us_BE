@@ -25,11 +25,15 @@ public class CalendarConverter {
         return accounts.stream()
                 .map(account -> new CalendarDetailResponse.CalendarDetailResponseDTO(
                         account.getId(),
-                        account.getScore(),
-                        account.getTitle(),
-                        account.getAmount(),
+                        account.getAccountType(),
+                        account.getDate(),
                         account.getSubCategory().getSubName(),
-                        account.getImageUrl()
+                        account.getSubAsset().getSubName(),
+                        account.getAmount(),
+                        account.getTitle(),
+                        account.getScore(),
+                        account.getImageUrl(),
+                        account.getContent()
                 ))
                 .collect(Collectors.toList());
     }
