@@ -1,6 +1,9 @@
 package finance_us.finance_us.domain.account.dto;
 
+import finance_us.finance_us.domain.account.entity.status.AccountType;
 import lombok.*;
+
+import java.time.LocalDate;
 
 public class CalendarDetailResponse {
 
@@ -12,10 +15,14 @@ public class CalendarDetailResponse {
     @Builder
     public static class CalendarDetailResponseDTO {
         private Long accountId;
-        private int score;
-        private String title;
-        private Long amount;
+        private AccountType accountType;
+        private LocalDate date;
         private String subName;
+        private String subAssetName;
+        private Long amount;
+        private String title;
+        private int score;
         private String imageUrl;
+        private String content;
     }
 }
