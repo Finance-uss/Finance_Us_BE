@@ -4,11 +4,16 @@ import finance_us.finance_us.domain.account.converter.AccountConverter;
 import finance_us.finance_us.domain.account.dto.*;
 import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.account.service.AccountService;
+import finance_us.finance_us.domain.account.service.GoogleOcrService;
 import finance_us.finance_us.domain.account.service.LikeService;
 import finance_us.finance_us.global.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @RestController
@@ -18,6 +23,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final LikeService likeService;
+    private final GoogleOcrService googleOcrService;
 
     // 가계부 생성
     @PostMapping
@@ -66,6 +72,30 @@ public class AccountController {
     public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, Authentication authentication) {
         CheerResponse.CheerResponseDTO response = likeService.createCheer(request, authentication);
         return ApiResponse.onSuccess(response);
+    }
+
+    // 영수증 인증
+    @Operation(summary= "영수증 인증")
+    @PostMapping(value = "/receipt", consumes = "multipart/form-data")
+    public void createAccountByReceipt(@RequestHeader("Authorization") String token,
+    @RequestParam("file") MultipartFile file){
+        System.out.println("야호");
+        // ✅ 1. AWS Textract를 이용하여 영수증에서 텍스트 추출
+        try {
+//            List<String> extractedText = textractService.extractTextFromReceipt(file);
+            List<String> extractedText = googleOcrService.extractTextFromImage(file);
+            System.out.println("추출된 영수증 데이터: " + extractedText);
+        } catch (Exception e) {
+            System.out.println("실패! 예외 메시지: " + e.getMessage());
+            e.printStackTrace(); // 전체 스택 트레이스 출력
+        }
+//
+//        // ✅ 2. 추출된 데이터를 바탕으로 가계부(Account) 생성
+////        Account account = accountService.createAccountFromText(extractedText);
+//
+//
+//        // ✅ 3. 응답 객체로 변환하여 반환
+////        return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(account));
     }
 
 }

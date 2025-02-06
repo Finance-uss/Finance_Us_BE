@@ -224,4 +224,17 @@ public class AccountService {
         return new FollowResponse(name, expenseRate, accountDTOs);
     }
 
+//    public Account createAccountFromText(List<String> extractedText) {
+//
+//        String storeName = extractedText.get(0);  // 예: 첫 번째 줄이 가게명이라고 가정
+//        String amount = extractedText.stream()
+//                .filter(line -> line.matches(".*\\d{1,3}(,\\d{3})*원.*")) // "12,000원" 같은 패턴 찾기
+//                .findFirst()
+//                .orElse("금액 정보 없음");
+//
+//        // ✅ 새로운 Account 객체 생성
+//        return Account.builder()
+
+//    }
+
 }

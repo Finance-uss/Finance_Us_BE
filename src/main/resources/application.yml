@@ -48,3 +48,6 @@ cloud:
       auto: false
     stack:
       auto: false
+google:
+  application:
+    credentials: "google-credential.json"
