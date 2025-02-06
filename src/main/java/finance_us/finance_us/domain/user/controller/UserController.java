@@ -178,4 +178,23 @@ public class UserController {
         return ApiResponse.onSuccess("삭제 완료되었습니다. ");
     }
 
+    @GetMapping()
+    @Operation(summary = "회원 조회 API", description = "회원을 조회합니다.")
+    public ApiResponse<AuthResponseDTO.ReadResponseDTO> readUser(@RequestHeader("Authorization") String token) {
+
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        return ApiResponse.onSuccess(userService.readUser(userId));
+    }
+
+    @PatchMapping()
+    @Operation(summary = "회원 수정 API", description = "회원을 수정합니다.")
+    public ApiResponse<String> updateUser(@RequestHeader("Authorization") String token, AuthRequestDTO.UpdateRequestDTO updateRequestDTO) {
+
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        return ApiResponse.onSuccess(userService.updateUser(userId, updateRequestDTO));
+    }
+
+
 }

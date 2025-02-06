@@ -8,6 +8,8 @@ import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.global.file.S3FileService;
+import finance_us.finance_us.security.JwtAuthenticationFilter;
+import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ public class CategoryController
 {
     private final CategoryService categoryService;
     private final S3FileService s3FileService;
+    private final TokenProvider tokenProvider;
 
     @GetMapping("/api/mypage/category")
     public ApiResponse<?> getCategory(String type) {

@@ -1,5 +1,8 @@
 package finance_us.finance_us.domain.user.service;
 
+import finance_us.finance_us.domain.user.converter.AuthConverter;
+import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
+import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
@@ -73,6 +76,7 @@ public class UserService {
         return user.getEmail();
     }
 
+<<<<<<< HEAD
     //이미지 저장
     @Transactional
     public void saveImage(Long userId, String url){
@@ -80,6 +84,29 @@ public class UserService {
                 .orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
         user.setImage(url);
         userRepository.save(user);
+=======
+    // 유저 읽어오기
+    public AuthResponseDTO.ReadResponseDTO readUser(Long id)
+    {
+        var user = userRepository.findById(id);
+
+        return AuthConverter.toReadResponseDTO(user.orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND))));
+    }
+
+    // 유저 수정
+    public String updateUser(Long id, AuthRequestDTO.UpdateRequestDTO dto)
+    {
+        var user = userRepository.findById(id).orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+
+        user.setName(dto.getName());
+        user.setAge(dto.getAgeGroup());
+        user.setOne_liner(dto.getOne_liner());
+        user.setJob(dto.getJobCategory());
+
+        userRepository.save(user);
+
+        return "success";
+>>>>>>> 54c7ba0010c1c2d9d2293c7b2aa0de80b096e39b
     }
 
     //회원탈퇴
@@ -88,4 +115,15 @@ public class UserService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         userRepository.delete(user);
     }
+
+    // 회원 비밀번호 수정
+    public void updatePassword(Long id, String password)
+    {
+
+
+        return;
+    }
+
+
+
 }
