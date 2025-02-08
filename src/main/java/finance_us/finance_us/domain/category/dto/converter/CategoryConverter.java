@@ -29,20 +29,20 @@ public class CategoryConverter
                 .build();
     }
 
-    public static MainCategory mainRequestDtoToEntity(Long userId, CategoryType type, CategoryRequestDto.MainRequestDto dto)
+    public static MainCategory mainRequestDtoToEntity(CategoryRequestDto.MainRequestDto dto, Long userId)
     {
         return MainCategory.builder()
                 .mainName(dto.getName())
-                .categoryType(type)
+                .categoryType(dto.getCategoryType())
                 .user(User.builder().Id(userId).build())
                 .build();
     }
 
-    public static SubCategory subRequestDtoToEntity(Long userId, Long mainId, CategoryRequestDto.SubRequestDto dto)
+    public static SubCategory subRequestDtoToEntity(CategoryRequestDto.SubRequestDto dto, Long userId)
     {
         return SubCategory.builder()
                 .subName(dto.getName())
-                .mainCategory(MainCategory.builder().id(mainId).build())
+                .mainCategory(MainCategory.builder().id(dto.getMainId()).build())
                 .goal(dto.getGoal())
                 .user(User.builder().Id(userId).build())
                 .build();

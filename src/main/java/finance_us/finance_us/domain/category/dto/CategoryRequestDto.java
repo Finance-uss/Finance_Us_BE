@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.category.dto;
 
+import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import lombok.*;
 
 
@@ -14,8 +15,8 @@ public class CategoryRequestDto
     @ToString @Builder
     public static class UpdateRequestDto
     {
-        String type;
-        List<MainRequestDto> mainCategories;
+        Long id;
+        String name;
     }
 
     @Getter
@@ -23,8 +24,8 @@ public class CategoryRequestDto
     @ToString @Builder
     public static class UpdateGoalDto
     {
-        String type;
-        List<SubRequestDto> subCategories;
+        CategoryType type;
+        List<GoalRequestDto> subGoals;
     }
 
     @Getter
@@ -32,9 +33,8 @@ public class CategoryRequestDto
     @ToString @Builder
     public static class MainRequestDto
     {
-        Long id;
         String name;
-        List<SubRequestDto> subCategories;
+        CategoryType categoryType;
     }
 
     @Getter
@@ -42,10 +42,21 @@ public class CategoryRequestDto
     @ToString @Builder
     public static class SubRequestDto
     {
-        Long id;
         String name;
         int goal;
 
         Long mainId;
     }
+
+    @Getter
+    @Setter @AllArgsConstructor @RequiredArgsConstructor
+    @ToString @Builder
+    public static class GoalRequestDto
+    {
+        int goal;
+        Long id;
+    }
+
+
+
 }
