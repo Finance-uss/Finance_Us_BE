@@ -76,15 +76,16 @@ public class UserService {
         return user.getEmail();
     }
 
-<<<<<<< HEAD
+
     //이미지 저장
     @Transactional
-    public void saveImage(Long userId, String url){
+    public void saveImage(Long userId, String url) {
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+                .orElseThrow(() -> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
         user.setImage(url);
         userRepository.save(user);
-=======
+    }
+
     // 유저 읽어오기
     public AuthResponseDTO.ReadResponseDTO readUser(Long id)
     {
@@ -106,7 +107,7 @@ public class UserService {
         userRepository.save(user);
 
         return "success";
->>>>>>> 54c7ba0010c1c2d9d2293c7b2aa0de80b096e39b
+
     }
 
     //회원탈퇴

@@ -88,8 +88,10 @@ public class WebSecurityConfig {
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
         config.addAllowedMethod("OPTIONS");
+        config.addAllowedMethod("PATCH");
         config.setMaxAge(MAX_AGE_SECS);
         config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("ws://localhost:8080");
         source.registerCorsConfiguration("/**", config);
         return source;
