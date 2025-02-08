@@ -87,6 +87,7 @@ public class WebSecurityConfig {
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("PATCH");
         config.addAllowedMethod("OPTIONS");
         config.setMaxAge(MAX_AGE_SECS);
         config.addAllowedOrigin("http://localhost:8080");
