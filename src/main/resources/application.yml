@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   mail:
     host: smtp.gmail.com
     port: 587

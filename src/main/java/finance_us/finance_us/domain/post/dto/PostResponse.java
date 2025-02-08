@@ -23,9 +23,15 @@ public class PostResponse {
     public static class PostListDto{
         // 게시물 목록을 반환할때 사용합니다.
 
+        Long postId;
+
         String category;
         String imgUrl;
         String title;
         String content;
+
+        Long likeCnt;
+        int commentCnt;
+
     }
 }
