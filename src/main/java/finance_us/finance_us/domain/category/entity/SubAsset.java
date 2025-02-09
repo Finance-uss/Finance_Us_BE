@@ -15,9 +15,6 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "sub_asset", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"sub_name", "user_id"})
-})
 public class SubAsset extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
