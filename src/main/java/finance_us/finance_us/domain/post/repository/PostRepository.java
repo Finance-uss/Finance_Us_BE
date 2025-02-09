@@ -1,6 +1,7 @@
 package finance_us.finance_us.domain.post.repository;
 
 import finance_us.finance_us.domain.post.entity.Post;
+import finance_us.finance_us.domain.post.entity.status.Category;
 import finance_us.finance_us.domain.post.entity.status.PostType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -33,4 +35,38 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("keyword") String keyword,
             Pageable pageable);
 
+    @Query("SELECT p.id, COUNT(pl) FROM Post p LEFT JOIN PostLike pl ON p.id = pl.post.id WHERE p.id IN :postIds GROUP BY p.id")
+    List<Object[]> countLikesByPostIds(@Param("postIds") List<Long> postIds);
+
+    @Query("SELECT p.id, COUNT(c) FROM Post p LEFT JOIN Comment c ON p.id = c.post.id WHERE p.id IN :postIds GROUP BY p.id")
+    List<Object[]> countCommentsByPostIds(@Param("postIds") List<Long> postIds);
+
+    @Query("""
+    SELECT p FROM Post p 
+    WHERE p.postType = :postType 
+    AND (:cursor IS NULL OR p.id < :cursor) 
+    ORDER BY p.id DESC
+""")
+    List<Post> findPostsByPostTypeWithCursor(
+            @Param("postType") PostType postType,
+            @Param("cursor") Long cursor,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT p FROM Post p 
+    WHERE p.postType = :postType
+    AND p.category = :category
+    AND (:cursor IS NULL OR p.id < :cursor) 
+    ORDER BY p.id DESC 
+""")
+    List<Post> findPostsByCategoryWithCursor(
+            @Param("postType") PostType postType,
+            @Param("category") Category category,
+            @Param("cursor") Long cursor,
+            Pageable pageable
+    );
+    
+    // 특정 게시글 조회
+    Optional<Post> findById(Long postId);
 }
