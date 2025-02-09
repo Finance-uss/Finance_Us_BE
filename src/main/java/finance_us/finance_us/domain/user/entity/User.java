@@ -44,6 +44,7 @@ public class User extends BaseEntity {
     private Role role;
 
     private String Image;
+    private String ImageName;
 
     @Builder.Default
     private boolean isAuthenticated=false;

@@ -123,7 +123,7 @@ public class UserController {
         return ApiResponse.onSuccess(response);
     }
 
-    @PostMapping(value = "/uploadImage", consumes = "multipart/form-data")  // 🚨 multipart/form-data로 지정
+    @PostMapping(value = "/image", consumes = "multipart/form-data")
     @Operation(summary = "사용자 프로필 사진 업로드", description = "사용자의 프로필 사진을 업로드합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
@@ -139,27 +139,63 @@ public class UserController {
                             schema = @Schema(type = "string", format = "binary")))
             @RequestParam("file") MultipartFile file) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-//        System.out.println("Received file: " + file.getOriginalFilename());
+        // DB에 이미지 URL 저장
+        String imageUrl =  userService.saveImage(token, file);
 
-        try {
-            // S3에 이미지 업로드
-            String imageUrl = s3FileService.saveFile(file);
+        // 응답 데이터 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("profileImageUrl", imageUrl);
 
-            // DB에 이미지 URL 저장
-            userService.saveImage(userId, imageUrl);
+        return ApiResponse.onSuccess(response); // 업로드된 파일 URL 반환
 
-            // 응답 데이터 생성
-            Map<String, Object> response = new HashMap<>();
-            response.put("profileImageUrl", imageUrl);
 
-            return ApiResponse.onSuccess(response); // 업로드된 파일 URL 반환
-
-        } catch (IOException e) {
-            throw new GeneralException(ErrorStatus.IMAGE_FAILED);
-        }
     }
 
+    @PatchMapping(value = "/image", consumes = "multipart/form-data")
+    @Operation(summary = "사용자 프로필 사진 수정", description = "사용자의 프로필 사진을 수정합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 에러")
+    })
+    public ApiResponse<Map<String, Object>> resetImage(
+            @RequestHeader("Authorization") String token,
+            @Parameter(
+                    description = "수정 파일",
+                    required = true,
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(type = "string", format = "binary")))
+            @RequestParam("file") MultipartFile file) {
+
+        // 이전 이미지 삭제
+        userService.deleteImage(token);
+
+        // DB에 이미지 URL 저장
+        String imageUrl =  userService.saveImage(token, file);
+
+        // 응답 데이터 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("profileImageUrl", imageUrl);
+
+        return ApiResponse.onSuccess(response); // 업로드된 파일 URL 반환
+
+    }
+
+    @DeleteMapping(value = "/image")
+    @Operation(summary = "사용자 프로필 사진 삭제", description = "사용자의 프로필 사진을 삭제합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 에러")
+    })
+    public ApiResponse<String> deleteImage(
+            @RequestHeader("Authorization") String token){
+
+        // 이전 이미지 삭제
+        userService.deleteImage(token);
+
+        return ApiResponse.onSuccess("삭제 완료되었습니다. ");
+    }
 
 
     //회원탈퇴 Delete / api/user/
