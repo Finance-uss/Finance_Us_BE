@@ -76,6 +76,11 @@ public class CategoryService
     }
 
     public CategoryResponseDto.SubResponseDto createSubCategory(CategoryRequestDto.SubRequestDto dto, Long userId) {
+        // 중복 체크
+        boolean exists = subCategoryRepository.existsBySubNameAndUserId(dto.getName(), userId);
+        if (exists) {
+            throw new IllegalArgumentException("이미 존재하는 소분류 이름입니다.");
+        }
 
         var category = CategoryConverter.subRequestDtoToEntity(dto, userId);
         var c = subCategoryRepository.save(category);
@@ -136,6 +141,11 @@ public class CategoryService
     }
 
     public AssetResponseDto.SubResponseDto createSubAsset(String subName, Long mainId, Long userId) {
+        // 중복 체크
+        boolean exists = subAssetRepository.existsBySubNameAndUserId(subName, userId);
+        if (exists) {
+            throw new IllegalArgumentException("이미 존재하는 소분류 이름입니다.");
+        }
 
         var subAsset = SubAsset.builder()
                 .subName(subName)
