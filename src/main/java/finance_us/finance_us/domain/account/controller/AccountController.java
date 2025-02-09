@@ -81,7 +81,7 @@ public class AccountController {
     // 영수증 인증
     @Operation(summary= "영수증 인증")
     @PostMapping(value = "/receipt", consumes = "multipart/form-data")
-    public ApiResponse<AccountResponse.AccountResponseDTO> createAccountByReceipt(@RequestHeader("Authorization") String token,
+    public ApiResponse<AccountResponse.AccountImageResponseDTO> createAccountByReceipt(@RequestHeader("Authorization") String token,
     @RequestParam("file") MultipartFile file){
         List<String> extractedText;
 
@@ -92,13 +92,7 @@ public class AccountController {
           throw new GeneralException(ErrorStatus.IMAGE_TEXT_FAILD);
         }
 
-        // 추출된 데이터를 가계부 형식으로 변환
-        AccountRequest.AccountRequestDTO accountRequest = accountImageExtractService.extractAccountFromReceipt(extractedText);
-
-        // 가계부 저장
-        Account savedAccount = accountService.createAccount(accountRequest, token);
-
-        return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(savedAccount));
+        return ApiResponse.onSuccess( accountImageExtractService.extractAccountFromReceipt(extractedText));
 
     }
 
