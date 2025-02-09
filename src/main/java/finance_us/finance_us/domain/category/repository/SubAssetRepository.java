@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface SubAssetRepository  extends JpaRepository<SubAsset, Long> {
     // subName으로 SubAsset 조회
-    Optional<SubAsset> findBySubName(String subName);
+    Optional<SubAsset> findBySubNameAndUserId(String subName, Long userId);
     // userId 와 CategoryType으로 조회
     @Query(value = "SELECT * FROM sub_category WHERE user_id=:userId;", nativeQuery = true)
     public List<SubAsset> findByUserId(@Param("userId") Long userId);
