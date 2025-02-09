@@ -83,21 +83,22 @@ public class AccountController {
     @PostMapping(value = "/receipt", consumes = "multipart/form-data")
     public ApiResponse<AccountResponse.AccountResponseDTO> createAccountByReceipt(@RequestHeader("Authorization") String token,
     @RequestParam("file") MultipartFile file){
+        List<String> extractedText;
 
         try {
-            List<String> extractedText = googleOcrService.extractTextFromImage(file);
-            System.out.println("추출된 영수증 데이터: " + extractedText);
-
-            // 추출된 데이터를 가계부 형식으로 변환
-            AccountRequest.AccountRequestDTO accountRequest = accountImageExtractService.extractAccountFromReceipt(extractedText);
-
-            // 가계부 저장
-            Account savedAccount = accountService.createAccount(accountRequest, token);
-
-            return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(savedAccount));
+            extractedText= googleOcrService.extractTextFromImage(file);
+//            System.out.println("추출된 데이터: " + extractedText);
         } catch (Exception e) {
           throw new GeneralException(ErrorStatus.IMAGE_TEXT_FAILD);
         }
+
+        // 추출된 데이터를 가계부 형식으로 변환
+        AccountRequest.AccountRequestDTO accountRequest = accountImageExtractService.extractAccountFromReceipt(extractedText);
+
+        // 가계부 저장
+        Account savedAccount = accountService.createAccount(accountRequest, token);
+
+        return ApiResponse.onSuccess(AccountConverter.toAccountResponseDTO(savedAccount));
 
     }
 
