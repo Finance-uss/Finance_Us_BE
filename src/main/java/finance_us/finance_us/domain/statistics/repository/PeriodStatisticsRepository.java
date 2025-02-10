@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PeriodStatisticsRepository extends JpaRepository<PeriodStatistics, Long> {
@@ -17,14 +18,20 @@ public interface PeriodStatisticsRepository extends JpaRepository<PeriodStatisti
     @Modifying
     @Query("UPDATE PeriodStatistics ps " +
             "SET ps.totalMoney = :totalMoney " +
-            "WHERE ps.year = :year AND ps.month = :month AND ps.type = :type AND ps.user.id = :userId")
+            "WHERE ps.year = :year AND ps.month = :month AND ps.type = :type AND ps.user.Id = :userId")
     void updateTotalMoney(@Param("year") Long year,
                           @Param("month") Long month,
                           @Param("type") Type type,
                           @Param("totalMoney") Long totalMoney,
                           @Param("userId") Long userId);
 
+    /**
+     * ✅ 특정 연도의 통계 목록 조회
+     */
     List<PeriodStatistics> findByYearAndTypeAndUserId(Long year, Type type, Long userId);
 
-    List<PeriodStatistics> findByYearAndMonthAndTypeAndUserId(Long year, Long month, Type type, Long userId);
+    /**
+     * ✅ 특정 연도 + 월의 통계 데이터 단일 조회
+     */
+    Optional<PeriodStatistics> findByYearAndMonthAndTypeAndUserId(Long year, Long month, Type type, Long userId);
 }

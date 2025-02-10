@@ -1,13 +1,16 @@
 package finance_us.finance_us.domain.statistics.repository;
 
+import finance_us.finance_us.domain.category.entity.MainCategory;
 import finance_us.finance_us.domain.statistics.entity.CategoryStatistics;
 import finance_us.finance_us.domain.statistics.entity.status.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoryStatisticsRepository extends JpaRepository<CategoryStatistics, Long> {
@@ -32,4 +35,13 @@ public interface CategoryStatisticsRepository extends JpaRepository<CategoryStat
     void updateTotalWithTimeStamp(Long userId, Long mainCategoryId, Long year, Long month, String type, Long totalMoney);
 
     List<CategoryStatistics> findByYearAndMonthAndTypeAndUserId(Long year, Long month, Type type, Long userId);
+
+    Optional<CategoryStatistics> findByYearAndMonthAndTypeAndUserIdAndMainCategory(Long year, Long month, Type type, Long userId, MainCategory mainCategory);
+
+    @Modifying
+    @Query("DELETE FROM CategoryStatistics cs WHERE cs.user.id = :userId AND cs.mainCategory.id = :mainCategoryId")
+    void deleteByUserIdAndMainCategoryId(@Param("userId") Long userId, @Param("mainCategoryId") Long mainCategoryId);
+
+    @Query("SELECT COUNT(cs) > 0 FROM CategoryStatistics cs WHERE cs.user.id = :userId AND cs.mainCategory = :mainCategory")
+    boolean existsByUserIdAndMainCategory(@Param("userId") Long userId, @Param("mainCategory") MainCategory mainCategory);
 }

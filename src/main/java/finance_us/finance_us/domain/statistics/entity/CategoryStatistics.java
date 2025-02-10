@@ -11,6 +11,7 @@ import finance_us.finance_us.domain.statistics.entity.status.Type;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder
