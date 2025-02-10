@@ -53,9 +53,12 @@ public class AccountService {
         SubCategory subCategory = subCategoryRepository.findBySubName(request.getSubName())
                 .orElseThrow(() -> new IllegalArgumentException("SubCategory not found"));
 
+
         // SubCategory 조회
         SubAsset subAsset = subAssetRepository.findBySubName(request.getSubAssetName())
                 .orElseThrow(() -> new IllegalArgumentException("SubAsset not found"));
+
+        System.out.println(request);
 
         // account 생성
         Account account = Account.builder()
@@ -73,8 +76,10 @@ public class AccountService {
                 .build();
 
         //통계 업데이트
-        categoryStatisticsService.updateStatisticsOnCreate(account);
-        periodStatisticsService.updatePeriodStatisticsOnCreate(account);
+        categoryStatisticsService.updateStatisticsOnCreate(token, account);
+        periodStatisticsService.updatePeriodStatisticsOnCreate(token, account);
+
+        System.out.println(account);
 
         return accountRepository.save(account);
     }
@@ -124,8 +129,8 @@ public class AccountService {
         account.setSubAsset(subAsset);
 
         //통계 업데이트
-        categoryStatisticsService.updateStatisticsOnUpdate(oldAccount, account);
-        periodStatisticsService.updatePeriodStatisticsOnUpdate(oldAccount, account);
+        categoryStatisticsService.updateStatisticsOnUpdate(token, oldAccount, account);
+        periodStatisticsService.updatePeriodStatisticsOnUpdate(token, oldAccount, account);
 
         return accountRepository.save(account);
     }
@@ -138,8 +143,8 @@ public class AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
         //통계 업데이트
-        categoryStatisticsService.updateStatisticsOnDelete(account);
-        periodStatisticsService.updatePeriodStatisticsOnDelete(account);
+        categoryStatisticsService.updateStatisticsOnDelete(token, account);
+        periodStatisticsService.updatePeriodStatisticsOnDelete(token, account);
 
         accountRepository.delete(account);
     }
@@ -252,5 +257,7 @@ public class AccountService {
 
         return new FollowResponse(name, expenseRate, accountDTOs);
     }
+
+
 
 }

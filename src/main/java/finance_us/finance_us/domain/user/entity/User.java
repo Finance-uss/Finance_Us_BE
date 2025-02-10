@@ -43,6 +43,10 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String Image;
+    private String ImageName;
+
+    @Builder.Default
     private boolean isAuthenticated=false;
 
 }
