@@ -51,7 +51,9 @@ public class PostLikeService {
     }
 
     // 게시글 좋아요 갯수 반환
-    public PostLikeResponse.PostLikeResponseDTO getPostLikes(Long postId) {
+    public PostLikeResponse.PostLikeResponseDTO getPostLikes(String token, Long postId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         // 게시글 유효성 검증
         Post post = postRepository.findById(postId)
                 .orElseThrow(()-> new IllegalArgumentException("Post not found"));

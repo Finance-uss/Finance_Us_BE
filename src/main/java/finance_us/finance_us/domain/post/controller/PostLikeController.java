@@ -22,8 +22,8 @@ public class PostLikeController {
 
     // 게시글 좋아요 갯수 반환
     @GetMapping
-    public ApiResponse<PostLikeResponse.PostLikeResponseDTO> getPostLikes(@PathVariable Long postId) {
-        PostLikeResponse.PostLikeResponseDTO postLikeResponseDTO = postLikeService.getPostLikes(postId);
+    public ApiResponse<PostLikeResponse.PostLikeResponseDTO> getPostLikes(@RequestHeader("Authorization") String token, @PathVariable Long postId) {
+        PostLikeResponse.PostLikeResponseDTO postLikeResponseDTO = postLikeService.getPostLikes(token, postId);
 
         return ApiResponse.onSuccess(postLikeResponseDTO);
     }

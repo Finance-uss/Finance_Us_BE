@@ -75,12 +75,16 @@ public class CommentService {
     }
 
     // 댓글 목록 반환
-    public List<Comment> getCommentsByPost(Long postId) {
+    public List<Comment> getCommentsByPost(String token, Long postId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         return commentRepository.findByPostIdOrderByCreatedAtDesc(postId);
     }
 
     // 댓글 갯수 반환
-    public int getCommentCount(Long postId) {
+    public int getCommentCount(String token, Long postId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         return commentRepository.countByPostId(postId);
     }
 
