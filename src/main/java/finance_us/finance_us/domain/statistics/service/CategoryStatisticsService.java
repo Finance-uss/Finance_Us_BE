@@ -12,10 +12,12 @@ import finance_us.finance_us.domain.statistics.entity.CategoryStatistics;
 import finance_us.finance_us.domain.statistics.entity.status.Type;
 import finance_us.finance_us.domain.statistics.repository.CategoryStatisticsRepository;
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class CategoryStatisticsService {
     private final TokenProvider tokenProvider;
     private final MainCategoryRepository mainCategoryRepository;
     private final SubCategoryRepository subCategoryRepository;
+    private final UserRepository userRepository;
 
     public CategoryStatisticsResponse getCategoryStatistics(String token, Long year, Long month, String type){
         Long userId = tokenProvider.extractUserIdFromToken(token);
@@ -111,15 +114,17 @@ public class CategoryStatisticsService {
 
     //가계부 생성 시 통계 업데이트
     @Transactional
-    public void updateStatisticsOnCreate(Account account){
+    public void updateStatisticsOnCreate(String token, Account account){
         Long year = (long) account.getDate().getYear();
         Long month = (long) account.getDate().getMonthValue();
-        User user = account.getUser();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         MainCategory mainCategory = account.getSubCategory().getMainCategory();
         Type type = Type.valueOf(account.getAccountType().name().toUpperCase());
 
         CategoryStatistics statistics = categoryStatisticsRepository
-                .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, type, user.getId(), mainCategory)
+                .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, type, userId, mainCategory)
                 .orElse(null);
 
         //카테고리별 통계 데이터가 없는 경우 생성
@@ -144,10 +149,12 @@ public class CategoryStatisticsService {
 
     //가계부 수정 시 업데이트
     @Transactional
-    public void updateStatisticsOnUpdate(Account oldAccount, Account updatedAccount){
+    public void updateStatisticsOnUpdate(String token, Account oldAccount, Account updatedAccount){
         Long year = (long) updatedAccount.getDate().getYear();
         Long month = (long) updatedAccount.getDate().getMonthValue();
-        User user = updatedAccount.getUser();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         MainCategory mainCategory = updatedAccount.getSubCategory().getMainCategory();
 
         // 기존 유형과 변경 후 유형이 다르면, 기존 통계에서 제거 후 새로운 통계에 추가
@@ -157,7 +164,7 @@ public class CategoryStatisticsService {
         if (!oldType.equals(newType)) {
             //기존 가계부의 유형에 맞는 통계 수정
             CategoryStatistics oldStatistics = categoryStatisticsRepository
-                    .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, oldType, user.getId(), mainCategory)
+                    .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, oldType, userId, mainCategory)
                     .orElse(null);
 
             if (oldStatistics != null) {
@@ -166,7 +173,7 @@ public class CategoryStatisticsService {
 
             //새로운 가계부의 유형에 맞는 통계 수정
             CategoryStatistics newStatistics = categoryStatisticsRepository
-                    .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, newType, user.getId(), mainCategory)
+                    .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, newType, userId, mainCategory)
                     .orElse(null);
 
             if (newStatistics == null) {
@@ -199,15 +206,15 @@ public class CategoryStatisticsService {
 
     //가계부 삭제 시 업데이트
     @Transactional
-    public void  updateStatisticsOnDelete(Account account){
+    public void  updateStatisticsOnDelete(String token, Account account){
         Long year = (long) account.getDate().getYear();
         Long month = (long) account.getDate().getMonthValue();
-        User user = account.getUser();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         MainCategory mainCategory = account.getSubCategory().getMainCategory();
         Type type = Type.valueOf(account.getAccountType().name().toUpperCase());
 
         CategoryStatistics statistics = categoryStatisticsRepository
-                .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, type, user.getId(), mainCategory)
+                .findByYearAndMonthAndTypeAndUserIdAndMainCategory(year, month, type, userId, mainCategory)
                 .orElse(null);
 
         //삭제한 가계부 금액 차감

@@ -9,6 +9,9 @@ import finance_us.finance_us.domain.statistics.entity.PeriodStatistics;
 import finance_us.finance_us.domain.statistics.entity.status.Type;
 import finance_us.finance_us.domain.statistics.repository.PeriodStatisticsRepository;
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ public class PeriodStatisticsService {
     private final PeriodStatisticsRepository periodStatisticsRepository;
     private final AccountRepository accountRepository;
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
     public PeriodStatisticsResponse getYearlyStatistics(String token, Long year, String type){
         Long userId = tokenProvider.extractUserIdFromToken(token);
@@ -73,10 +77,12 @@ public class PeriodStatisticsService {
 
     //가계부 생성 시 기간별 통계 데이터 관리
     @Transactional
-    public void updatePeriodStatisticsOnCreate(Account account) {
+    public void updatePeriodStatisticsOnCreate(String token, Account account) {
         Long year = (long) account.getDate().getYear();
         Long month = (long) account.getDate().getMonthValue();
-        Long userId = account.getUser().getId();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         Type type = Type.valueOf(account.getAccountType().name().toUpperCase());
 
         //기존 통계 데이터 조회
@@ -104,7 +110,7 @@ public class PeriodStatisticsService {
 
     //가계부 수정 시 기간별 통계 업데이트
     @Transactional
-    public void updatePeriodStatisticsOnUpdate(Account oldAccount, Account updatedAccount) {
+    public void updatePeriodStatisticsOnUpdate(String token, Account oldAccount, Account updatedAccount) {
         Long year = (long) updatedAccount.getDate().getYear();
         Long month = (long) updatedAccount.getDate().getMonthValue();
         Long userId = updatedAccount.getUser().getId();
@@ -157,10 +163,12 @@ public class PeriodStatisticsService {
 
     //가계부 삭제 시 통계 업데이트
     @Transactional
-    public void updatePeriodStatisticsOnDelete(Account account) {
+    public void updatePeriodStatisticsOnDelete(String token, Account account) {
         Long year = (long) account.getDate().getYear();
         Long month = (long) account.getDate().getMonthValue();
-        Long userId = account.getUser().getId();
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         Type type = Type.valueOf(account.getAccountType().name().toUpperCase());
 
         // 기존 데이터 조회
