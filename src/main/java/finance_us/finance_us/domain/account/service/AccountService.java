@@ -12,6 +12,8 @@ import finance_us.finance_us.domain.category.repository.SubAssetRepository;
 import finance_us.finance_us.domain.category.repository.SubCategoryRepository;
 import finance_us.finance_us.domain.follows.entity.Follow;
 import finance_us.finance_us.domain.follows.repository.FollowRepository;
+import finance_us.finance_us.domain.statistics.service.CategoryStatisticsService;
+import finance_us.finance_us.domain.statistics.service.PeriodStatisticsService;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.security.TokenProvider;
@@ -32,6 +34,9 @@ public class AccountService {
     private final SubAssetRepository subAssetRepository;
     private final FollowRepository followRepository;
     private final TokenProvider tokenProvider;
+    //통계 테이블 관리 로직을 위해 추가
+    private final CategoryStatisticsService categoryStatisticsService;
+    private final PeriodStatisticsService periodStatisticsService;
 
 
     // 가계부 생성
@@ -67,6 +72,10 @@ public class AccountService {
                 .user(user)
                 .build();
 
+        //통계 업데이트
+        categoryStatisticsService.updateStatisticsOnCreate(account);
+        periodStatisticsService.updatePeriodStatisticsOnCreate(account);
+
         return accountRepository.save(account);
     }
 
@@ -78,6 +87,22 @@ public class AccountService {
         // 기존 계좌 조회
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+        //통계에 사용할 수정 전 계좌 깊은 복사
+        Account oldAccount = Account.builder()
+                .id(account.getId())
+                .accountType(account.getAccountType())
+                .date(account.getDate())
+                .amount(account.getAmount())
+                .title(account.getTitle())
+                .status(account.getStatus())
+                .score(account.getScore())
+                .content(account.getContent())
+                .imageUrl(account.getImageUrl())
+                .subCategory(account.getSubCategory())
+                .subAsset(account.getSubAsset())
+                .user(account.getUser())
+                .build();
 
         // SubCategory 조회
         SubCategory subCategory = subCategoryRepository.findBySubName(request.getSubName())
@@ -98,6 +123,10 @@ public class AccountService {
         account.setSubCategory(subCategory);
         account.setSubAsset(subAsset);
 
+        //통계 업데이트
+        categoryStatisticsService.updateStatisticsOnUpdate(oldAccount, account);
+        periodStatisticsService.updatePeriodStatisticsOnUpdate(oldAccount, account);
+
         return accountRepository.save(account);
     }
 
@@ -107,6 +136,10 @@ public class AccountService {
 
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+        //통계 업데이트
+        categoryStatisticsService.updateStatisticsOnDelete(account);
+        periodStatisticsService.updatePeriodStatisticsOnDelete(account);
 
         accountRepository.delete(account);
     }
