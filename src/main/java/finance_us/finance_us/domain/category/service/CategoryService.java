@@ -15,6 +15,7 @@ import finance_us.finance_us.domain.category.repository.MainAssetRepository;
 import finance_us.finance_us.domain.category.repository.SubAssetRepository;
 import finance_us.finance_us.domain.category.repository.MainCategoryRepository;
 import finance_us.finance_us.domain.category.repository.SubCategoryRepository;
+import finance_us.finance_us.domain.statistics.service.CategoryStatisticsService;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
@@ -33,6 +34,7 @@ public class CategoryService
     final private SubCategoryRepository subCategoryRepository;
     final private MainAssetRepository mainAssetRepository;
     final private SubAssetRepository subAssetRepository;
+    final private CategoryStatisticsService categoryStatisticsService;
 
     // userId : 대상으로 할 유저
     // type   : 지출 / 수입
@@ -102,6 +104,14 @@ public class CategoryService
     // 카테고리를 삭제하는 부분
     public Long deleteMainCategory(Long mainId)
     {
+        MainCategory mainCategory = mainCategoryRepository.findById(mainId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
+
+        Long userId = mainCategory.getUser().getId();
+
+        // 🔹 메인 카테고리에 연결된 통계 삭제
+        categoryStatisticsService.deleteStatisticsOnCategoryDelete(userId, mainId);
+
         mainCategoryRepository.deleteById(mainId);
         return mainId;
     }
