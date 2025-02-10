@@ -48,9 +48,12 @@ public class AccountService {
         SubCategory subCategory = subCategoryRepository.findBySubName(request.getSubName())
                 .orElseThrow(() -> new IllegalArgumentException("SubCategory not found"));
 
+
         // SubCategory 조회
         SubAsset subAsset = subAssetRepository.findBySubName(request.getSubAssetName())
                 .orElseThrow(() -> new IllegalArgumentException("SubAsset not found"));
+
+        System.out.println(request);
 
         // account 생성
         Account account = Account.builder()
@@ -66,6 +69,8 @@ public class AccountService {
                 .subAsset(subAsset)
                 .user(user)
                 .build();
+
+        System.out.println(account);
 
         return accountRepository.save(account);
     }
@@ -219,5 +224,7 @@ public class AccountService {
 
         return new FollowResponse(name, expenseRate, accountDTOs);
     }
+
+
 
 }

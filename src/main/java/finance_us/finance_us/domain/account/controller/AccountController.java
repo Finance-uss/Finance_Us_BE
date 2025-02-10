@@ -3,11 +3,20 @@ package finance_us.finance_us.domain.account.controller;
 import finance_us.finance_us.domain.account.converter.AccountConverter;
 import finance_us.finance_us.domain.account.dto.*;
 import finance_us.finance_us.domain.account.entity.Account;
+import finance_us.finance_us.domain.account.service.AccountImageExtractService;
 import finance_us.finance_us.domain.account.service.AccountService;
+import finance_us.finance_us.domain.account.service.GoogleOcrService;
 import finance_us.finance_us.domain.account.service.LikeService;
 import finance_us.finance_us.global.ApiResponse;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 
 
 @RestController
@@ -17,6 +26,8 @@ public class AccountController {
 
     private final AccountService accountService;
     private final LikeService likeService;
+    private final GoogleOcrService googleOcrService;
+    private final AccountImageExtractService accountImageExtractService;
 
     // 가계부 생성
     @PostMapping
@@ -65,6 +76,24 @@ public class AccountController {
     public ApiResponse<CheerResponse.CheerResponseDTO> createCheer(@RequestBody CheerRequest.CheerRequestDTO request, @RequestHeader("Authorization") String token) {
         CheerResponse.CheerResponseDTO response = likeService.createCheer(request, token);
         return ApiResponse.onSuccess(response);
+    }
+
+    // 영수증 인증
+    @Operation(summary= "영수증 인증")
+    @PostMapping(value = "/receipt", consumes = "multipart/form-data")
+    public ApiResponse<AccountResponse.AccountImageResponseDTO> createAccountByReceipt(@RequestHeader("Authorization") String token,
+    @RequestParam("file") MultipartFile file){
+        List<String> extractedText;
+
+        try {
+            extractedText= googleOcrService.extractTextFromImage(file);
+//            System.out.println("추출된 데이터: " + extractedText);
+        } catch (Exception e) {
+          throw new GeneralException(ErrorStatus.IMAGE_TEXT_FAILD);
+        }
+
+        return ApiResponse.onSuccess( accountImageExtractService.extractAccountFromReceipt(extractedText));
+
     }
 
 }

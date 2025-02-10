@@ -7,19 +7,29 @@ import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
+import finance_us.finance_us.global.file.S3FileService;
+import finance_us.finance_us.security.TokenProvider;
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private AuthService authService;
+    private final UserRepository userRepository;
+    private final AuthService authService;
+    private final S3FileService s3FileService;
+    @Lazy
+    private final TokenProvider tokenProvider;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -75,6 +85,44 @@ public class UserService {
         return user.getEmail();
     }
 
+
+    //이미지 저장
+    @Transactional
+    public String saveImage(String token, MultipartFile file) {
+
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        String imageUrl;
+        try {
+            // S3에 이미지 업로드
+            imageUrl = s3FileService.saveFile(file);
+        } catch (IOException e) {
+        throw new GeneralException(ErrorStatus.IMAGE_FAILED);
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+        user.setImageName(file.getOriginalFilename());
+        user.setImage(imageUrl);
+        userRepository.save(user);
+
+        return imageUrl;
+    }
+
+    //이미지 삭제
+    @Transactional
+    public void deleteImage(String token){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+
+        String name = user.getImageName();
+        s3FileService.deleteImage(name);
+
+        user.setImage(null);
+        user.setImageName(null);
+        userRepository.save(user);
+
+    }
+
     // 유저 읽어오기
     public AuthResponseDTO.ReadResponseDTO readUser(Long id)
     {
@@ -96,6 +144,7 @@ public class UserService {
         userRepository.save(user);
 
         return "success";
+
     }
 
     //회원탈퇴
@@ -104,15 +153,6 @@ public class UserService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         userRepository.delete(user);
     }
-
-    // 회원 비밀번호 수정
-    public void updatePassword(Long id, String password)
-    {
-
-
-        return;
-    }
-
 
 
 }
