@@ -5,6 +5,7 @@ import finance_us.finance_us.domain.statistics.dto.MonthDetailResponse;
 import finance_us.finance_us.domain.statistics.dto.PeriodStatisticsResponse;
 import finance_us.finance_us.domain.statistics.service.PeriodStatisticsService;
 import finance_us.finance_us.global.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ public class PeriodStatisticsController {
     private final PeriodStatisticsService periodStatisticsService;
 
     @GetMapping("/")
+    @Operation(summary = "이번 년도의 기간별 통계 조회 API(막대 그래프)")
     public ApiResponse<PeriodStatisticsResponse> getYearlyStatistics(
             @RequestParam("Authorization") String token,
             @RequestParam Long year,
@@ -25,6 +27,7 @@ public class PeriodStatisticsController {
     }
 
     @GetMapping("/details")
+    @Operation(summary = "선택한 월의 가계부 요약본 조회 API")
     public ApiResponse<MonthDetailResponse> getMonthlyDetails(
             @RequestParam("Authorization") String token,
             @RequestParam Long year,
