@@ -51,7 +51,9 @@ public class CommentLikeService {
     }
 
     // 댓글 좋아요 갯수 반환
-    public CommentLikeResponse.CommentLikeResponseDTO getCommentLikes(Long commentId) {
+    public CommentLikeResponse.CommentLikeResponseDTO getCommentLikes(String token, Long commentId) {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         // 댓글 유효성 검증
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(()-> new IllegalArgumentException("Comment not found"));

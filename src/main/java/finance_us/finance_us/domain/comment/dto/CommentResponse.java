@@ -39,6 +39,9 @@ public class CommentResponse {
     public static class CommentDTO {
         private Long commentId;
         private Long userId;
+        private String name;
+        private Boolean isAuthenticated;
+//        private String userImageUrl;
         private String content;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
