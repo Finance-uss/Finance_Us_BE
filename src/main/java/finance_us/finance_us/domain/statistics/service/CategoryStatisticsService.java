@@ -242,7 +242,7 @@ public class CategoryStatisticsService {
     }
 
 
-    //메인 카테고리 삭제 시 통계 데이터 삭제(아직 미사용)
+    //메인 카테고리 삭제 시 통계 데이터 삭제
     @Transactional
     public void deleteStatisticsOnCategoryDelete(Long userId, Long mainCategoryId) {
         categoryStatisticsRepository.deleteByUserIdAndMainCategoryId(userId, mainCategoryId);
