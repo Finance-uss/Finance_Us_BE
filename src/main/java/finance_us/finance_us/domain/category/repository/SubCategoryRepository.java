@@ -13,7 +13,8 @@ import java.util.Optional;
 @Repository
 public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> {
     // subName으로 SubCategory 조회
-    Optional<SubCategory> findBySubName(String subName);
+    Optional<SubCategory> findBySubNameAndUserId(String subName, Long userId);
+
     // userId 와 CategoryType으로 조회
     @Query(value = "SELECT * FROM sub_category WHERE user_id=:userId AND main_category_id=:mainCategoryId;", nativeQuery = true)
     public List<SubCategory> findByUserIdAndMainCategoryId(@Param("userId") Long userId, @Param("mainCategoryId") Long mainCategoryId);

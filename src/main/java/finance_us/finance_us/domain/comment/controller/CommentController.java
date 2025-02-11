@@ -8,7 +8,6 @@ import finance_us.finance_us.domain.comment.service.CommentService;
 import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,9 +40,9 @@ public class CommentController {
 
     // 댓글 갯수 및 목록 반환
     @GetMapping("/{postId}")
-    public ApiResponse<CommentResponse.CommentResultDTO> getCommentsByPost(@PathVariable Long postId) {
-        List<Comment> commentsList = commentService.getCommentsByPost(postId);
-        int commentCount = commentService.getCommentCount(postId);
+    public ApiResponse<CommentResponse.CommentResultDTO> getCommentsByPost(@RequestHeader("Authorization") String token, @PathVariable Long postId) {
+        List<Comment> commentsList = commentService.getCommentsByPost(token, postId);
+        int commentCount = commentService.getCommentCount(token, postId);
 
         List<CommentResponse.CommentDTO> commentDTOS = commentsList.stream()
                 .map(CommentConverter::toCommentDTO)

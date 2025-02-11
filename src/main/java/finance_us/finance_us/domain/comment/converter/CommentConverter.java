@@ -1,6 +1,5 @@
 package finance_us.finance_us.domain.comment.converter;
 
-import finance_us.finance_us.domain.comment.dto.CommentLikeResponse;
 import finance_us.finance_us.domain.comment.dto.CommentResponse;
 import finance_us.finance_us.domain.comment.entity.Comment;
 
@@ -17,6 +16,9 @@ public class CommentConverter {
         return CommentResponse.CommentDTO.builder()
                 .commentId(comment.getId())
                 .userId(comment.getUser().getId())
+                .name(comment.getUser().getName())
+                .isAuthenticated(comment.getUser().isAuthenticated())
+//                .userImageUrl(comment.getUser().get())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())

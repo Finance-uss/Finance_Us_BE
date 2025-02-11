@@ -22,8 +22,8 @@ public class CommentLikeController {
 
     // 댓글 좋아요 갯수 반환
     @GetMapping
-    public ApiResponse<CommentLikeResponse.CommentLikeResponseDTO> getCommentLikes(@PathVariable Long commentId) {
-        CommentLikeResponse.CommentLikeResponseDTO commentLikeResponseDTO = commentLikeService.getCommentLikes(commentId);
+    public ApiResponse<CommentLikeResponse.CommentLikeResponseDTO> getCommentLikes(@RequestHeader("Authorization") String token, @PathVariable Long commentId) {
+        CommentLikeResponse.CommentLikeResponseDTO commentLikeResponseDTO = commentLikeService.getCommentLikes(token, commentId);
 
         return ApiResponse.onSuccess(commentLikeResponseDTO);
     }
