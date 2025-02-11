@@ -45,12 +45,12 @@ public class AccountService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         // SubCategory 조회
-        SubCategory subCategory = subCategoryRepository.findBySubName(request.getSubName())
+        SubCategory subCategory = subCategoryRepository.findBySubNameAndUserId(request.getSubName(), userId)
                 .orElseThrow(() -> new IllegalArgumentException("SubCategory not found"));
 
 
         // SubCategory 조회
-        SubAsset subAsset = subAssetRepository.findBySubName(request.getSubAssetName())
+        SubAsset subAsset = subAssetRepository.findBySubNameAndUserId(request.getSubAssetName(), userId)
                 .orElseThrow(() -> new IllegalArgumentException("SubAsset not found"));
 
         System.out.println(request);
@@ -78,18 +78,18 @@ public class AccountService {
 
     // 가계부 수정
     public Account updateAccount(Long accountId, AccountRequest.AccountRequestDTO request, String token) {
-        tokenProvider.extractUserIdFromToken(token);
+        Long userId = tokenProvider.extractUserIdFromToken(token);
 
         // 기존 계좌 조회
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
         // SubCategory 조회
-        SubCategory subCategory = subCategoryRepository.findBySubName(request.getSubName())
+        SubCategory subCategory = subCategoryRepository.findBySubNameAndUserId(request.getSubName(), userId)
                 .orElseThrow(() -> new IllegalArgumentException("SubCategory not found"));
 
         // SubAsset 조회
-        SubAsset subAsset = subAssetRepository.findBySubName(request.getSubAssetName())
+        SubAsset subAsset = subAssetRepository.findBySubNameAndUserId(request.getSubAssetName(), userId)
                 .orElseThrow(() -> new IllegalArgumentException("SubAsset not found"));
 
         // 필드 업데이트
