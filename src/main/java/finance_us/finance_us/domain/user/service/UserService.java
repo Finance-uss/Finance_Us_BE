@@ -85,6 +85,17 @@ public class UserService {
         return user.getEmail();
     }
 
+    //비밀번호 확인
+    public boolean passwordCheck(String token, String password){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!passwordEncoder.matches(password, user.getPassword())) return false;
+
+        return true;
+    }
+
 
     //이미지 저장
     @Transactional

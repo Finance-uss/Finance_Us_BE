@@ -123,6 +123,20 @@ public class UserController {
         return ApiResponse.onSuccess(response);
     }
 
+    @GetMapping("/passwordCheck")
+    @Operation(summary = "비밀번호 확인", description = "사용자의 비밀번호가 맞는지 확인합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<Boolean> passwordCheck (@RequestHeader("Authorization") String token, @RequestParam String password) {
+
+        return ApiResponse.onSuccess(userService.passwordCheck(token, password));
+    }
+
+
     @PostMapping(value = "/image", consumes = "multipart/form-data")
     @Operation(summary = "사용자 프로필 사진 업로드", description = "사용자의 프로필 사진을 업로드합니다.")
     @ApiResponses({
