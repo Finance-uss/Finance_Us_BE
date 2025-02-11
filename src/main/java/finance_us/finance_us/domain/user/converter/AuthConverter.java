@@ -43,7 +43,7 @@ public class AuthConverter {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
-                .imgUrl(user.getImage())               // 유저로직에 이미지 들어오면 반드시 수정할 것!!
+                .imgUrl(user.getImage())
                 .one_liner(user.getOne_liner())
                 .role(user.getRole())
                 .build();

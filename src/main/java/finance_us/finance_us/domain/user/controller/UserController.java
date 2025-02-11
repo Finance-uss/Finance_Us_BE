@@ -34,9 +34,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final TokenProvider tokenProvider;
-    private final AuthService authService;
-    private final S3FileService s3FileService;
 
     @GetMapping("/mailCheck")
     @Operation(summary = "이메일 중복확인 API", description = "이메일을 중복확인 합니다.")
@@ -75,10 +72,8 @@ public class UserController {
     })
     public ApiResponse<Map<String,Object>> resetMail(@RequestHeader("Authorization") String token, @RequestParam String email) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-
         userService.mailCheck(email);
-        userService.changeMail(userId, email);
+        Long userId = userService.changeMail(token, email);
 
         Map<String, Object> response = new HashMap<>();
         response.put("userId", userId);
@@ -223,8 +218,7 @@ public class UserController {
     })
     public ApiResponse<String> withDrawUser(@RequestHeader("Authorization") String token) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-        userService.deleteUser(userId);
+        userService.deleteUser(token);
         return ApiResponse.onSuccess("삭제 완료되었습니다. ");
     }
 
@@ -232,18 +226,14 @@ public class UserController {
     @Operation(summary = "회원 조회 API", description = "회원을 조회합니다.")
     public ApiResponse<AuthResponseDTO.ReadResponseDTO> readUser(@RequestHeader("Authorization") String token) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-
-        return ApiResponse.onSuccess(userService.readUser(userId));
+        return ApiResponse.onSuccess(userService.readUser(token));
     }
 
     @PatchMapping()
     @Operation(summary = "회원 수정 API", description = "회원을 수정합니다.")
     public ApiResponse<String> updateUser(@RequestHeader("Authorization") String token, AuthRequestDTO.UpdateRequestDTO updateRequestDTO) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-
-        return ApiResponse.onSuccess(userService.updateUser(userId, updateRequestDTO));
+        return ApiResponse.onSuccess(userService.updateUser(token, updateRequestDTO));
     }
 
 

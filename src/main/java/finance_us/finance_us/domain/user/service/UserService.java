@@ -47,8 +47,8 @@ public class UserService {
     }
 
     //이메일 변경
-    public boolean changeMail(Long userId, String email){
-
+    public long changeMail(String token, String email){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         authService.isValidEmail(email);
         // 사용자 조회
         User user = userRepository.findById(userId)
@@ -59,7 +59,7 @@ public class UserService {
 
         // 변경 사항 저장
         userRepository.save(user);
-        return true;
+        return userId;
     }
 
     //비밀번호 변경
@@ -135,17 +135,21 @@ public class UserService {
     }
 
     // 유저 읽어오기
-    public AuthResponseDTO.ReadResponseDTO readUser(Long id)
+    public AuthResponseDTO.ReadResponseDTO readUser(String token)
     {
-        var user = userRepository.findById(id);
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
 
-        return AuthConverter.toReadResponseDTO(user.orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND))));
+        return AuthConverter.toReadResponseDTO(user);
     }
 
     // 유저 수정
-    public String updateUser(Long id, AuthRequestDTO.UpdateRequestDTO dto)
+    public String updateUser(String token, AuthRequestDTO.UpdateRequestDTO dto)
     {
-        var user = userRepository.findById(id).orElseThrow(()-> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
 
         user.setName(dto.getName());
         user.setAge(dto.getAgeGroup());
@@ -159,7 +163,8 @@ public class UserService {
     }
 
     //회원탈퇴
-    public void deleteUser(Long userId){
+    public void deleteUser(String token){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         userRepository.delete(user);
