@@ -121,6 +121,12 @@ public class CategoryStatisticsService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         MainCategory mainCategory = account.getSubCategory().getMainCategory();
+
+        //메인 카테고리 사용자 검증 로직
+        if(!mainCategory.getUser().getId().equals(userId)){
+            throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
+        }
+
         Type type = Type.valueOf(account.getAccountType().name().toUpperCase());
 
         CategoryStatistics statistics = categoryStatisticsRepository
@@ -155,7 +161,13 @@ public class CategoryStatisticsService {
         Long userId = tokenProvider.extractUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
         MainCategory mainCategory = updatedAccount.getSubCategory().getMainCategory();
+
+        //메인 카테고리 사용자 검증 로직
+        if(!mainCategory.getUser().getId().equals(userId)){
+            throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
+        }
 
         // 기존 유형과 변경 후 유형이 다르면, 기존 통계에서 제거 후 새로운 통계에 추가
         Type oldType = Type.valueOf(oldAccount.getAccountType().name().toUpperCase());
@@ -211,6 +223,12 @@ public class CategoryStatisticsService {
         Long month = (long) account.getDate().getMonthValue();
         Long userId = tokenProvider.extractUserIdFromToken(token);
         MainCategory mainCategory = account.getSubCategory().getMainCategory();
+
+        //메인 카테고리 사용자 검증 로직
+        if(!mainCategory.getUser().getId().equals(userId)){
+            throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
+        }
+
         Type type = Type.valueOf(account.getAccountType().name().toUpperCase());
 
         CategoryStatistics statistics = categoryStatisticsRepository
