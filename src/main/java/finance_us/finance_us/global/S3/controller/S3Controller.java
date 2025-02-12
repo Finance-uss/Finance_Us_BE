@@ -4,8 +4,6 @@ import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.S3.dto.S3Request;
 import finance_us.finance_us.global.S3.dto.S3Response;
 import finance_us.finance_us.global.S3.service.S3Service;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

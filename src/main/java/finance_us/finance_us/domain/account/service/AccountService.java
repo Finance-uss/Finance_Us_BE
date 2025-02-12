@@ -173,7 +173,8 @@ public class AccountService {
                     account.getAmount(),
                     account.getDate(),
                     account.getSubCategory().getSubName(),
-                    account.getImageUrl()
+                    account.getImageUrl(),
+                    account.getImageName()
             );
 
             // 점수별로 분류
