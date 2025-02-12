@@ -33,6 +33,7 @@ public class CalendarConverter {
                         account.getTitle(),
                         account.getScore(),
                         account.getImageUrl(),
+                        account.getImageName(),
                         account.getContent()
                 ))
                 .collect(Collectors.toList());
