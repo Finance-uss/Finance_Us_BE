@@ -16,9 +16,10 @@ import finance_us.finance_us.domain.statistics.service.CategoryStatisticsService
 import finance_us.finance_us.domain.statistics.service.PeriodStatisticsService;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -45,18 +46,17 @@ public class AccountService {
         // userId 추출
         Long userId = tokenProvider.extractUserIdFromToken(token);
 
-        // ID로 사용자 조회
+        // 사용자가 존재하지 않을경우 예외 처리
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));;
 
         // SubCategory 조회
         SubCategory subCategory = subCategoryRepository.findBySubNameAndUserId(request.getSubName(), userId)
-                .orElseThrow(() -> new IllegalArgumentException("SubCategory not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SUBCATEGORY_NOT_FOUND));
 
-
-        // SubCategory 조회
+        // SubAsset 조회
         SubAsset subAsset = subAssetRepository.findBySubNameAndUserId(request.getSubAssetName(), userId)
-                .orElseThrow(() -> new IllegalArgumentException("SubAsset not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SUB_ASSET_NOT_FOUND));
 
         System.out.println(request);
 
@@ -91,7 +91,7 @@ public class AccountService {
 
         // 기존 계좌 조회
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
 
         //통계에 사용할 수정 전 계좌 깊은 복사
         Account oldAccount = Account.builder()
@@ -111,11 +111,11 @@ public class AccountService {
 
         // SubCategory 조회
         SubCategory subCategory = subCategoryRepository.findBySubNameAndUserId(request.getSubName(), userId)
-                .orElseThrow(() -> new IllegalArgumentException("SubCategory not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SUBCATEGORY_NOT_FOUND));
 
         // SubAsset 조회
         SubAsset subAsset = subAssetRepository.findBySubNameAndUserId(request.getSubAssetName(), userId)
-                .orElseThrow(() -> new IllegalArgumentException("SubAsset not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SUB_ASSET_NOT_FOUND));
 
         // 필드 업데이트
         account.setAccountType(AccountType.valueOf(request.getAccountType()));
@@ -140,7 +140,7 @@ public class AccountService {
         tokenProvider.extractUserIdFromToken(token);
 
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
 
         //통계 업데이트
         categoryStatisticsService.updateStatisticsOnDelete(token, account);
@@ -192,14 +192,17 @@ public class AccountService {
         tokenProvider.extractUserIdFromToken(token);
         // Follow 객체 조회
         Follow follow = followRepository.findById(followId)
-                .orElseThrow(() -> new IllegalArgumentException("Follow not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.FOLLOW_INFO_NOT_FOUND));
 
         // followingId 조회
         Long followingId = follow.getFollowingId();
+        if (followingId == null) {
+            throw new GeneralException(ErrorStatus.INVALID_FOLLOW_DATA);
+        }
 
         // name 가져오기
         User User = userRepository.findById(followingId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         String name = User.getName();
 
