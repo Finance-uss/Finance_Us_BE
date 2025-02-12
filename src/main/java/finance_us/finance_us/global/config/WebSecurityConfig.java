@@ -111,6 +111,7 @@ public class WebSecurityConfig {
 
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("https://financeus.netlify.app");
         source.registerCorsConfiguration("/**", config);
         return source;
     }
