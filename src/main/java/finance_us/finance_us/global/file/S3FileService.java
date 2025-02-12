@@ -22,8 +22,7 @@ public class S3FileService
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String saveFile(MultipartFile multipartFile) throws IOException {
-        String originalFilename = multipartFile.getOriginalFilename();
+    public String saveFile(MultipartFile multipartFile, String originalFilename) throws IOException {
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());

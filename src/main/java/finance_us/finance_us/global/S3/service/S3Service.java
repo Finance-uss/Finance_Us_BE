@@ -31,7 +31,7 @@ public class S3Service {
         String imageName = UUID.randomUUID().toString() + "_" +file.getOriginalFilename();
         try {
             // S3에 이미지 업로드
-            imageUrl = s3FileService.saveFile(file);
+            imageUrl = s3FileService.saveFile(file, imageName);
         } catch (IOException e) {
             throw new GeneralException(ErrorStatus.IMAGE_FAILED);
         }

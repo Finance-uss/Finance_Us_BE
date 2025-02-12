@@ -105,7 +105,7 @@ public class UserService {
         String imageUrl;
         try {
             // S3에 이미지 업로드
-            imageUrl = s3FileService.saveFile(file);
+            imageUrl = s3FileService.saveFile(file, file.getOriginalFilename());
         } catch (IOException e) {
         throw new GeneralException(ErrorStatus.IMAGE_FAILED);
         }
