@@ -21,7 +21,6 @@ public class AccountController {
 
     private final AccountService accountService;
     private final LikeService likeService;
-    private final AccountImageService accountImageService;
     private final GoogleOcrService googleOcrService;
     private final AccountImageExtractService accountImageExtractService;
 
@@ -89,19 +88,6 @@ public class AccountController {
         }
 
         return ApiResponse.onSuccess( accountImageExtractService.extractAccountFromReceipt(extractedText));
-
-    }
-
-    // S3 이미지 업로드
-    @PostMapping(value = "/image", consumes = "multipart/form-data")
-    public ApiResponse<String> uploadImage(
-            @RequestHeader("Authorization") String token,
-            @RequestParam("file") MultipartFile file) {
-
-        String response =  accountImageService.saveImage(token, file);
-
-        return ApiResponse.onSuccess(response); // 업로드된 파일 URL 반환
-
 
     }
 
