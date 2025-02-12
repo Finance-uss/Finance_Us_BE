@@ -29,5 +29,6 @@ public class ReportResponse {
         private LocalDate date;
         private String subName;
         private String imageUrl;
+        private String imageName;
     }
 }

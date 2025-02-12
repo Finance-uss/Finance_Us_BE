@@ -23,6 +23,7 @@ public class CalendarDetailResponse {
         private String title;
         private int score;
         private String imageUrl;
+        private String imageName;
         private String content;
     }
 }

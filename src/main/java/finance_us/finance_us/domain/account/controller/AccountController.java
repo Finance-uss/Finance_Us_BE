@@ -3,10 +3,7 @@ package finance_us.finance_us.domain.account.controller;
 import finance_us.finance_us.domain.account.converter.AccountConverter;
 import finance_us.finance_us.domain.account.dto.*;
 import finance_us.finance_us.domain.account.entity.Account;
-import finance_us.finance_us.domain.account.service.AccountImageExtractService;
-import finance_us.finance_us.domain.account.service.AccountService;
-import finance_us.finance_us.domain.account.service.GoogleOcrService;
-import finance_us.finance_us.domain.account.service.LikeService;
+import finance_us.finance_us.domain.account.service.*;
 import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
@@ -16,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
-
 
 @RestController
 @RequestMapping("/api/account")
