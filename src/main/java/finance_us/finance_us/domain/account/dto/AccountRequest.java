@@ -23,6 +23,7 @@ public class AccountRequest {
         private Boolean status;
         private Integer score;
         private String imageUrl;
+        private String imageName;
         private String content;
     }
 

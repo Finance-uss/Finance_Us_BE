@@ -49,6 +49,7 @@ public class Account {
     private int totalCheer;
 
     private String imageUrl;
+    private String imageName;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

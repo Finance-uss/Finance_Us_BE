@@ -1,5 +1,7 @@
 package finance_us.finance_us.global.S3.service;
 
+import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.global.S3.dto.S3Request;
 import finance_us.finance_us.global.S3.dto.S3Response;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
@@ -8,6 +10,7 @@ import finance_us.finance_us.security.TokenProvider;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -34,6 +37,15 @@ public class S3Service {
         }
 
         return new S3Response.S3ResponseDTO(imageUrl, imageName);
+    }
+
+    //S3 삭제
+    @Transactional
+    public void deleteS3(String token, @RequestBody S3Request request){
+        tokenProvider.extractUserIdFromToken(token);
+
+        s3FileService.deleteImage(request.getImageName());
+
     }
 }
 

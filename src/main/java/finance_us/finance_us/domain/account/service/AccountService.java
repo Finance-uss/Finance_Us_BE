@@ -70,6 +70,7 @@ public class AccountService {
                 .score(request.getScore())
                 .content(request.getContent())
                 .imageUrl(request.getImageUrl())
+                .imageName(request.getImageName())
                 .subCategory(subCategory)
                 .subAsset(subAsset)
                 .user(user)
