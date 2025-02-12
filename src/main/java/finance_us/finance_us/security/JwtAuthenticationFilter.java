@@ -1,6 +1,9 @@
 package finance_us.finance_us.security;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -26,33 +30,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private TokenProvider tokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
-            String token=parseBearerToken(request);
-            log.info("Filter if running...");
+            String token = parseBearerToken(request);
 
-            if(token != null && !token.equalsIgnoreCase("null")) {
-                Long userId=tokenProvider.extractUserIdFromToken(token);
-                log.info("Authenticated user ID :"+userId);
-                AbstractAuthenticationToken authentication=new UsernamePasswordAuthenticationToken(userId,null, AuthorityUtils.NO_AUTHORITIES);
+            if (token != null && !token.equalsIgnoreCase("null")) {
+                Long userId = tokenProvider.extractUserIdFromToken(token);
+                log.info("Authenticated user ID: " + userId);
+
+                AbstractAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userId, null, AuthorityUtils.NO_AUTHORITIES);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContext securityContext= SecurityContextHolder.createEmptyContext();
+
+                SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authentication);
                 SecurityContextHolder.setContext(securityContext);
             }
-        }catch (Exception e) {
-            logger.error("Failed to set user authentication in SecurityContext", e);
+
+            filterChain.doFilter(request, response);
+        } catch (GeneralException e) {
+            handleException(response, e); // 예외 발생 시 직접 JSON 응답 반환
+        } catch (Exception e) {
+            handleException(response, new GeneralException(ErrorStatus.JWT_MALFORMED));
         }
-        filterChain.doFilter(request, response);
     }
 
     private String parseBearerToken(HttpServletRequest request) {
-        String bearerToken=request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
     }
 
+    private void handleException(HttpServletResponse response, GeneralException ex) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(ex.getErrorReasonHttpStatus().getHttpStatus().value());
+        response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of(
+                "status", ex.getErrorReasonHttpStatus().getCode(),
+                "message", ex.getErrorReasonHttpStatus().getMessage()
+        )));
+    }
 }
-

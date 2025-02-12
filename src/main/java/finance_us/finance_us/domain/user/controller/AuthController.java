@@ -81,9 +81,6 @@ public class AuthController {
             @Parameter(name = "Authorization", description = "Bearer access 토큰", required = true)
     })
     public ApiResponse<Map<String, String>> refreshToken(@RequestHeader("Authorization") String token) {
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
 
         String newToken = authService.refreshToken(token);
 

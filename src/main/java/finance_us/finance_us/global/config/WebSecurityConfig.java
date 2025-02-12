@@ -61,12 +61,24 @@ public class WebSecurityConfig {
         http.exceptionHandling(except -> {
             // 인증 실패 (401)
             except.authenticationEntryPoint((request, response, authException) -> {
-                throw new GeneralException(ErrorStatus._UNAUTHORIZED); // GeneralException으로 던짐
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write(objectMapper.writeValueAsString(Map.of(
+                        "status", ErrorStatus._UNAUTHORIZED.getCode(),
+                        "message", ErrorStatus._UNAUTHORIZED.getMessage()
+                )));
             });
 
             // 인가 실패 (403)
             except.accessDeniedHandler((request, response, accessDeniedException) -> {
-                throw new GeneralException(ErrorStatus._FORBIDDEN); // GeneralException으로 던짐
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write(objectMapper.writeValueAsString(Map.of(
+                        "status", ErrorStatus._FORBIDDEN.getCode(),
+                        "message", ErrorStatus._FORBIDDEN.getMessage()
+                )));
             });
         });
 

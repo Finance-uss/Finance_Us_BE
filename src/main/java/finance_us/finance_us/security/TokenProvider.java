@@ -2,6 +2,8 @@
 package finance_us.finance_us.security;
 
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -59,8 +61,21 @@ public class TokenProvider {
 
     // 사용자 ID 추출
     public Long extractUserIdFromToken(String token) {
-        return extractClaims(token).get("userId", Long.class); // JWT의 "userId" 클레임에서 추출
+        if (token == null || token.isBlank()) {
+            throw new IllegalArgumentException("토큰이 비어 있거나 null입니다.");
+        }
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        try {
+            return extractClaims(token).get("userId", Long.class);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.JWT_MALFORMED);
+        }
     }
+
 
     // 토큰 유효성 확인
     public boolean isValidToken(String token) {

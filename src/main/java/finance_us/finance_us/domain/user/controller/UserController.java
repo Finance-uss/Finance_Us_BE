@@ -34,9 +34,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final TokenProvider tokenProvider;
-    private final AuthService authService;
-    private final S3FileService s3FileService;
 
     @GetMapping("/mailCheck")
     @Operation(summary = "이메일 중복확인 API", description = "이메일을 중복확인 합니다.")
@@ -75,10 +72,8 @@ public class UserController {
     })
     public ApiResponse<Map<String,Object>> resetMail(@RequestHeader("Authorization") String token, @RequestParam String email) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-
         userService.mailCheck(email);
-        userService.changeMail(userId, email);
+        Long userId = userService.changeMail(token, email);
 
         Map<String, Object> response = new HashMap<>();
         response.put("userId", userId);
@@ -122,6 +117,20 @@ public class UserController {
 
         return ApiResponse.onSuccess(response);
     }
+
+    @GetMapping("/passwordCheck")
+    @Operation(summary = "비밀번호 확인", description = "사용자의 비밀번호가 맞는지 확인합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<Boolean> passwordCheck (@RequestHeader("Authorization") String token, @RequestParam String password) {
+
+        return ApiResponse.onSuccess(userService.passwordCheck(token, password));
+    }
+
 
     @PostMapping(value = "/image", consumes = "multipart/form-data")
     @Operation(summary = "사용자 프로필 사진 업로드", description = "사용자의 프로필 사진을 업로드합니다.")
@@ -209,8 +218,7 @@ public class UserController {
     })
     public ApiResponse<String> withDrawUser(@RequestHeader("Authorization") String token) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-        userService.deleteUser(userId);
+        userService.deleteUser(token);
         return ApiResponse.onSuccess("삭제 완료되었습니다. ");
     }
 
@@ -218,18 +226,14 @@ public class UserController {
     @Operation(summary = "회원 조회 API", description = "회원을 조회합니다.")
     public ApiResponse<AuthResponseDTO.ReadResponseDTO> readUser(@RequestHeader("Authorization") String token) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-
-        return ApiResponse.onSuccess(userService.readUser(userId));
+        return ApiResponse.onSuccess(userService.readUser(token));
     }
 
     @PatchMapping()
     @Operation(summary = "회원 수정 API", description = "회원을 수정합니다.")
     public ApiResponse<String> updateUser(@RequestHeader("Authorization") String token, AuthRequestDTO.UpdateRequestDTO updateRequestDTO) {
 
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-
-        return ApiResponse.onSuccess(userService.updateUser(userId, updateRequestDTO));
+        return ApiResponse.onSuccess(userService.updateUser(token, updateRequestDTO));
     }
 
 
