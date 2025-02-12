@@ -19,10 +19,14 @@ public class PeriodStatisticsController {
     @Operation(summary = "이번 년도의 기간별 통계 조회 API(막대 그래프)")
     public ApiResponse<PeriodStatisticsResponse> getYearlyStatistics(
             @RequestParam("Authorization") String token,
-            @RequestParam Long year,
+            @RequestParam Long startYear,
+            @RequestParam Long startMonth,
+            @RequestParam Long endYear,
+            @RequestParam Long endMonth,
             @RequestParam String type)
     {
-        PeriodStatisticsResponse response = periodStatisticsService.getYearlyStatistics(token, year, type);
+        PeriodStatisticsResponse response = periodStatisticsService.getStatisticsByPeriod(
+                token, startYear, startMonth, endYear, endMonth, type);
         return ApiResponse.onSuccess(response);
     }
 

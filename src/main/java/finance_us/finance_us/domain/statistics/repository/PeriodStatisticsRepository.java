@@ -34,4 +34,17 @@ public interface PeriodStatisticsRepository extends JpaRepository<PeriodStatisti
      * ✅ 특정 연도 + 월의 통계 데이터 단일 조회
      */
     Optional<PeriodStatistics> findByYearAndMonthAndTypeAndUserId(Long year, Long month, Type type, Long userId);
+
+    @Query("SELECT ps FROM PeriodStatistics ps WHERE " +
+            "(ps.year > :startYear OR (ps.year = :startYear AND ps.month >= :startMonth)) " +
+            "AND (ps.year < :endYear OR (ps.year = :endYear AND ps.month <= :endMonth)) " +
+            "AND ps.type = :type AND ps.user.Id = :userId " +
+            "ORDER BY ps.year, ps.month")
+    List<PeriodStatistics> findByDateRangeAndTypeAndUserId(@Param("startYear") Long startYear,
+                                                           @Param("startMonth") Long startMonth,
+                                                           @Param("endYear") Long endYear,
+                                                           @Param("endMonth") Long endMonth,
+                                                           @Param("type") Type type,
+                                                           @Param("userId") Long userId);
+
 }
