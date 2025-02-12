@@ -12,6 +12,8 @@ import finance_us.finance_us.domain.account.repository.CheerRepository;
 import finance_us.finance_us.domain.account.repository.LikeRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
+import finance_us.finance_us.global.code.status.ErrorStatus;
+import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,16 +36,16 @@ public class LikeService {
 
         // userId로 사용자 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         // accountId로 가계부 조회
         Account account = accountRepository.findById(request.getAccountId())
-                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
 
        // 중복 좋아요 체크
         Optional<AccountLike> existingLike = likeRepository.findByUserIdAndAccountId(userId, request.getAccountId());
         if (existingLike.isPresent()) {
-            throw new IllegalStateException("이미 좋아요를 누르셨습니다.");
+            throw new GeneralException(ErrorStatus.ALREADY_LIKE);
         }
 
         // 좋아요 생성
@@ -72,16 +74,16 @@ public class LikeService {
 
         // userId로 사용자 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         // accountId로 가계부 조회
         Account account = accountRepository.findById(request.getAccountId())
-                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
 
-        // 중복 좋아요 체크
+        // 중복 응원해요 체크
         Optional<AccountCheer> existingLike = cheerRepository.findByUserIdAndAccountId(userId, request.getAccountId());
         if (existingLike.isPresent()) {
-            throw new IllegalStateException("이미 응원해요를 누르셨습니다.");
+            throw new GeneralException(ErrorStatus.ALREADY_CHEER);
         }
 
         // 좋아요 생성

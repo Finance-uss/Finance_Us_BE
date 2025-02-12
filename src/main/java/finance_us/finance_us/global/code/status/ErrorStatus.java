@@ -31,6 +31,8 @@ public enum ErrorStatus implements BaseErrorCode {
     JWT_MALFORMED(HttpStatus.UNAUTHORIZED, "AUTH003", "JWT 토큰이 올바르지 않은 형식입니다."),
 
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ACCOUNT4001", "가계부를 찾을 수 없습니다."),
+    ALREADY_LIKE(HttpStatus.BAD_REQUEST, "LIKE4001", "이미 좋아요를 누르셨습니다."),
+    ALREADY_CHEER(HttpStatus.BAD_REQUEST, "CHEER4001", "이미 응원해요를 누르셨습니다."),
 
     MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_MISSION_4001", "미션이 존재하지 않습니다."),
 
