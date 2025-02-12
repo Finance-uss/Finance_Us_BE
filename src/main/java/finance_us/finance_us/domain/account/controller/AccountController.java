@@ -3,10 +3,7 @@ package finance_us.finance_us.domain.account.controller;
 import finance_us.finance_us.domain.account.converter.AccountConverter;
 import finance_us.finance_us.domain.account.dto.*;
 import finance_us.finance_us.domain.account.entity.Account;
-import finance_us.finance_us.domain.account.service.AccountImageExtractService;
-import finance_us.finance_us.domain.account.service.AccountService;
-import finance_us.finance_us.domain.account.service.GoogleOcrService;
-import finance_us.finance_us.domain.account.service.LikeService;
+import finance_us.finance_us.domain.account.service.*;
 import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
@@ -17,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
-
 @RestController
 @RequestMapping("/api/account")
 @RequiredArgsConstructor
@@ -26,6 +21,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final LikeService likeService;
+    private final AccountImageService accountImageService;
     private final GoogleOcrService googleOcrService;
     private final AccountImageExtractService accountImageExtractService;
 
@@ -93,6 +89,19 @@ public class AccountController {
         }
 
         return ApiResponse.onSuccess( accountImageExtractService.extractAccountFromReceipt(extractedText));
+
+    }
+
+    // S3 이미지 업로드
+    @PostMapping(value = "/image", consumes = "multipart/form-data")
+    public ApiResponse<String> uploadImage(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("file") MultipartFile file) {
+
+        String response =  accountImageService.saveImage(token, file);
+
+        return ApiResponse.onSuccess(response); // 업로드된 파일 URL 반환
+
 
     }
 
