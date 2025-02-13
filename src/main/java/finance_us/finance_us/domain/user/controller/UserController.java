@@ -3,6 +3,7 @@ package finance_us.finance_us.domain.user.controller;
 import com.amazonaws.services.ec2.model.AssignPrivateIpAddressesRequest;
 import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
 import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
+import finance_us.finance_us.domain.user.dto.UserRequestDto;
 import finance_us.finance_us.domain.user.service.AuthService;
 import finance_us.finance_us.domain.user.service.UserService;
 import finance_us.finance_us.global.ApiResponse;
@@ -132,7 +133,7 @@ public class UserController {
     }
 
 
-    @PostMapping(value = "/image", consumes = "multipart/form-data")
+    @PostMapping(value = "/image")
     @Operation(summary = "사용자 프로필 사진 업로드", description = "사용자의 프로필 사진을 업로드합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
@@ -141,26 +142,21 @@ public class UserController {
     })
     public ApiResponse<Map<String, Object>> uploadImage(
             @RequestHeader("Authorization") String token,
-            @Parameter(
-                    description = "업로드할 파일",
-                    required = true,
-                    content = @Content(mediaType = "multipart/form-data",
-                            schema = @Schema(type = "string", format = "binary")))
-            @RequestParam("file") MultipartFile file) {
+            @RequestBody UserRequestDto.imageRequestDto imageRequestDto) {
 
         // DB에 이미지 URL 저장
-        String imageUrl =  userService.saveImage(token, file);
+        userService.saveImage(token, imageRequestDto.getImageUrl(), imageRequestDto.getImageName());
 
         // 응답 데이터 생성
         Map<String, Object> response = new HashMap<>();
-        response.put("profileImageUrl", imageUrl);
+        response.put("profileImageUrl", imageRequestDto.getImageUrl());
 
         return ApiResponse.onSuccess(response); // 업로드된 파일 URL 반환
 
 
     }
 
-    @PatchMapping(value = "/image", consumes = "multipart/form-data")
+    @PatchMapping(value = "/image")
     @Operation(summary = "사용자 프로필 사진 수정", description = "사용자의 프로필 사진을 수정합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
@@ -169,22 +165,17 @@ public class UserController {
     })
     public ApiResponse<Map<String, Object>> resetImage(
             @RequestHeader("Authorization") String token,
-            @Parameter(
-                    description = "수정 파일",
-                    required = true,
-                    content = @Content(mediaType = "multipart/form-data",
-                            schema = @Schema(type = "string", format = "binary")))
-            @RequestParam("file") MultipartFile file) {
+            @RequestBody UserRequestDto.imageRequestDto imageRequestDto) {
 
         // 이전 이미지 삭제
         userService.deleteImage(token);
 
         // DB에 이미지 URL 저장
-        String imageUrl =  userService.saveImage(token, file);
+        userService.saveImage(token, imageRequestDto.getImageUrl(), imageRequestDto.getImageName());
 
         // 응답 데이터 생성
         Map<String, Object> response = new HashMap<>();
-        response.put("profileImageUrl", imageUrl);
+        response.put("profileImageUrl", imageRequestDto.getImageUrl());
 
         return ApiResponse.onSuccess(response); // 업로드된 파일 URL 반환
 

@@ -99,19 +99,12 @@ public class UserService {
 
     //이미지 저장
     @Transactional
-    public String saveImage(String token, MultipartFile file) {
+    public String saveImage(String token, String imageUrl, String imageName) {
 
         Long userId = tokenProvider.extractUserIdFromToken(token);
-        String imageUrl;
-        try {
-            // S3에 이미지 업로드
-            imageUrl = s3FileService.saveFile(file, file.getOriginalFilename());
-        } catch (IOException e) {
-        throw new GeneralException(ErrorStatus.IMAGE_FAILED);
-        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
-        user.setImageName(file.getOriginalFilename());
+        user.setImageName(imageName);
         user.setImage(imageUrl);
         userRepository.save(user);
 
@@ -124,9 +117,6 @@ public class UserService {
         Long userId = tokenProvider.extractUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException((ErrorStatus.MEMBER_NOT_FOUND)));
-
-        String name = user.getImageName();
-        s3FileService.deleteImage(name);
 
         user.setImage(null);
         user.setImageName(null);
