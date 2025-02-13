@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentResponse {
@@ -44,6 +45,10 @@ public class CommentResponse {
         private String userImageUrl; // 댓글 작성자 프로필 사진 url
         private String userImageName;
         private String content;
+
+        @Builder.Default
+        private List<CommentDTO> replies = new ArrayList<>(); // 대댓글 리스트
+
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
