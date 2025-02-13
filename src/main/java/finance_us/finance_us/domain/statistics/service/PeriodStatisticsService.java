@@ -29,17 +29,18 @@ public class PeriodStatisticsService {
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
 
-    public PeriodStatisticsResponse getYearlyStatistics(String token, Long year, String type){
+    public PeriodStatisticsResponse getStatisticsByPeriod(String token, Long startYear, Long startMonth, Long endYear, Long endMonth, String type){
         Long userId = tokenProvider.extractUserIdFromToken(token);
         Type statisticsType = Type.valueOf(type.toUpperCase());
 
-        List<PeriodStatistics> statistics = periodStatisticsRepository.findByYearAndTypeAndUserId(year, statisticsType, userId);
+        List<PeriodStatistics> statistics = periodStatisticsRepository.findByDateRangeAndTypeAndUserId(
+                startYear, startMonth, endYear, endMonth, statisticsType, userId);
 
-        List<PeriodStatisticsResponse.MonthData> monthlyData = statistics.stream()
-                .map(stat -> new PeriodStatisticsResponse.MonthData(stat.getMonth(), stat.getTotalMoney()))
+        List<PeriodStatisticsResponse.MonthData> periodData = statistics.stream()
+                .map(stat -> new PeriodStatisticsResponse.MonthData(stat.getYear(), stat.getMonth(), stat.getTotalMoney()))
                 .collect(Collectors.toList());
 
-        return new PeriodStatisticsResponse(year, type, monthlyData);
+        return new PeriodStatisticsResponse(type, periodData);
     }
 
     @Transactional(readOnly = true)

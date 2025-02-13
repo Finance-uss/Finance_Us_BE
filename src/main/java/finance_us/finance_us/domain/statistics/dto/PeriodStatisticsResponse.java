@@ -8,13 +8,13 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class PeriodStatisticsResponse {
-    private Long year;
     private String type;
     private List<MonthData> monthlyData;
 
     @Getter
     @AllArgsConstructor
     public static class MonthData{
+        private Long year;
         private Long month;
         private Long totalMoney;
     }
