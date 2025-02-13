@@ -76,6 +76,7 @@ public class PostResponse {
         private String title;
         private String content;
         private String imageUrl;
+        private String imageName;
         private Long likes;
         private Long comments;
 
@@ -84,6 +85,7 @@ public class PostResponse {
             this.title = post.getTitle();
             this.content = post.getContent();
             this.imageUrl = post.getImageUrl();
+            this.imageName = post.getImageName();
             this.likes = likeCount;
             this.comments = commentCount;
         }
@@ -98,12 +100,14 @@ public class PostResponse {
         private Long postId;
         private Long userId;
         private String name;
-//        private String userImageUrl;
+        private String userImageUrl;
+        private String userImageName;
         private String title;
         private String content;
         private PostType postType;
         private Category category;
         private String imageUrl;
+        private String imageName;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 

@@ -49,7 +49,7 @@ public class CommentController {
                 .collect(Collectors.toList());
 
         CommentResponse.CommentResultDTO commentResultDTO = CommentResponse.CommentResultDTO.builder()
-                .commentId(postId)
+                .postId(postId)
                 .commentCount(commentCount)
                 .commentsList(commentDTOS)
                 .build();
