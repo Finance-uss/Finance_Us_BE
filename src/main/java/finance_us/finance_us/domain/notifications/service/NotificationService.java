@@ -107,7 +107,7 @@ public class NotificationService {
 
         // 알림 대상은 가계부 주인
         User targetUser = account.getUser();
-        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+        //if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
 
         String message = "해당 가계부에 느낌을 표시했습니다.";
 
@@ -132,7 +132,7 @@ public class NotificationService {
 
         // 알림 대상은 게시글 주인
         User targetUser = post.getUser();
-        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+        //if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
 
         String message = "해당 게시글에 좋아요가 달렸습니다.";
 
@@ -157,7 +157,7 @@ public class NotificationService {
 
         // 알림 대상은 게시글 주인
         User targetUser = post.getUser();
-        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+        //if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
 
         String message = "해당 게시글에 댓글이 달렸습니다.";
 
@@ -182,7 +182,7 @@ public class NotificationService {
 
         // 알림 대상은 댓글 작성자
         User targetUser = comment.getUser();
-        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+        //if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
 
         // 해당 댓글이 달린 게시글을 찾아서 resource로 전달
         Post post = comment.getPost();
