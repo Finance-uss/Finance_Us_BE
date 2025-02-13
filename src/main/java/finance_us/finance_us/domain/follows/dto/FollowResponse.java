@@ -8,5 +8,5 @@ import lombok.Getter;
 public class FollowResponse {
     private Long followingId;
     private String name;
-    //private String profileImage;
+    private String profileImage;
 }

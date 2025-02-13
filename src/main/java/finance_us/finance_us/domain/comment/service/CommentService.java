@@ -3,6 +3,7 @@ package finance_us.finance_us.domain.comment.service;
 import finance_us.finance_us.domain.comment.dto.CommentRequest;
 import finance_us.finance_us.domain.comment.entity.Comment;
 import finance_us.finance_us.domain.comment.repository.CommentRepository;
+import finance_us.finance_us.domain.notifications.service.NotificationService;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.repository.PostRepository;
 import finance_us.finance_us.domain.user.entity.User;
@@ -20,6 +21,8 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    //알림 서비스 추가
+    private final NotificationService notificationService;
 
     // 댓글 생성
     public Comment createComment(String token, Long postId, CommentRequest.CommentRequestDTO request) {
@@ -38,6 +41,9 @@ public class CommentService {
                 .post(post)
                 .user(user)
                 .build();
+
+        // 알림 추가
+        notificationService.addCommentNotification(postId, userId);
 
         return commentRepository.save(comment);
     }

@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.post.service;
 
+import finance_us.finance_us.domain.notifications.service.NotificationService;
 import finance_us.finance_us.domain.post.converter.PostLikeConverter;
 import finance_us.finance_us.domain.post.dto.PostLikeResponse;
 import finance_us.finance_us.domain.post.entity.Post;
@@ -19,6 +20,8 @@ public class PostLikeService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    //알림 서비스 추가
+    private final NotificationService notificationService;
 
     // 게시글에 좋아요 추가
     public PostLikeResponse.PostLikeResponseDTO likePost(String token, Long postId) {
@@ -46,6 +49,9 @@ public class PostLikeService {
         postLikeRepository.save(postLike);
 
         Long likesCount = postLikeRepository.countLikesByPostId(postId);
+
+        // 알림 추가
+        notificationService.addPostLikeNotification(postId, userId);
 
         return PostLikeConverter.toPostLikeResponseDTO(postLike, likesCount);
     }

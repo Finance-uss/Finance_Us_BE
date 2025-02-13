@@ -1,11 +1,18 @@
 package finance_us.finance_us.domain.notifications.service;
 
+import finance_us.finance_us.domain.account.entity.Account;
+import finance_us.finance_us.domain.account.repository.AccountRepository;
+import finance_us.finance_us.domain.comment.entity.Comment;
+import finance_us.finance_us.domain.comment.repository.CommentRepository;
 import finance_us.finance_us.domain.notifications.dto.NotificationListResponse;
 import finance_us.finance_us.domain.notifications.dto.NotificationResponse;
 import finance_us.finance_us.domain.notifications.dto.UnreadNotificationsResponse;
 import finance_us.finance_us.domain.notifications.entity.Notification;
+import finance_us.finance_us.domain.notifications.entity.status.ResourceType;
 import finance_us.finance_us.domain.notifications.entity.status.Type;
 import finance_us.finance_us.domain.notifications.repository.NotificationRepository;
+import finance_us.finance_us.domain.post.entity.Post;
+import finance_us.finance_us.domain.post.repository.PostRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
@@ -25,6 +32,9 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final AccountRepository accountRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public NotificationListResponse getNotifications(String token, Long lastNotificationId, int size) {
@@ -68,6 +78,7 @@ public class NotificationService {
         return new UnreadNotificationsResponse(hasUnread);
     }
 
+    //팔로우 시 알림 생성
     public void addFollowNotification(Long targetUserId, Long followerId){
         User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -85,5 +96,108 @@ public class NotificationService {
 
         notificationRepository.save(notification);
 
+    }
+
+    //가계부에 이모지 추가 시 알림 생성
+    public void addEmojiNotification(Long accountId, Long senderUserId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
+        User sender = userRepository.findById(senderUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 알림 대상은 가계부 주인
+        User targetUser = account.getUser();
+        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+
+        String message = "해당 가계부에 느낌을 표시했습니다.";
+
+        Notification notification = Notification.builder()
+                .type(Type.EMOJI)
+                .message(message)
+                .resourceType(ResourceType.ACCOUNT)
+                .resourceId(accountId)
+                .isRead(false)
+                .user(targetUser)
+                .build();
+
+        notificationRepository.save(notification);
+    }
+
+    //게시글에 좋아요 추가 시 알림 생성
+    public void addPostLikeNotification(Long postId, Long senderUserId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ARTICLE_NOT_FOUND));
+        User sender = userRepository.findById(senderUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 알림 대상은 게시글 주인
+        User targetUser = post.getUser();
+        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+
+        String message = "해당 게시글에 좋아요가 달렸습니다.";
+
+        Notification notification = Notification.builder()
+                .type(Type.LIKE)
+                .message(message)
+                .resourceType(ResourceType.POST)
+                .resourceId(postId)
+                .isRead(false)
+                .user(targetUser)
+                .build();
+
+        notificationRepository.save(notification);
+    }
+
+    //게시글에 댓글 추가 시 알림 생성
+    public void addCommentNotification(Long postId, Long senderUserId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ARTICLE_NOT_FOUND));
+        User sender = userRepository.findById(senderUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 알림 대상은 게시글 주인
+        User targetUser = post.getUser();
+        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+
+        String message = "해당 게시글에 댓글이 달렸습니다.";
+
+        Notification notification = Notification.builder()
+                .type(Type.COMMENT)
+                .message(message)
+                .resourceType(ResourceType.POST)
+                .resourceId(postId)
+                .isRead(false)
+                .user(targetUser)
+                .build();
+
+        notificationRepository.save(notification);
+    }
+
+    //댓글에 좋아요 추가 시 알림 생성
+    public void addCommentLikeNotification(Long commentId, Long senderUserId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        User sender = userRepository.findById(senderUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 알림 대상은 댓글 작성자
+        User targetUser = comment.getUser();
+        if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
+
+        // 해당 댓글이 달린 게시글을 찾아서 resource로 전달
+        Post post = comment.getPost();
+
+        String message = "해당 댓글에 좋아요가 달렸습니다.";
+
+        Notification notification = Notification.builder()
+                .type(Type.LIKE)
+                .message(message)
+                .resourceType(ResourceType.POST)
+                .resourceId(post.getId()) // 댓글이 달린 게시글 ID 전달
+                .isRead(false)
+                .user(targetUser)
+                .build();
+
+        notificationRepository.save(notification);
     }
 }

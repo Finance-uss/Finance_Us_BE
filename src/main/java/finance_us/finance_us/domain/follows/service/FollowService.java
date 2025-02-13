@@ -73,7 +73,8 @@ public class FollowService {
 
                     return new FollowResponse(
                             follow.getFollowingId(),
-                            followingUser.getName()
+                            followingUser.getName(),
+                            followingUser.getImage()
                     );
                 })
                 .collect(Collectors.toList());

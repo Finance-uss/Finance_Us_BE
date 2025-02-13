@@ -6,6 +6,8 @@ import finance_us.finance_us.domain.comment.entity.Comment;
 import finance_us.finance_us.domain.comment.entity.CommentLike;
 import finance_us.finance_us.domain.comment.repository.CommentLikeRepository;
 import finance_us.finance_us.domain.comment.repository.CommentRepository;
+import finance_us.finance_us.domain.notifications.entity.Notification;
+import finance_us.finance_us.domain.notifications.service.NotificationService;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.security.TokenProvider;
@@ -19,6 +21,8 @@ public class CommentLikeService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    //알림 서비스 추가
+    private final NotificationService notificationService;
 
     // 댓글 좋아요 추가
     public CommentLikeResponse.CommentLikeResponseDTO likeComment(String token, Long commentId) {
@@ -46,6 +50,9 @@ public class CommentLikeService {
         commentLikeRepository.save(commentLike);
 
         Long likesCount = commentLikeRepository.countLikesByCommentId(commentId);
+
+        // 알림 추가
+        notificationService.addCommentLikeNotification(commentId, userId);
 
         return CommentLikeConverter.toCommentLikeResponseDTO(commentLike, likesCount);
     }

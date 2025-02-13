@@ -10,6 +10,7 @@ import finance_us.finance_us.domain.account.entity.AccountLike;
 import finance_us.finance_us.domain.account.repository.AccountRepository;
 import finance_us.finance_us.domain.account.repository.CheerRepository;
 import finance_us.finance_us.domain.account.repository.LikeRepository;
+import finance_us.finance_us.domain.notifications.service.NotificationService;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
@@ -28,6 +29,8 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final CheerRepository cheerRepository;
     private final TokenProvider tokenProvider;
+    //알림 서비스 추가
+    private final NotificationService notificationService;
 
 
     public LikeResponse.LikeResponseDTO createLike(LikeRequest.LikeRequestDTO request, String token) {
@@ -58,6 +61,9 @@ public class LikeService {
         // likeTotal 증가
         account.setTotalLike(account.getTotalLike() + 1);
         accountRepository.save(account);
+
+        //알림 추가
+        notificationService.addEmojiNotification(request.getAccountId(), userId);
 
         // 응답 생성
         return LikeResponse.LikeResponseDTO.builder()
@@ -96,6 +102,9 @@ public class LikeService {
         // likeTotal 증가
         account.setTotalCheer(account.getTotalCheer() + 1);
         accountRepository.save(account);
+
+        //알림 추가
+        notificationService.addEmojiNotification(request.getAccountId(), userId);
 
         // 응답 생성
         return CheerResponse.CheerResponseDTO.builder()
