@@ -47,6 +47,7 @@ public class PostService {
                 .postType(PostType.valueOf(request.getPostType()))
                 .category(Category.valueOf(request.getCategory()))
                 .imageUrl(request.getImageUrl())
+                .imageName(request.getImageName())
                 .user(user)
                 .build();
 
@@ -70,6 +71,7 @@ public class PostService {
         post.setPostType(PostType.valueOf(request.getPostType()));
         post.setCategory(Category.valueOf(request.getCategory()));
         post.setImageUrl(request.getImageUrl());
+        post.setImageName(request.getImageName());
 
         return postRepository.save(post);
     }
@@ -231,12 +233,14 @@ public class PostService {
                 post.getId(),
                 post.getUser().getId(),
                 post.getUser().getName(),
-//                post.getUser().getImageUrl(),
+                post.getUser().getImage(), // 유저 프로필사진 url
+                post.getUser().getImageName(),
                 post.getTitle(),
                 post.getContent(),
                 post.getPostType(),
                 post.getCategory(),
-                post.getImageUrl(),
+                post.getImageUrl(), // 게시글 작성 시 첨부하는 사진 url
+                post.getImageName(),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         );

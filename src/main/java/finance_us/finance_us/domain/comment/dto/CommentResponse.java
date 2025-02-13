@@ -26,7 +26,7 @@ public class CommentResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CommentResultDTO{
-        private Long commentId;
+        private Long postId;
         private int commentCount;
         private List<CommentDTO> commentsList;
     }
@@ -41,7 +41,8 @@ public class CommentResponse {
         private Long userId;
         private String name;
         private Boolean isAuthenticated;
-//        private String userImageUrl;
+        private String userImageUrl; // 댓글 작성자 프로필 사진 url
+        private String userImageName;
         private String content;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
