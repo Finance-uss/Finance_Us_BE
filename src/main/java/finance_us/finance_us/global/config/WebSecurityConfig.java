@@ -25,6 +25,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -93,26 +94,22 @@ public class WebSecurityConfig {
         final long MAX_AGE_SECS = 3600;
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("PATCH");
-        config.addAllowedMethod("OPTIONS");
-        config.addAllowedMethod("PATCH");
-        config.setMaxAge(MAX_AGE_SECS);
-        config.addAllowedOrigin("http://localhost:8080");
-        config.addAllowedOrigin("http://localhost:5173");
-        config.addAllowedOrigin("ws://localhost:8080");
-        config.addAllowedOrigin("http://13.209.210.46:8080");
-        config.addAllowedOrigin("ws://13.209.210.46:8080");
+        List<String> allowedOrigins = List.of(
+                "http://localhost:8080",
+                "http://localhost:5173",
+                "ws://localhost:8080",
+                "http://13.209.210.46:8080",
+                "ws://13.209.210.46:8080",
+                "http://localhost:3000",
+                "https://financeus.netlify.app",
+                "http://3.34.46.75"
+        );
 
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://localhost:5173");
-        config.addAllowedOrigin("https://financeus.netlify.app");
+        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.addAllowedHeader("*");
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 }

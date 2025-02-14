@@ -120,16 +120,22 @@ public class AuthController {
         return ApiResponse.onFailure("COMMON400", "이메일 인증번호와 다릅니다.", false);
     }
 
-    @PatchMapping("/{userId}")
-    @Operation(summary = "사용자 인증", description = "사용자의 권한을 인증합니다.")
+    @PatchMapping("/user")
+    @Operation(summary = "사용자 인증", description = "사용자의 권한을 인증 요청합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    public ApiResponse<AuthResponseDTO.UserResponseDTO> authUser(@PathVariable Long userId) {
-        return ApiResponse.onSuccess(authService.authUser(userId));
+    public ApiResponse<AuthResponseDTO.UserResponseDTO> authUser(@RequestHeader("Authorization") String token, @RequestBody AuthRequestDTO.userAuthRequestDTO userAuthRequestDTO) {
+        return ApiResponse.onSuccess(authService.authUser(token, userAuthRequestDTO));
+    }
 
+    @PatchMapping("/user/verify")
+    @Operation(summary = "사용자 인증 승인/거절", description = "디스코드에서 요청을 승인 또는 거절합니다.")
+    public ApiResponse<String> verifyUserAuth(@RequestParam Long userId, @RequestParam boolean approved) {
+        authService.verifyUser(userId, approved);
+        return ApiResponse.onSuccess("처리 완료");
     }
 }

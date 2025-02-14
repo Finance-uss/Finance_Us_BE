@@ -9,6 +9,7 @@ import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.TokenProvider;
 import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,12 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TokenProvider tokenProvider;
+    private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
+    private final DiscordWebhookService discordWebhookService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -102,13 +102,24 @@ public class AuthService {
     }
 
     //사용자 인증
-    public AuthResponseDTO.UserResponseDTO authUser(Long userId){
+    public AuthResponseDTO.UserResponseDTO authUser(String token, AuthRequestDTO.userAuthRequestDTO userAuthRequestDTO){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
         //사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-        user.setAuthenticated(true);
-        userRepository.save(user);
+
+        discordWebhookService.sendAuthRequest(user, userAuthRequestDTO);
 
         return AuthConverter.toUserResponseDTO(user);
+    }
+
+    //디스코드 승인/거절 요청
+    public void verifyUser(Long userId, boolean isApproved){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        user.setAuthenticated(isApproved); // 승인 or 거절 반영
+        userRepository.save(user);
     }
 }
