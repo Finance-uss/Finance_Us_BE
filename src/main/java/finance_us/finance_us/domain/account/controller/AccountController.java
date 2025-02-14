@@ -53,9 +53,9 @@ public class AccountController {
     }
 
     // 가계부 특정 팔로우 조회
-    @GetMapping("/follow/{followId}")
-    public ApiResponse<FollowResponse> getFollow(@PathVariable Long followId,  @RequestHeader("Authorization") String token) {
-        FollowResponse response = accountService.getFollow(followId, token);
+    @GetMapping("/follow/{followingId}")
+    public ApiResponse<FollowResponse> getFollow(@PathVariable Long followingId,  @RequestHeader("Authorization") String token) {
+        FollowResponse response = accountService.getFollow(followingId, token);
         return ApiResponse.onSuccess(response);
     }
 
