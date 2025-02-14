@@ -42,7 +42,8 @@ public class CategoryService
     public List<CategoryResponseDto.MainResponseDto> getCategoryList(Long userId, CategoryType type)
     {
         // 메인 카테고리 정보를 불러온다.
-        var list = mainCategoryRepository.findByUserIdAndCategoryType(userId, type);
+        var list = mainCategoryRepository.findByUserIdAndCategoryType(userId, type.name());
+        log.info(list.toString());
 
         // 반환할 메인카테고리 배열
         var array = new ArrayList<CategoryResponseDto.MainResponseDto>();
@@ -118,6 +119,10 @@ public class CategoryService
 
     public Long deleteSubCategory(Long subId)
     {
+        // 가계부가 연결된 서브 카테고리 리스트를 뽑아내준다. (가게부가 있으면 삭제할 수 없음)
+        var list = subCategoryRepository.linkedAccount(subId);
+        if(!list.isEmpty()) throw new GeneralException(ErrorStatus.SUBCATEGORY_HAS_ACCOUNT);
+
         subCategoryRepository.deleteById(subId);
         return subId;
     }
@@ -233,6 +238,251 @@ public class CategoryService
         return getGoalList(userId, type);
     }
 
+    // 유저가 회원가입을 했을 때 자산과 카테고리를 초기화 시켜주는 부분
+    public void initializeCategoryExpense(Long userId)
+    {
+        User user = User.builder().Id(userId).build();
+        // 식비
+        var main1 = mainCategoryRepository.save(MainCategory.builder()
+                .mainName("식비")
+                .categoryType(CategoryType.EXPENSE)
+                .user(user)
+                .build());
+        // 교통
+        var main2 = mainCategoryRepository.save(MainCategory.builder()
+                .mainName("교통")
+                .categoryType(CategoryType.EXPENSE)
+                .user(user)
+                .build());
+        // 교통
+        var main3 = mainCategoryRepository.save(MainCategory.builder()
+                .mainName("여가/취미")
+                .categoryType(CategoryType.EXPENSE)
+                .user(user)
+                .build());
+
+
+        // 식비
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("외식")
+                .goal(0)
+                .user(user)
+                .mainCategory(main1)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("배달")
+                .goal(0)
+                .user(user)
+                .mainCategory(main1)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("식재료")
+                .goal(0)
+                .user(user)
+                .mainCategory(main1)
+                .build());
+
+        // 교통
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("대중교통")
+                .goal(0)
+                .user(user)
+                .mainCategory(main2)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("택시")
+                .goal(0)
+                .user(user)
+                .mainCategory(main2)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("주유")
+                .goal(0)
+                .user(user)
+                .mainCategory(main2)
+                .build());
+
+        // 여가/취미
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("영화/공연")
+                .goal(0)
+                .user(user)
+                .mainCategory(main3)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("취미 용품")
+                .goal(0)
+                .user(user)
+                .mainCategory(main3)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("여행")
+                .goal(0)
+                .user(user)
+                .mainCategory(main3)
+                .build());
+
+    }
+
+    public void initializeCategoryIncome(Long userId)
+    {
+        User user = User.builder().Id(userId).build();
+        // 급여
+        var main1 = mainCategoryRepository.save(MainCategory.builder()
+                .mainName("급여")
+                .categoryType(CategoryType.INCOME)
+                .user(user)
+                .build());
+        // 투자수익
+        var main2 = mainCategoryRepository.save(MainCategory.builder()
+                .mainName("투자 수익")
+                .categoryType(CategoryType.INCOME)
+                .user(user)
+                .build());
+        // 기타 수익
+        var main3 = mainCategoryRepository.save(MainCategory.builder()
+                .mainName("기타 수익")
+                .categoryType(CategoryType.INCOME)
+                .user(user)
+                .build());
+
+
+        // 급여
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("월급")
+                .goal(0)
+                .user(user)
+                .mainCategory(main1)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("투자 수익")
+                .goal(0)
+                .user(user)
+                .mainCategory(main1)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("기타 수익")
+                .goal(0)
+                .user(user)
+                .mainCategory(main1)
+                .build());
+
+        // 투자 수익
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("주식")
+                .goal(0)
+                .user(user)
+                .mainCategory(main2)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("예금 이자")
+                .goal(0)
+                .user(user)
+                .mainCategory(main2)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("부동산")
+                .goal(0)
+                .user(user)
+                .mainCategory(main2)
+                .build());
+
+        // 기타 수익
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("중고 거래")
+                .goal(0)
+                .user(user)
+                .mainCategory(main3)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("용돈")
+                .goal(0)
+                .user(user)
+                .mainCategory(main3)
+                .build());
+        subCategoryRepository.save(SubCategory.builder()
+                .subName("환불/환불")
+                .goal(0)
+                .user(user)
+                .mainCategory(main3)
+                .build());
+
+
+    }
+
+    public void initializeAsset(Long userId)
+    {
+        User user = User.builder().Id(userId).build();
+        // 결제수단
+        var main1 = mainAssetRepository.save(MainAsset.builder()
+                .mainName("결제 수단")
+                .user(user)
+                .build());
+        // 은행 계좌
+        var main2 = mainAssetRepository.save(MainAsset.builder()
+                .mainName("은행 계좌")
+                .user(user)
+                .build());
+        // 현금
+        var main3 = mainAssetRepository.save(MainAsset.builder()
+                .mainName("현금")
+                .user(user)
+                .build());
+
+        // 결제수단
+        subAssetRepository.save(SubAsset.builder()
+                .subName("신용카드")
+                .user(user)
+                .mainAsset(main1)
+                .build());
+        subAssetRepository.save(SubAsset.builder()
+                .subName("체크카드")
+                .user(user)
+                .mainAsset(main1)
+                .build());
+        subAssetRepository.save(SubAsset.builder()
+                .subName("선불카드")
+                .user(user)
+                .mainAsset(main1)
+                .build());
+
+        // 은행계좌
+        subAssetRepository.save(SubAsset.builder()
+                .subName("급여 통장")
+                .user(user)
+                .mainAsset(main2)
+                .build());
+        subAssetRepository.save(SubAsset.builder()
+                .subName("저축 통장")
+                .user(user)
+                .mainAsset(main2)
+                .build());
+        subAssetRepository.save(SubAsset.builder()
+                .subName("CMA 계좌")
+                .user(user)
+                .mainAsset(main2)
+                .build());
+
+        // 현금
+        subAssetRepository.save(SubAsset.builder()
+                .subName("현금")
+                .user(user)
+                .mainAsset(main3)
+                .build());
+        subAssetRepository.save(SubAsset.builder()
+                .subName("비상금")
+                .user(user)
+                .mainAsset(main3)
+                .build());
+        subAssetRepository.save(SubAsset.builder()
+                .subName("기타 현금")
+                .user(user)
+                .mainAsset(main3)
+                .build());
+
+
+
+    }
 
 
 }

@@ -51,7 +51,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     CATEGORY_TYPE_ERROR(HttpStatus.BAD_REQUEST,"CATEGORY4001", "카테고리의 타입 문자열이 잘못되었습니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"CATEGORY4002", "카테고리를 찾을 수 없습니다."),
-    SUBCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4002", "서브카테고리가 존재하지 않습니다. "),
+    SUBCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4003", "서브카테고리가 존재하지 않습니다. "),
+    SUBCATEGORY_HAS_ACCOUNT(HttpStatus.BAD_REQUEST,"CATEGORY4004", "가계부를 가진 서브 카테고리는 삭제할 수 없습니다."),
+
     SUB_ASSET_NOT_FOUND(HttpStatus.NOT_FOUND, "ASSET4001", "서브자산이 존재하지 않습니다."),
 
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION4001", "조회할 알림 목록이 없습니다."),
