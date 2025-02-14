@@ -2,6 +2,7 @@ package finance_us.finance_us.domain.comment.converter;
 
 import finance_us.finance_us.domain.comment.dto.CommentResponse;
 import finance_us.finance_us.domain.comment.entity.Comment;
+import java.util.ArrayList;
 
 public class CommentConverter {
     public static CommentResponse.CommentResponseDTO toCommentResponseDTO(Comment comment) {
@@ -21,6 +22,7 @@ public class CommentConverter {
                 .userImageUrl(comment.getUser().getImage())
                 .userImageName(comment.getUser().getImageName())
                 .content(comment.getContent())
+                .replies(new ArrayList<>())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .build();

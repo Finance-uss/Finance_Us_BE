@@ -12,5 +12,14 @@ public class CommentRequest {
     @AllArgsConstructor
     public static class CommentRequestDTO {
         private String content;
+        private Long parentCommentId;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CommentUpdateDTO {
+        private String content;
     }
 }
