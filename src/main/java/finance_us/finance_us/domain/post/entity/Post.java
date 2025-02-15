@@ -40,6 +40,7 @@ public class Post extends BaseEntity {
     private Category category;
 
     private String imageUrl;
+    private String imageName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

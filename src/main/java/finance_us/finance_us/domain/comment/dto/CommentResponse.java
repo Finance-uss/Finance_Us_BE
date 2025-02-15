@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentResponse {
@@ -26,7 +27,7 @@ public class CommentResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CommentResultDTO{
-        private Long commentId;
+        private Long postId;
         private int commentCount;
         private List<CommentDTO> commentsList;
     }
@@ -41,8 +42,13 @@ public class CommentResponse {
         private Long userId;
         private String name;
         private Boolean isAuthenticated;
-//        private String userImageUrl;
+        private String userImageUrl; // 댓글 작성자 프로필 사진 url
+        private String userImageName;
         private String content;
+
+        @Builder.Default
+        private List<CommentDTO> replies = new ArrayList<>(); // 대댓글 리스트
+
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 

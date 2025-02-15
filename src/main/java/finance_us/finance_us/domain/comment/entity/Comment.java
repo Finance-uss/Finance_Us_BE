@@ -37,4 +37,12 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
+
+    @Builder.Default
+    private boolean isDeleted = false;
+
+    public void delete() {
+        this.isDeleted = true;
+        this.content = "삭제된 댓글입니다.";
+    }
 }

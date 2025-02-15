@@ -9,7 +9,6 @@ import finance_us.finance_us.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class CommentController {
 
     // 댓글 수정
     @PatchMapping("/{commentId}")
-    public ApiResponse<CommentResponse.CommentResponseDTO> updateComment(@RequestHeader("Authorization") String token, @PathVariable Long commentId, @RequestBody CommentRequest.CommentRequestDTO request) {
+    public ApiResponse<CommentResponse.CommentResponseDTO> updateComment(@RequestHeader("Authorization") String token, @PathVariable Long commentId, @RequestBody CommentRequest.CommentUpdateDTO request) {
         Comment comment = commentService.updateComment(token, commentId, request);
         return ApiResponse.onSuccess(CommentConverter.toCommentResponseDTO(comment));
     }
@@ -41,17 +40,13 @@ public class CommentController {
     // 댓글 갯수 및 목록 반환
     @GetMapping("/{postId}")
     public ApiResponse<CommentResponse.CommentResultDTO> getCommentsByPost(@RequestHeader("Authorization") String token, @PathVariable Long postId) {
-        List<Comment> commentsList = commentService.getCommentsByPost(token, postId);
+        List<CommentResponse.CommentDTO> commentsList = commentService.getCommentsByPostWithReplies(token, postId);
         int commentCount = commentService.getCommentCount(token, postId);
 
-        List<CommentResponse.CommentDTO> commentDTOS = commentsList.stream()
-                .map(CommentConverter::toCommentDTO)
-                .collect(Collectors.toList());
-
         CommentResponse.CommentResultDTO commentResultDTO = CommentResponse.CommentResultDTO.builder()
-                .commentId(postId)
+                .postId(postId)
                 .commentCount(commentCount)
-                .commentsList(commentDTOS)
+                .commentsList(commentsList)
                 .build();
 
         return ApiResponse.onSuccess(commentResultDTO);

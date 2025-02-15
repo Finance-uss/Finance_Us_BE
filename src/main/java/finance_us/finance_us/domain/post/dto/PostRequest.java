@@ -16,5 +16,6 @@ public class PostRequest {
         private String postType;
         private String category;
         private String imageUrl;
+        private String imageName;
     }
 }

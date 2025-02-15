@@ -192,14 +192,8 @@ public class AccountService {
     }
 
     // 가계부 특정 팔로우 조회
-    public FollowResponse getFollow(Long followId, String token) {
+    public FollowResponse getFollow(Long followingId, String token) {
         tokenProvider.extractUserIdFromToken(token);
-        // Follow 객체 조회
-        Follow follow = followRepository.findById(followId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.FOLLOW_INFO_NOT_FOUND));
-
-        // followingId 조회
-        Long followingId = follow.getFollowingId();
         if (followingId == null) {
             throw new GeneralException(ErrorStatus.INVALID_FOLLOW_DATA);
         }

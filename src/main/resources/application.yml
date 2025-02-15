@@ -53,3 +53,8 @@ cloud:
 google:
   application:
     credentials: "google-credential.json"
+node:
+  server:
+    url: http://15.164.20.51:3000
+
+

@@ -17,7 +17,6 @@ public class AuthRequestDTO {
     public static class LoginRequestDTO{
         private String email;
         private String password;
-
     }
 
     @Getter
@@ -44,5 +43,14 @@ public class AuthRequestDTO {
         private String one_liner;
 
         String imgUrl;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class userAuthRequestDTO{
+        private String content;
+        private String imgUrl;
     }
 }
