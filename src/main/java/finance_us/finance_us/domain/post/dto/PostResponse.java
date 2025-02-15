@@ -44,12 +44,39 @@ public class PostResponse {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PostListByBoardDTO{
+    public static class PostListByPostTypeDTO{
         // 커뮤니티에서 특정 게시판 목록 조회
 
         private PostType postType;
-        private List<PostListByBoardResponse> posts;
+        private List<PostListByPostTypeResponse> posts;
         private Long nextCursor;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostListByPostTypeResponse {
+        private Long postId;
+        private String title;
+        private String content;
+        private String imageUrl;
+        private String imageName;
+        private Long likes;
+        private Long comments;
+        private Category category;
+
+        public PostListByPostTypeResponse(Post post, Long likeCount, Long commentCount) {
+            this.postId = post.getId();
+            this.title = post.getTitle();
+            this.content = post.getContent();
+            this.imageUrl = post.getImageUrl();
+            this.imageName = post.getImageName();
+            this.likes = likeCount;
+            this.comments = commentCount;
+            this.category = post.getCategory();
+        }
     }
 
     @Builder
@@ -62,7 +89,7 @@ public class PostResponse {
 
         private PostType postType;
         private Category category;
-        private List<PostListByBoardResponse> posts;
+        private List<PostListByCategoryResponse> posts;
         private Long nextCursor;
     }
 
@@ -71,7 +98,7 @@ public class PostResponse {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PostListByBoardResponse {
+    public static class PostListByCategoryResponse {
         private Long postId;
         private String title;
         private String content;
@@ -80,7 +107,7 @@ public class PostResponse {
         private Long likes;
         private Long comments;
 
-        public PostListByBoardResponse(Post post, Long likeCount, Long commentCount) {
+        public PostListByCategoryResponse(Post post, Long likeCount, Long commentCount) {
             this.postId = post.getId();
             this.title = post.getTitle();
             this.content = post.getContent();
@@ -97,11 +124,16 @@ public class PostResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostByBoardDTO{
+        // 특정 게시글 조회
+
         private Long postId;
         private Long userId;
         private String name;
         private String userImageUrl;
         private String userImageName;
+        private Boolean isAuthenticated;
+        private Boolean isLiked;
+        private Boolean isMine;
         private String title;
         private String content;
         private PostType postType;

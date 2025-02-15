@@ -3,6 +3,7 @@ package finance_us.finance_us.domain.post.repository;
 import finance_us.finance_us.domain.post.entity.Post;
 import finance_us.finance_us.domain.post.entity.status.Category;
 import finance_us.finance_us.domain.post.entity.status.PostType;
+import finance_us.finance_us.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -69,4 +70,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     
     // 특정 게시글 조회
     Optional<Post> findById(Long postId);
+
+    @Query("SELECT COUNT(pl) > 0 FROM PostLike pl WHERE pl.post = :post AND pl.user = :user")
+    boolean existsByPostAndUser(@Param("post") Post post, @Param("user") User user);
 }
