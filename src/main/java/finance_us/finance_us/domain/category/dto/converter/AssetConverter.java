@@ -5,7 +5,12 @@ import finance_us.finance_us.domain.category.dto.AssetResponseDto;
 import finance_us.finance_us.domain.category.entity.MainAsset;
 import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.user.entity.User;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
 public class AssetConverter
 {
 
@@ -42,8 +47,14 @@ public class AssetConverter
     // 메인 자산 Entity를 응답dto로 전환
     static public AssetResponseDto.MainResponseDto mainAssetEntityToDto(MainAsset mainAsset)
     {
+
+        List<AssetResponseDto.SubResponseDto> subAssetDtoList = new ArrayList<>();
         // 서브 자산을 dto로 전환 후 목록화
-        var subAssetDtoList = mainAsset.getSubAssets().stream().map(AssetConverter::subAssetEntityToDto).toList();
+        try{
+            subAssetDtoList = mainAsset.getSubAssets().stream().map(AssetConverter::subAssetEntityToDto).toList();
+        } catch(Exception e){
+            log.info("서브 자산이 없는 메인 자산입니다.");
+        }
 
         return AssetResponseDto.MainResponseDto.builder()
                 .id(mainAsset.getId())

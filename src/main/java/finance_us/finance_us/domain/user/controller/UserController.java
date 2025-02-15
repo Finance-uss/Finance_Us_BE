@@ -1,6 +1,7 @@
 package finance_us.finance_us.domain.user.controller;
 
 import com.amazonaws.services.ec2.model.AssignPrivateIpAddressesRequest;
+import finance_us.finance_us.domain.category.service.CategoryService;
 import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
 import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.dto.UserRequestDto;

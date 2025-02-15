@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.category.repository;
 
+import finance_us.finance_us.domain.account.entity.Account;
 import finance_us.finance_us.domain.category.entity.SubCategory;
 import finance_us.finance_us.domain.category.entity.status.CategoryType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,11 +24,18 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
     List<SubCategory> findByUserId(Long userId);
     // goal이 null이 아닌 값만 불러오기
     @Query(value = "SELECT s.* FROM main_category m INNER JOIN sub_category s ON m.id=s.main_category_id " +
-                   "WHERE m.user_id=:userId AND m.category_type=:categoryType AND s.goal >= 0;", nativeQuery = true)
+                   "WHERE m.user_id=:userId AND m.category_type=:categoryType AND s.goal > 0;", nativeQuery = true)
     public List<SubCategory> findByGoal(@Param("userId") Long userId, @Param("categoryType") CategoryType categoryType);
 
     // 카테고리 타입으로 찾기
     @Query(value = "SELECT s.* FROM main_category m INNER JOIN sub_category s ON m.id=s.main_category_id " +
             "WHERE m.user_id=:userId AND m.category_type=:categoryType;", nativeQuery = true)
     public List<SubCategory> findByType(@Param("userId") Long userId, @Param("categoryType") CategoryType categoryType);
+
+    // 서브 카테고리에 연결된 가계부 데이터가 존재하는지 확인.
+    @Query(value = "SELECT s.* FROM sub_category s INNER JOIN account a ON s.id = a.sub_category_id " +
+            "WHERE s.id=:subId;", nativeQuery = true)
+    public List<SubCategory> linkedAccount(@Param("subId") Long subId);
+
+
 }

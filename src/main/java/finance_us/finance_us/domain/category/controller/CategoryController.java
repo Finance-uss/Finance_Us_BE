@@ -41,7 +41,7 @@ public class CategoryController
         }
 
         Long userId = tokenProvider.extractUserIdFromToken(token);
-
+        log.info(categoryType.name());
         return ApiResponse.onSuccess(categoryService.getCategoryList(userId, categoryType));
     }
 
@@ -156,6 +156,7 @@ public class CategoryController
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
         categoryService.deleteSubAsset(subId);
+
         return ApiResponse.onSuccess("deleted : sub_asset");
     }
   
@@ -180,6 +181,19 @@ public class CategoryController
 
         return ApiResponse.onSuccess(categoryService.updateCategoryGoal(userId, dto.getType(), dto.getSubGoals()));
     }
+
+    @PostMapping("/api/mypage/init-test")
+    public ApiResponse<?> initTest(@RequestHeader("Authorization") String token)
+    {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        categoryService.initializeCategoryExpense(userId);
+        categoryService.initializeCategoryIncome(userId);
+        categoryService.initializeAsset(userId);
+
+        return ApiResponse.onSuccess("init success");
+    }
+
 
 }
 

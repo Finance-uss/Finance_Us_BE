@@ -14,5 +14,5 @@ import java.util.List;
 public interface MainCategoryRepository extends JpaRepository<MainCategory, Long>
 {
     @Query(value = "SELECT * FROM main_category WHERE user_id=:userId AND category_type=:type;", nativeQuery = true)
-    List<MainCategory> findByUserIdAndCategoryType(@Param("userId") Long userId, @Param("type") CategoryType type);
+    List<MainCategory> findByUserIdAndCategoryType(@Param("userId") Long userId, @Param("type") String type);
 }
