@@ -52,7 +52,7 @@ public class AssetConverter
         // 서브 자산을 dto로 전환 후 목록화
         try{
             subAssetDtoList = mainAsset.getSubAssets().stream().map(AssetConverter::subAssetEntityToDto).toList();
-        } catch(NullPointerException e){
+        } catch(Exception e){
             log.info("서브 자산이 없는 메인 자산입니다.");
         }
 

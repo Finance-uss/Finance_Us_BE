@@ -261,21 +261,21 @@ public class CategoryService
                 .user(user)
                 .build());
 
-
+        var subList = new ArrayList<SubCategory>();
         // 식비
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("외식")
                 .goal(0)
                 .user(user)
                 .mainCategory(main1)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("배달")
                 .goal(0)
                 .user(user)
                 .mainCategory(main1)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("식재료")
                 .goal(0)
                 .user(user)
@@ -283,19 +283,19 @@ public class CategoryService
                 .build());
 
         // 교통
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("대중교통")
                 .goal(0)
                 .user(user)
                 .mainCategory(main2)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("택시")
                 .goal(0)
                 .user(user)
                 .mainCategory(main2)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("주유")
                 .goal(0)
                 .user(user)
@@ -303,24 +303,26 @@ public class CategoryService
                 .build());
 
         // 여가/취미
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("영화/공연")
                 .goal(0)
                 .user(user)
                 .mainCategory(main3)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("취미 용품")
                 .goal(0)
                 .user(user)
                 .mainCategory(main3)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("여행")
                 .goal(0)
                 .user(user)
                 .mainCategory(main3)
                 .build());
+
+        subCategoryRepository.saveAll(subList);
 
     }
 
@@ -347,20 +349,21 @@ public class CategoryService
                 .build());
 
 
+        var subList = new ArrayList<SubCategory>();
         // 급여
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("월급")
                 .goal(0)
                 .user(user)
                 .mainCategory(main1)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("투자 수익")
                 .goal(0)
                 .user(user)
                 .mainCategory(main1)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("기타 수익")
                 .goal(0)
                 .user(user)
@@ -368,19 +371,19 @@ public class CategoryService
                 .build());
 
         // 투자 수익
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("주식")
                 .goal(0)
                 .user(user)
                 .mainCategory(main2)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("예금 이자")
                 .goal(0)
                 .user(user)
                 .mainCategory(main2)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("부동산")
                 .goal(0)
                 .user(user)
@@ -388,26 +391,26 @@ public class CategoryService
                 .build());
 
         // 기타 수익
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("중고 거래")
                 .goal(0)
                 .user(user)
                 .mainCategory(main3)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("용돈")
                 .goal(0)
                 .user(user)
                 .mainCategory(main3)
                 .build());
-        subCategoryRepository.save(SubCategory.builder()
+        subList.add(SubCategory.builder()
                 .subName("환불/환불")
                 .goal(0)
                 .user(user)
                 .mainCategory(main3)
                 .build());
 
-
+        subCategoryRepository.saveAll(subList);
     }
 
     public void initializeAsset(Long userId)
@@ -429,58 +432,59 @@ public class CategoryService
                 .user(user)
                 .build());
 
+        var subList = new ArrayList<SubAsset>();
         // 결제수단
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("신용카드")
                 .user(user)
                 .mainAsset(main1)
                 .build());
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("체크카드")
                 .user(user)
                 .mainAsset(main1)
                 .build());
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("선불카드")
                 .user(user)
                 .mainAsset(main1)
                 .build());
 
         // 은행계좌
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("급여 통장")
                 .user(user)
                 .mainAsset(main2)
                 .build());
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("저축 통장")
                 .user(user)
                 .mainAsset(main2)
                 .build());
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("CMA 계좌")
                 .user(user)
                 .mainAsset(main2)
                 .build());
 
         // 현금
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("현금")
                 .user(user)
                 .mainAsset(main3)
                 .build());
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("비상금")
                 .user(user)
                 .mainAsset(main3)
                 .build());
-        subAssetRepository.save(SubAsset.builder()
+        subList.add(SubAsset.builder()
                 .subName("기타 현금")
                 .user(user)
                 .mainAsset(main3)
                 .build());
 
-
+        subAssetRepository.saveAll(subList);
 
     }
 
