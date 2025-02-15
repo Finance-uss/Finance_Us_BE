@@ -9,8 +9,10 @@ import finance_us.finance_us.domain.user.service.AuthService;
 import finance_us.finance_us.domain.user.service.MailService;
 import finance_us.finance_us.domain.user.service.UserService;
 import finance_us.finance_us.global.ApiResponse;
+import finance_us.finance_us.global.S3.service.S3Service;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
+import finance_us.finance_us.global.file.S3FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -34,6 +36,7 @@ public class AuthController {
     private final AuthService authService;
     private final MailService mailService;
     private final UserService userService;
+    private final S3Service s3Service;
 
     @PostMapping("/login")
     @Operation(summary = "사용자 로그인 API", description = "사용자가 이메일과 비밀번호를 사용하여 로그인합니다.")
@@ -134,8 +137,9 @@ public class AuthController {
 
     @PatchMapping("/user/verify")
     @Operation(summary = "사용자 인증 승인/거절", description = "디스코드에서 요청을 승인 또는 거절합니다.")
-    public ApiResponse<String> verifyUserAuth(@RequestParam Long userId, @RequestParam boolean approved) {
-        authService.verifyUser(userId, approved);
+    public ApiResponse<String> verifyUserAuth(@RequestBody AuthRequestDTO.discordAuthRequestDTO discordAuthRequestDTO) {
+        authService.verifyUser(discordAuthRequestDTO.getUserId(), discordAuthRequestDTO.getApproved());
+        s3Service.deleteS3ByUrl(discordAuthRequestDTO.getImgUrl());
         return ApiResponse.onSuccess("처리 완료");
     }
 }

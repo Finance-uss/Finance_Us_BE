@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class AuthRequestDTO {
 
@@ -51,6 +52,16 @@ public class AuthRequestDTO {
     @NoArgsConstructor
     public static class userAuthRequestDTO{
         private String content;
+        private String imgUrl;
+
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class discordAuthRequestDTO{
+        private Long userId;
+        private Boolean approved;
         private String imgUrl;
     }
 }

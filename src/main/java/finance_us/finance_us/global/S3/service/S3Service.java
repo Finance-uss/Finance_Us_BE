@@ -47,5 +47,13 @@ public class S3Service {
         s3FileService.deleteImage(request.getImageName());
 
     }
+
+    //S3 삭제
+    @Transactional
+    public void deleteS3ByUrl(@RequestBody String imageUrl){
+        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        s3FileService.deleteImage(fileName);
+
+    }
 }
 
