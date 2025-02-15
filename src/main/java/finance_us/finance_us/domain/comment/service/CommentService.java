@@ -50,6 +50,7 @@ public class CommentService {
             if (parentComment.isDeleted()) {
                 throw new IllegalStateException("Cannot reply to a deleted comment.");
             }
+
         }
 
         Comment comment = Comment.builder()
@@ -60,7 +61,14 @@ public class CommentService {
                 .build();
 
         // 알림 추가
-        notificationService.addCommentNotification(postId, userId);
+        //부모 댓글이 있는 경우 → 부모 댓글 작성자에게만 알림 전송 (게시글 주인에게는 알림 X)
+        if (parentComment != null) {
+            notificationService.addReplyNotification(parentComment.getId(), userId);
+        }
+        //부모 댓글이 없는 경우 → 게시글 주인에게 댓글 알림 전송
+        else {
+            notificationService.addCommentNotification(postId, userId);
+        }
 
         return commentRepository.save(comment);
     }

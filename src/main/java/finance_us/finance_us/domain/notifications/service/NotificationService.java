@@ -51,7 +51,21 @@ public class NotificationService {
             notifications = notificationRepository.findByUserIdAndIdANDIsReadFalseLessThanOrderByCreatedAtDesc(userId, lastNotificationId, pageRequest);
         }
 
-        return NotificationListResponse.fromEntities(notifications);
+        return NotificationListResponse.fromEntities(notifications, this);
+    }
+
+    //리소스 제목 조회
+    public String getResourceTitle(ResourceType resourceType, Long resourceId) {
+        if (resourceType == ResourceType.POST) {
+            return postRepository.findById(resourceId)
+                    .map(Post::getTitle)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.ARTICLE_NOT_FOUND));
+        } else if (resourceType == ResourceType.ACCOUNT) {
+            return accountRepository.findById(resourceId)
+                    .map(Account::getTitle)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.ACCOUNT_NOT_FOUND));
+        }
+        throw new GeneralException(ErrorStatus.RESOURCE_NOT_FOUND);
     }
 
     @Transactional
@@ -184,16 +198,53 @@ public class NotificationService {
         User targetUser = comment.getUser();
         //if (targetUser.getId().equals(senderUserId)) return; // 자기 자신에게 알림 X
 
+
         // 해당 댓글이 달린 게시글을 찾아서 resource로 전달
         Post post = comment.getPost();
 
-        String message = "해당 댓글에 좋아요가 달렸습니다.";
+        //댓글인지, 대댓글인지 확인
+        boolean isReply = comment.getParentComment() != null;
+
+        String message = isReply
+                ? "해당 게시글에 작성한 답글에 좋아요가 달렸습니다."
+                : "해당 게시글에 작성한 댓글에 좋아요가 달렸습니다.";
 
         Notification notification = Notification.builder()
                 .type(Type.LIKE)
                 .message(message)
                 .resourceType(ResourceType.POST)
                 .resourceId(post.getId()) // 댓글이 달린 게시글 ID 전달
+                .isRead(false)
+                .user(targetUser)
+                .build();
+
+        notificationRepository.save(notification);
+    }
+
+    //댓글에 대댓글이 달린 경우
+    public void addReplyNotification(Long parentCommentId, Long senderUserId) {
+        Comment parentComment = commentRepository.findById(parentCommentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        User sender = userRepository.findById(senderUserId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 알림 대상은 부모 댓글을 작성한 사용자
+        User targetUser = parentComment.getUser();
+
+        // 부모 댓글이 달린 게시글을 찾아서 resource로 전달
+        Post post = parentComment.getPost();
+
+        // 🔹 자기 댓글에 대댓글을 달 경우 알림을 보내지 않음
+        //if (targetUser.getId().equals(senderUserId)) return; 테스트를 위해 자신에게도 알림이 가도록 설정
+
+
+        String message = "해당 게시글에 작성한 댓글에 답글이 달렸습니다.";
+
+        Notification notification = Notification.builder()
+                .type(Type.REPLY) // REPLY 타입의 알림
+                .message(message)
+                .resourceType(ResourceType.POST) // 리소스 타입은 POST
+                .resourceId(post.getId()) // 대댓글이 달린 게시글 ID
                 .isRead(false)
                 .user(targetUser)
                 .build();
