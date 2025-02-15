@@ -6,6 +6,7 @@ import finance_us.finance_us.domain.search.dto.PostSearchResponse;
 import finance_us.finance_us.domain.search.dto.UserSearchResponse;
 import finance_us.finance_us.domain.search.service.SearchService;
 import finance_us.finance_us.global.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,6 +20,7 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/posts")
+    @Operation(summary = "게시글 검색 API")
     public ApiResponse<PostSearchResponse> searchPosts(
             @RequestParam PostType boardType,
             @RequestParam(required = false) Long lastId,
@@ -30,6 +32,7 @@ public class SearchController {
     }
 
     @GetMapping("/users")
+    @Operation(summary = "사용자 검색 API")
     public ApiResponse<UserSearchResponse> searchUsers(
             @RequestHeader("Authorization") String token,
             @RequestParam String keyword,
