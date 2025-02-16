@@ -75,7 +75,7 @@ public class PostController {
 
     // 특정 게시판 목록 조회
     @GetMapping("/{postType}")
-    public ApiResponse<PostResponse.PostListByBoardDTO> getPostsByPostType(@RequestHeader("Authorization") String token, @PathVariable("postType") PostType postType, @RequestParam(required = false) Long cursor, @RequestParam(defaultValue = "3") int size)
+    public ApiResponse<PostResponse.PostListByPostTypeDTO> getPostsByPostType(@RequestHeader("Authorization") String token, @PathVariable("postType") PostType postType, @RequestParam(required = false) Long cursor, @RequestParam(defaultValue = "3") int size)
     {
         return ApiResponse.onSuccess(postService.getPostsByPostType(token, postType, cursor, size));
     }

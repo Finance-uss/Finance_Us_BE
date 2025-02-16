@@ -4,6 +4,7 @@ import finance_us.finance_us.domain.comment.converter.CommentConverter;
 import finance_us.finance_us.domain.comment.dto.CommentRequest;
 import finance_us.finance_us.domain.comment.dto.CommentResponse;
 import finance_us.finance_us.domain.comment.entity.Comment;
+import finance_us.finance_us.domain.comment.repository.CommentLikeRepository;
 import finance_us.finance_us.domain.comment.repository.CommentRepository;
 import finance_us.finance_us.domain.notifications.service.NotificationService;
 import finance_us.finance_us.domain.post.entity.Post;
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
@@ -132,7 +134,12 @@ public class CommentService {
         List<CommentResponse.CommentDTO> topLevelComments = new ArrayList<>(); // 부모가 없는 댓글들 따로 저장
 
         for (Comment comment : comments) {
+            boolean isMine = comment.getUser().getId().equals(userId); // 내가 작성한 댓글인지 확인
+            boolean isLiked = commentLikeRepository.existsByCommentIdAndUserId(comment.getId(), userId);
+
             CommentResponse.CommentDTO dto = CommentConverter.toCommentDTO(comment);
+            dto.setIsMine(isMine); // 내가 작성한 댓글인지 설정
+            dto.setIsLiked(isLiked); // 좋아요 여부 설정
             commentDTOMap.put(dto.getCommentId(), dto);
 
             if (comment.getParentComment() == null) {
