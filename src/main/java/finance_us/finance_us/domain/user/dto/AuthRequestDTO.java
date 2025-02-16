@@ -3,10 +3,7 @@ package finance_us.finance_us.domain.user.dto;
 import finance_us.finance_us.domain.user.entity.status.AgeGroup;
 import finance_us.finance_us.domain.user.entity.status.JobCategory;
 import finance_us.finance_us.domain.user.entity.status.Role;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 public class AuthRequestDTO {
 
@@ -53,4 +50,21 @@ public class AuthRequestDTO {
         private String content;
         private String imgUrl;
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UserPreferenceRequestDTO{
+        Boolean openSwitch;
+        Boolean alarmSwitch;
+        Boolean highlightSwitch;
+
+        Integer expenseAmount;
+        Integer incomeAmount;
+        String expenseColor;
+        String incomeColor;
+    }
+
 }

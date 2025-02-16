@@ -137,7 +137,7 @@ public class CategoryController
     public ApiResponse<?> updateSubAsset(@RequestHeader("Authorization") String token, @RequestBody CategoryRequestDto.UpdateRequestDto dto)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
-        categoryService.updateSubCategory(dto.getId(), dto.getName());
+        categoryService.updateSubAsset(dto.getId(), dto.getName());
         return ApiResponse.onSuccess("updated : sub_category");
     }
 

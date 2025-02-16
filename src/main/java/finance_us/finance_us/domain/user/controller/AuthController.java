@@ -75,6 +75,8 @@ public class AuthController {
         categoryService.initializeCategoryIncome(userDTO.getId());
         categoryService.initializeAsset(userDTO.getId());
 
+        authService.createUserPreference(userDTO.getId());
+
         return ApiResponse.onSuccess(userDTO);
     }
 
