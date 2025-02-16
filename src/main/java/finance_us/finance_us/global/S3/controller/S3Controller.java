@@ -4,6 +4,8 @@ import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.global.S3.dto.S3Request;
 import finance_us.finance_us.global.S3.dto.S3Response;
 import finance_us.finance_us.global.S3.service.S3Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,11 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Tag(name = "S3 API", description = "S3 관련 API")
 public class S3Controller {
     private final S3Service s3Service;
 
     // S3 이미지 업로드
     @PostMapping(value = "/image", consumes = "multipart/form-data")
+    @Operation(summary = "S3 이미지 업로드 API")
     public ApiResponse<S3Response.S3ResponseDTO> uploadImage(
             @RequestHeader("Authorization") String token,
             @RequestParam("file") MultipartFile file) {
@@ -28,6 +32,7 @@ public class S3Controller {
 
     // 이미지 삭제
     @DeleteMapping(value = "/image")
+    @Operation(summary = "S3 이미지 삭제 API")
     public ApiResponse<String> deleteImage(
             @RequestHeader("Authorization") String token, @RequestBody S3Request request){
         // 이전 이미지 삭제
