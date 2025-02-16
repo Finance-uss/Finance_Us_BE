@@ -84,7 +84,7 @@ public class CategoryController
     public ApiResponse<?> deleteMainCategory(@RequestHeader("Authorization") String token, Long mainId)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
-        categoryService.deleteMainCategory(mainId);
+        categoryService.deleteMainCategory(mainId, userId);
         return ApiResponse.onSuccess("deleted : main_category");
     }
 

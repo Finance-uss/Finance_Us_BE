@@ -103,12 +103,21 @@ public class CategoryService
     }
 
     // 카테고리를 삭제하는 부분
-    public Long deleteMainCategory(Long mainId)
+    public Long deleteMainCategory(Long mainId, Long userId)
     {
+        //메인 카테고리 존재 확인 및 userId 일치 검증
         MainCategory mainCategory = mainCategoryRepository.findById(mainId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
 
-        Long userId = mainCategory.getUser().getId();
+        if(!mainCategory.getUser().getId().equals(userId)) {
+            throw new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND);
+        }
+
+        //메인 카테고리와 연관된 서브 카테고리의 존재 여부 확인 (존재한다면 삭제 불가)
+        List<SubCategory> subCategories = subCategoryRepository.findByUserIdAndMainCategoryId(userId, mainId);
+        if (!subCategories.isEmpty()) {
+            throw new GeneralException(ErrorStatus.MAINCATEGORY_HAS_SUBCATEGORY);
+        }
 
         // 🔹 메인 카테고리에 연결된 통계 삭제
         categoryStatisticsService.deleteStatisticsOnCategoryDelete(userId, mainId);
