@@ -39,7 +39,7 @@ public class UserController {
     private final AuthService authService;
 
     @GetMapping("/mailCheck")
-    @Operation(summary = "이메일 중복확인 API", description = "이메일을 중복확인 합니다.")
+    @Operation(summary = "이메일 확인 API", description = "이메일을 확인 합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
@@ -48,7 +48,7 @@ public class UserController {
 
        userService.mailCheck(email);
 
-       return ApiResponse.onSuccess("사용가능한 이메일 입니다.");
+       return ApiResponse.onSuccess("이메일이 이미 존재합니다.");
     }
 
     @GetMapping("/nameCheck")
