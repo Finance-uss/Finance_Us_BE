@@ -49,4 +49,8 @@ public class User extends BaseEntity {
     @Builder.Default
     private boolean isAuthenticated=false;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_preference_id")
+    private UserPreference userPreference;
+
 }

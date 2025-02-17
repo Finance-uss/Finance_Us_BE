@@ -39,6 +39,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_MISSION_ALREADY_IN_CHALLENGING(HttpStatus.CONFLICT, "MEMBER_MISSION4002", "이미 진행 중인 미션입니다."),
     MEMBER_MISSION_NOT_CHALLENGING(HttpStatus.BAD_REQUEST, "MEMBERMISSION4003", "회원이 도전 중인 미션이 아닙니다."),
 
+    USER_PREFERENCE_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_PREFERENCE4001", "유저 설정을 찾을 수 없습니다."),
+
     FOOD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "FOOD_CATEGORY4001", "음식 카테고리가 없습니다."),
 
     RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "RESTAURANT4001", "식당이 없습니다."),

@@ -36,6 +36,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @GetMapping("/mailCheck")
     @Operation(summary = "이메일 중복확인 API", description = "이메일을 중복확인 합니다.")
@@ -228,5 +229,19 @@ public class UserController {
         return ApiResponse.onSuccess(userService.updateUser(token, updateRequestDTO));
     }
 
+    @GetMapping("/user-preference")
+    @Operation(summary = "회원 설정 조회 API", description = "회원 설정을 조회합니다. 쓰고 싶은 필드만 가져다 쓰십시오.")
+    public ApiResponse<?> getUserPreference(@RequestHeader("Authorization") String token) {
+
+        return ApiResponse.onSuccess(authService.getUserPreference(token));
+    }
+
+    @PatchMapping("/user-preference")
+    @Operation(summary = "회원 설정 수정 API", description = "회원 설정을 수정합니다. 수정하고픈 필드만 입력해서 요청하시면 됩니당.")
+    public ApiResponse<String> updateUserPreference(@RequestHeader("Authorization") String token, AuthRequestDTO.UserPreferenceRequestDTO dto)
+    {
+
+        return ApiResponse.onSuccess(authService.updateUserPreference(token, dto));
+    }
 
 }

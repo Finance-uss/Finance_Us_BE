@@ -46,9 +46,27 @@ public class AuthResponseDTO {
         private String email;
         private String name;
         private Long id;
+        private String age;
+        private String job;
         private String one_liner;
         private String imgUrl;
         private Role role;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UserPreferenceResponseDTO{
+        Boolean openSwitch;
+        Boolean alarmSwitch;
+        Boolean highlightSwitch;
+
+        Integer expenseAmount;
+        Integer incomeAmount;
+        String expenseColor;
+        String incomeColor;
     }
 
 }
