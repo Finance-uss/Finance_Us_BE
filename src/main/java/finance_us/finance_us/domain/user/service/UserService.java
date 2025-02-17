@@ -36,8 +36,8 @@ public class UserService {
     //이메일 중복 확인
     public void mailCheck(String email) {
         authService.isValidEmail(email);
-        if(!userRepository.findByEmail(email).isEmpty())
-            throw new GeneralException(ErrorStatus.EMAIL_EXIST);
+        if(userRepository.findByEmail(email).isEmpty())
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
     }
 
     //닉네임 중복 확인
