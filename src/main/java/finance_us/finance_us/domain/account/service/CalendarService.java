@@ -99,24 +99,24 @@ public class CalendarService {
             }
         }
 
-        // 날짜별 하이라이트 색상 적용
-        for (String date : incomeMap.keySet()) {
-            Long incomeTotal = incomeMap.get(date);
-
-            // 해당 날짜의 income이 설정된 임계값보다 크면 색상 설정
-            if (incomeTotal >= incomeAmount) {
-                System.out.println("incomeTotal"+ incomeTotal);
-                calendar.add(new CalendarResponse.CalendarDTO(date, incomeColor));
-            }
-        }
-
         for (String date : expenseMap.keySet()) {
             Long expenseTotal = expenseMap.get(date);
 
             // 해당 날짜의 expense가 설정된 임계값보다 크면 색상 설정
-            if (expenseTotal >= expenseAmount) {
-                System.out.println("expenseTotal"+ expenseTotal);
+            if (expenseTotal >= expenseAmount ) {
+                System.out.println("expenseTotal" + expenseTotal);
                 calendar.add(new CalendarResponse.CalendarDTO(date, expenseColor));
+            }
+        }
+
+        // 날짜별 하이라이트 색상 적용
+        for (String date : incomeMap.keySet()) {
+            Long incomeTotal = incomeMap.get(date);
+
+            // 해당 날짜의 income이 설정된 임계값보다 크면 색상 설정, 이미 expense가 적용되지 않은 날짜만 처리
+            if (incomeTotal >= incomeAmount && !expenseMap.containsKey(date)) {
+                System.out.println("incomeTotal"+ incomeTotal);
+                calendar.add(new CalendarResponse.CalendarDTO(date, incomeColor));
             }
         }
 
