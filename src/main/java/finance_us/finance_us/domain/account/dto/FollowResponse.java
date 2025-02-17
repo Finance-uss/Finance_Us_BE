@@ -27,7 +27,7 @@ public class FollowResponse {
         private String title;
         private Long amount;
         private LocalDate date;
-        private String subName;
+        private String content;
         private String imageUrl;
         private int totalLike;
         private int totalCheer;
