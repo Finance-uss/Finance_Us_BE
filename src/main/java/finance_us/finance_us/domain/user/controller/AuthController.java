@@ -143,6 +143,19 @@ public class AuthController {
         return ApiResponse.onSuccess(authService.authUser(token, userAuthRequestDTO));
     }
 
+    @GetMapping("/user")
+    @Operation(summary = "사용자 인증 여부", description = "사용자의 인증 여부를 반환합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<String> authUserCheck (@RequestHeader("Authorization") String token) {
+        authService.authUserCheck(token);
+        return ApiResponse.onSuccess("인증된 사용자입니다.");
+    }
+
     @PatchMapping("/user/verify")
     @Operation(summary = "사용자 인증 승인/거절", description = "디스코드에서 요청을 승인 또는 거절합니다.")
     public ApiResponse<String> verifyUserAuth(@RequestParam Long userId, @RequestParam boolean approved) {

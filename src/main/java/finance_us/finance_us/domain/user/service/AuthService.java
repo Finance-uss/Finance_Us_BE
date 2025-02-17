@@ -191,4 +191,15 @@ public class AuthService {
         return "updated field : " + updateStr;
     }
 
+    public void authUserCheck(String token){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        //사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if(!user.isAuthenticated()) throw new GeneralException(ErrorStatus._UNAUTHORIZED);
+
+    }
+
 }
