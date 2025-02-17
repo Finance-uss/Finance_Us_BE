@@ -104,7 +104,6 @@ public class CalendarService {
 
             // 해당 날짜의 expense가 설정된 임계값보다 크면 색상 설정
             if (expenseTotal >= expenseAmount ) {
-                System.out.println("expenseTotal" + expenseTotal);
                 calendar.add(new CalendarResponse.CalendarDTO(date, expenseColor));
             }
         }
@@ -115,7 +114,6 @@ public class CalendarService {
 
             // 해당 날짜의 income이 설정된 임계값보다 크면 색상 설정, 이미 expense가 적용되지 않은 날짜만 처리
             if (incomeTotal >= incomeAmount && !expenseMap.containsKey(date)) {
-                System.out.println("incomeTotal"+ incomeTotal);
                 calendar.add(new CalendarResponse.CalendarDTO(date, incomeColor));
             }
         }
