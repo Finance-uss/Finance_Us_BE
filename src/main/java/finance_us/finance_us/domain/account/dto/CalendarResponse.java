@@ -26,6 +26,7 @@ public class CalendarResponse {
     @Builder
     public static class CalendarDTO {
         private String date;
+        private String highlightColor;
     }
 
 }

@@ -13,4 +13,5 @@ public interface UserPreferenceRepository  extends JpaRepository<UserPreference,
     @Query(value="SELECT * FROM user_preference WHERE user_id=:userId;", nativeQuery = true)
     Optional<UserPreference> findByUserId(@Param("userId") Long userId);
 
+
 }
