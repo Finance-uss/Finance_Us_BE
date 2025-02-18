@@ -32,19 +32,7 @@ public class CalendarService {
 
 
         // 유저 환경설정 조회
-        UserPreference userPreference = userPreferenceRepository.findByUserId(userId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.userPreference_NOT_FOUND)); // 존재하지 않을 경우 예외처리
-
-        // 하이라이트 스위치가 꺼져 있으면 예외 발생
-        if (Boolean.FALSE.equals(userPreference.getHighlightSwitch())) {
-            throw new GeneralException(ErrorStatus.HIGHLIGHT_DISABLED);
-        }
-
-        // 환경설정에서 값 가져오기
-        Integer incomeAmount = userPreference.getIncomeAmount();
-        Integer expenseAmount = userPreference.getExpenseAmount();
-        String incomeColor = userPreference.getIncomeColor();
-        String expenseColor = userPreference.getExpenseColor();
+        Optional<UserPreference> userPreference = userPreferenceRepository.findByUserId(userId);
 
 
         // 총 별점
@@ -76,52 +64,59 @@ public class CalendarService {
             }
         }
 
+        // 하이라이트 스위치가 꺼져 있으면 예외 발생
+        if (userPreference.isPresent() && Boolean.FALSE.equals(userPreference.get().getHighlightSwitch())) {
+            return CalendarConverter.toCalendarResponseDTO(totalScore, totalExpense, totalIncome, new ArrayList<>());
+        }
 
-        // 하이라이트 색상 생성
+
+        // 환경설정이 없으면 calendar를 빈 리스트로 설정
         List<CalendarResponse.CalendarDTO> calendar = new ArrayList<>();
+        if (userPreference.isPresent()) {
+            // 환경설정에서 값 가져오기
+            Integer incomeAmount = userPreference.get().getIncomeAmount();
+            Integer expenseAmount = userPreference.get().getExpenseAmount();
+            String incomeColor = userPreference.get().getIncomeColor();
+            String expenseColor = userPreference.get().getExpenseColor();
 
-        // 날짜별 income과 expense 합산
-        Map<String, Long> incomeMap = new HashMap<>();
-        Map<String, Long> expenseMap = new HashMap<>();
+            // 날짜별 income과 expense 합산
+            Map<String, Long> incomeMap = new HashMap<>();
+            Map<String, Long> expenseMap = new HashMap<>();
 
-        // account 리스트 순회
-        for (Account account : accounts) {
-            String date = account.getDate().toString();
+            for (Account account : accounts) {
+                String date = account.getDate().toString();
 
-            // income일 경우 합산
-            if (account.getAccountType() == AccountType.income) {
-                incomeMap.merge(date, account.getAmount(), Long::sum); // 같은 날짜의 income을 합산
+                if (account.getAccountType() == AccountType.income) {
+                    incomeMap.merge(date, account.getAmount(), Long::sum);
+                }
+
+                if (account.getAccountType() == AccountType.expense) {
+                    expenseMap.merge(date, account.getAmount(), Long::sum);
+                }
             }
 
-            // expense일 경우 합산
-            if (account.getAccountType() == AccountType.expense) {
-                expenseMap.merge(date, account.getAmount(), Long::sum); // 같은 날짜의 expense를 합산
+            for (String date : expenseMap.keySet()) {
+                Long expenseTotal = expenseMap.get(date);
+                if (expenseTotal >= expenseAmount) {
+                    calendar.add(new CalendarResponse.CalendarDTO(date, expenseColor));
+                }
+            }
+
+            for (String date : incomeMap.keySet()) {
+                Long incomeTotal = incomeMap.get(date);
+                if (incomeTotal >= incomeAmount && !expenseMap.containsKey(date)) {
+                    calendar.add(new CalendarResponse.CalendarDTO(date, incomeColor));
+                }
             }
         }
 
-        for (String date : expenseMap.keySet()) {
-            Long expenseTotal = expenseMap.get(date);
 
-            // 해당 날짜의 expense가 설정된 임계값보다 크면 색상 설정
-            if (expenseTotal >= expenseAmount ) {
-                calendar.add(new CalendarResponse.CalendarDTO(date, expenseColor));
-            }
-        }
-
-        // 날짜별 하이라이트 색상 적용
-        for (String date : incomeMap.keySet()) {
-            Long incomeTotal = incomeMap.get(date);
-
-            // 해당 날짜의 income이 설정된 임계값보다 크면 색상 설정, 이미 expense가 적용되지 않은 날짜만 처리
-            if (incomeTotal >= incomeAmount && !expenseMap.containsKey(date)) {
-                calendar.add(new CalendarResponse.CalendarDTO(date, incomeColor));
-            }
-        }
 
 
         // DTO 반환
         return CalendarConverter.toCalendarResponseDTO(totalScore, totalExpense, totalIncome, calendar);
     }
+
 
 
     // 가계부 달별 일별 조회
