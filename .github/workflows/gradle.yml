@@ -39,9 +39,6 @@ jobs:
     - name : Gradle Clean
       run : ./gradlew clean
 
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build
-
     - name : set .env file
       run: |
         cd ./
