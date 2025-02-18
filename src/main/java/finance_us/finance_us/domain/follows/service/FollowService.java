@@ -13,6 +13,7 @@ import finance_us.finance_us.security.TokenProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +63,7 @@ public class FollowService {
         Long userId = tokenProvider.extractUserIdFromToken(token);
         lastFollowingId = (lastFollowingId == null) ? 0 : lastFollowingId;
 
-        PageRequest pageRequest = PageRequest.of(0, size);
+        PageRequest pageRequest = PageRequest.of(0, size, Sort.by(Sort.Direction.ASC, "followingId"));
 
         List<Follow> follows = followRepository.findByUserIdAndIdGreaterThan(userId, lastFollowingId, pageRequest);
 
