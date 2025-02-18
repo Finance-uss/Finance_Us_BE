@@ -45,7 +45,6 @@ jobs:
         echo "generate .env file"
         touch ./env
         echo '${{secrets.ENV_FILE}}' >> ./.env
-        cat ./.env
 
     - name : set google-credential.json file
       run: |
@@ -59,7 +58,7 @@ jobs:
 
 
       # docker build & push to develop
-    - name: Docker build & push to dev
+    - name: Docker build & push to DockerHub
       if: contains(github.ref, 'dev')
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -67,7 +66,7 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/finance
 
       ## deploy to production
-    - name: Deploy to dev
+    - name: Deploy to EC2
       uses: appleboy/ssh-action@master
       id: deploy-prod
       if: contains(github.ref, 'dev')
