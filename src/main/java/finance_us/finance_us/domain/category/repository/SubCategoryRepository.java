@@ -24,7 +24,7 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
     List<SubCategory> findByUserId(Long userId);
     // goal이 null이 아닌 값만 불러오기
     @Query(value = "SELECT s.* FROM main_category m INNER JOIN sub_category s ON m.id=s.main_category_id " +
-                   "WHERE m.user_id=:userId AND m.category_type=:categoryType AND s.goal > 0;", nativeQuery = true)
+                   "WHERE m.user_id=:userId AND m.category_type=:categoryType;", nativeQuery = true)
     public List<SubCategory> findByGoal(@Param("userId") Long userId, @Param("categoryType") CategoryType categoryType);
 
     // 카테고리 타입으로 찾기
