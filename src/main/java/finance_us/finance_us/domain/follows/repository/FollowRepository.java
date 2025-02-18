@@ -18,7 +18,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     boolean existsByUserIdAndFollowingId(Long userId, Long followingId);
 
-    @Query("SELECT f FROM Follow f WHERE f.user.Id = :userId AND f.followingId > :lastFollowingId ORDER BY f.createdAt ASC")
+    @Query("SELECT f FROM Follow f WHERE f.user.Id = :userId AND f.followingId > :lastFollowingId ORDER BY f.followingId ASC")
     List<Follow> findByUserIdAndIdGreaterThan(
             @Param("userId") Long userId,
             @Param("lastFollowingId") Long lastFollowingId,
