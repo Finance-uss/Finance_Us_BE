@@ -8,6 +8,7 @@ import lombok.Getter;
 public class UserResponse {
     private Long userId;
     private String username;
-    //private String profileImageUrl;
+    private String profileImageUrl;
+    private String one_liner;
     private boolean isFollowed;
 }
