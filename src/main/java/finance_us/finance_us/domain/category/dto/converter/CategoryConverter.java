@@ -48,4 +48,15 @@ public class CategoryConverter
                 .build();
     }
 
+    public static CategoryResponseDto.SubGoalResponseDto toSubGoalResponseDto(SubCategory subCategory)
+    {
+        return CategoryResponseDto.SubGoalResponseDto.builder()
+                .name(subCategory.getSubName())
+                .goal(subCategory.getGoal())
+                .mainName(subCategory.getMainCategory().getMainName())
+                .id(subCategory.getId())
+                .build();
+
+    }
+
 }
