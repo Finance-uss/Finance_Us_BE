@@ -66,7 +66,7 @@ public class AuthController {
     })
     public ApiResponse<AuthResponseDTO.SignResponseDTO> userSignin(@RequestBody AuthRequestDTO.SignRequestDTO signRequestDTO) {
         userService.nameCheck(signRequestDTO.getUsername());
-//        userService.mailCheck(signRequestDTO.getEmail());
+        userService.mailCheck2(signRequestDTO.getEmail());
         User user = AuthConverter.toUser(signRequestDTO, Role.USER);
 
         // 카테고리와 자산을 초기화 해줍니다.

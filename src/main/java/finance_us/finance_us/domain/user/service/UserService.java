@@ -40,6 +40,13 @@ public class UserService {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
     }
 
+    //이메일 중복 확인2
+    public void mailCheck2(String email) {
+        authService.isValidEmail(email);
+        if(!userRepository.findByEmail(email).isEmpty())
+            throw new GeneralException(ErrorStatus.EMAIL_EXIST);
+    }
+
     //닉네임 중복 확인
     public void nameCheck(String name){
         if(!userRepository.findByName(name).isEmpty())
