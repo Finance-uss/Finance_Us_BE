@@ -162,6 +162,7 @@ public class CategoryController
   
 
     @GetMapping("/api/mypage/goal-asset")
+    @Operation(summary = "목표금액 조회 API", description = "목표금액을 조회합니다.")
     public ApiResponse<?> getGoalAsset(@RequestHeader("Authorization") String token, String type)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
@@ -175,6 +176,7 @@ public class CategoryController
     }
 
     @PatchMapping("/api/mypage/goal-asset")
+    @Operation(summary = "목표금액 수정 API", description = "목표금액을 수정합니다.")
     public ApiResponse<?> getGoalAsset(@RequestHeader("Authorization") String token, @RequestBody CategoryRequestDto.UpdateGoalDto dto)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
@@ -182,17 +184,6 @@ public class CategoryController
         return ApiResponse.onSuccess(categoryService.updateCategoryGoal(userId, dto.getType(), dto.getSubGoals()));
     }
 
-    @PostMapping("/api/mypage/init-test")
-    public ApiResponse<?> initTest(@RequestHeader("Authorization") String token)
-    {
-        Long userId = tokenProvider.extractUserIdFromToken(token);
-
-        categoryService.initializeCategoryExpense(userId);
-        categoryService.initializeCategoryIncome(userId);
-        categoryService.initializeAsset(userId);
-
-        return ApiResponse.onSuccess("init success");
-    }
 
 
 }
