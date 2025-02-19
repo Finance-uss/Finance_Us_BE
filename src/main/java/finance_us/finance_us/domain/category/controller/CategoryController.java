@@ -125,20 +125,20 @@ public class CategoryController
 
     @PatchMapping("/api/mypage/asset/main")
     @Operation(summary = "메인 자산 수정 API", description = "메인 자산을 수정합니다.")
-    public ApiResponse<?> updateMainAsset(@RequestHeader("Authorization") String token, String subName, Long mainId)
+    public ApiResponse<?> updateSubAsset(@RequestHeader("Authorization") String token, Long mainId, String mainName)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
-        categoryService.updateMainAsset(mainId, subName);
-        return ApiResponse.onSuccess("updated : main_asset");
+        categoryService.updateMainAsset(mainId, mainName);
+        return ApiResponse.onSuccess("updated : sub_category");
     }
 
     @PatchMapping("/api/mypage/asset/sub")
     @Operation(summary = "서브 자산 수정 API", description = "서브 자산을 수정합니다.")
-    public ApiResponse<?> updateSubAsset(@RequestHeader("Authorization") String token, @RequestBody CategoryRequestDto.UpdateRequestDto dto)
+    public ApiResponse<?> updateMainAsset(@RequestHeader("Authorization") String token, Long subId, String subName)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
-        categoryService.updateSubAsset(dto.getId(), dto.getName());
-        return ApiResponse.onSuccess("updated : sub_category");
+        categoryService.updateSubAsset(subId, subName);
+        return ApiResponse.onSuccess("updated : main_asset");
     }
 
     @DeleteMapping("/api/mypage/asset/main")
