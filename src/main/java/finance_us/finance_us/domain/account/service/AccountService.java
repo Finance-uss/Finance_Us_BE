@@ -24,6 +24,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static finance_us.finance_us.domain.category.entity.QSubCategory.subCategory;
 
 @Service
 @RequiredArgsConstructor
@@ -211,29 +215,34 @@ public class AccountService {
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
 
-        // 가계부 데이터 조회 (이번 달)
+        // 가계부 데이터 조회 (이번 달 + 공개 true)
         List<Account> accounts = accountRepository.findAccountsByYearAndMonth(followingId, currentYear, currentMonth);
 
         // 소분류 목표금액 조회
         List<SubCategory> subCategories = subCategoryRepository.findByUserId(followingId);
 
-       // 소비량 계산
+        // 소비량 계산
         Object expenseRate;
-        if (subCategories.isEmpty()) {
+
+        // 목표 금액이 null이거나 0일 경우
+        int totalGoal = subCategories.stream()
+                .map(SubCategory::getGoal)
+                .filter(Objects::nonNull) // null 값 제외
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        System.out.println("totalGoal"+totalGoal);
+        if (totalGoal == 0) {
+            System.out.println("totalGoal"+totalGoal);
             expenseRate = "목표 금액이 설정되지 않았어요. 함께 응원하며 기다려볼까요?";
         } else {
-            // 목표 금액 합산
-            int totalGoal = subCategories.stream()
-                    .mapToInt(SubCategory::getGoal)
-                    .sum();
-
             long totalAmount = accounts.stream()
                     .mapToLong(Account::getAmount)
                     .sum();
 
-            // 총 소비량이 크면 0으로 설정
+            // 총 소비량이 크면 100으로 설정
             if (totalAmount > totalGoal) {
-                expenseRate = 0;
+                expenseRate = 100;
             } else {
                 // 계산된 퍼센트 반환
                 int calculatedRate = (int) ((totalAmount * 100) / totalGoal);
