@@ -56,6 +56,9 @@ public class NotificationService {
 
     //리소스 제목 조회
     public String getResourceTitle(ResourceType resourceType, Long resourceId) {
+        if(resourceType == null || resourceId == null) {
+            return null;
+        }
         if (resourceType == ResourceType.POST) {
             return postRepository.findById(resourceId)
                     .map(Post::getTitle)

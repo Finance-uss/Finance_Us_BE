@@ -19,7 +19,10 @@ public class NotificationListResponse {
 
         List<NotificationResponse> notificationResponses = notifications.stream()
                 .map(notification -> {
-                    String resourceTitle = notificationService.getResourceTitle(notification.getResourceType(), notification.getResourceId());
+                    String resourceTitle = null;
+                    if(notification.getResourceType() != null) {
+                        resourceTitle = notificationService.getResourceTitle(notification.getResourceType(), notification.getResourceId());
+                    }
                     return NotificationResponse.fromEntity(notification, resourceTitle);
                 })
                 .toList();
