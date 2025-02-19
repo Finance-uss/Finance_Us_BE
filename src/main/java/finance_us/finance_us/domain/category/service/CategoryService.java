@@ -203,7 +203,7 @@ public class CategoryService
     // 이번 달 목표 금액 / 카테고리별 목표 금액 조회
     public CategoryResponseDto.GoalResponseDto getGoalList(Long userId, CategoryType type)
     {
-        var categoryList = subCategoryRepository.findByGoal(userId, type);
+        var categoryList = subCategoryRepository.findByGoal(userId, type.toString());
 
         var monthlyGoal = categoryList.stream()
                         .mapToInt(SubCategory::getGoal)
@@ -224,7 +224,7 @@ public class CategoryService
     public CategoryResponseDto.GoalResponseDto updateCategoryGoal(Long userId, CategoryType type, List<CategoryRequestDto.GoalRequestDto> subGoals)
     {
         // GOAL 값 초기화( 꼴값 초기화 )
-        var categoryList = subCategoryRepository.findByType(userId, type);
+        var categoryList = subCategoryRepository.findByType(userId, type.toString());
         categoryList = categoryList.stream()
                     .peek(s -> s.setGoal(-1))
                     .toList();

@@ -25,12 +25,12 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
     // goal이 null이 아닌 값만 불러오기
     @Query(value = "SELECT s.* FROM main_category m INNER JOIN sub_category s ON m.id=s.main_category_id " +
                    "WHERE m.user_id=:userId AND m.category_type=:categoryType;", nativeQuery = true)
-    public List<SubCategory> findByGoal(@Param("userId") Long userId, @Param("categoryType") CategoryType categoryType);
+    public List<SubCategory> findByGoal(@Param("userId") Long userId, @Param("categoryType") String categoryType);
 
     // 카테고리 타입으로 찾기
     @Query(value = "SELECT s.* FROM main_category m INNER JOIN sub_category s ON m.id=s.main_category_id " +
             "WHERE m.user_id=:userId AND m.category_type=:categoryType;", nativeQuery = true)
-    public List<SubCategory> findByType(@Param("userId") Long userId, @Param("categoryType") CategoryType categoryType);
+    public List<SubCategory> findByType(@Param("userId") Long userId, @Param("categoryType") String categoryType);
 
     // 서브 카테고리에 연결된 가계부 데이터가 존재하는지 확인.
     @Query(value = "SELECT s.* FROM sub_category s INNER JOIN account a ON s.id = a.sub_category_id " +
