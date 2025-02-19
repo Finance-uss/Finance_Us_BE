@@ -75,7 +75,7 @@ public class UserController {
     })
     public ApiResponse<Map<String,Object>> resetMail(@RequestHeader("Authorization") String token, @RequestParam String email) {
 
-        userService.mailCheck(email);
+        userService.mailCheck2(email);
         Long userId = userService.changeMail(token, email);
 
         Map<String, Object> response = new HashMap<>();
