@@ -209,7 +209,7 @@ public class CategoryService
                         .mapToInt(SubCategory::getGoal)
                         .sum();
         var subCategoryList = categoryList.stream()
-                .map(CategoryConverter::subCategoryEntityToDto)
+                .map(CategoryConverter::toSubGoalResponseDto)
                 .toList();
 
         return CategoryResponseDto.GoalResponseDto.builder()
