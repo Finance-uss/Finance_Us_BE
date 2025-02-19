@@ -64,7 +64,7 @@ public class AuthController {
     })
     public ApiResponse<AuthResponseDTO.SignResponseDTO> userSignin(@RequestBody AuthRequestDTO.SignRequestDTO signRequestDTO) {
         userService.nameCheck(signRequestDTO.getUsername());
-        userService.mailCheck(signRequestDTO.getEmail());
+//        userService.mailCheck(signRequestDTO.getEmail());
         User user = AuthConverter.toUser(signRequestDTO, Role.USER);
         return ApiResponse.onSuccess(authService.signUp(user));
     }
