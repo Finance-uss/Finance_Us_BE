@@ -94,7 +94,7 @@ public class PostService {
     // 유저가 게시한 게시물 조회
     public List<PostResponse.PostListDto> getPostedPostList(Long userId) {
 
-        var postList = postRepository.findByUserLiked(userId);
+        var postList = postRepository.findByUserId(userId);
         var dtoList = postList.stream().map(p -> {
             var likeCnt = postLikeRepository.countLikesByPostId(p.getId());
             var commentCnt = commentRepository.countByPostId(p.getId());
@@ -121,7 +121,7 @@ public class PostService {
     // 유저가 댓글을 단 게시물 조회
     public List<PostResponse.PostListDto> getCommentedPostList(Long userId) {
 
-        var postList = postRepository.findByUserLiked(userId);
+        var postList = postRepository.findByUserCommented(userId);
         var dtoList = postList.stream().map(p -> {
             var likeCnt = postLikeRepository.countLikesByPostId(p.getId());
             var commentCnt = commentRepository.countByPostId(p.getId());
@@ -135,7 +135,7 @@ public class PostService {
     // 유저가 댓글을 단 게시물 조회
     public List<PostResponse.PostListDto> getScrapedPostList(Long userId) {
 
-        var postList = postRepository.findByUserLiked(userId);
+        var postList = postRepository.findByUserScraped(userId);
         var dtoList = postList.stream().map(p -> {
             var likeCnt = postLikeRepository.countLikesByPostId(p.getId());
             var commentCnt = commentRepository.countByPostId(p.getId());
