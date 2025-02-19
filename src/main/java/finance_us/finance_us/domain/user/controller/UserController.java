@@ -1,6 +1,7 @@
 package finance_us.finance_us.domain.user.controller;
 
 import com.amazonaws.services.ec2.model.AssignPrivateIpAddressesRequest;
+import finance_us.finance_us.domain.category.service.CategoryService;
 import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
 import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.dto.UserRequestDto;
@@ -35,9 +36,10 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @GetMapping("/mailCheck")
-    @Operation(summary = "이메일 중복확인 API", description = "이메일을 중복확인 합니다.")
+    @Operation(summary = "이메일 확인 API", description = "이메일을 확인 합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
@@ -46,7 +48,7 @@ public class UserController {
 
        userService.mailCheck(email);
 
-       return ApiResponse.onSuccess("사용가능한 이메일 입니다.");
+       return ApiResponse.onSuccess("이메일이 이미 존재합니다.");
     }
 
     @GetMapping("/nameCheck")
@@ -227,5 +229,19 @@ public class UserController {
         return ApiResponse.onSuccess(userService.updateUser(token, updateRequestDTO));
     }
 
+    @GetMapping("/user-preference")
+    @Operation(summary = "회원 설정 조회 API", description = "회원 설정을 조회합니다. 쓰고 싶은 필드만 가져다 쓰십시오.")
+    public ApiResponse<?> getUserPreference(@RequestHeader("Authorization") String token) {
+
+        return ApiResponse.onSuccess(authService.getUserPreference(token));
+    }
+
+    @PatchMapping("/user-preference")
+    @Operation(summary = "회원 설정 수정 API", description = "회원 설정을 수정합니다. 수정하고픈 필드만 입력해서 요청하시면 됩니당.")
+    public ApiResponse<String> updateUserPreference(@RequestHeader("Authorization") String token, AuthRequestDTO.UserPreferenceRequestDTO dto)
+    {
+
+        return ApiResponse.onSuccess(authService.updateUserPreference(token, dto));
+    }
 
 }

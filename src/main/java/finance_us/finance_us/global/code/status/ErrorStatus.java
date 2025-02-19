@@ -31,6 +31,8 @@ public enum ErrorStatus implements BaseErrorCode {
     JWT_MALFORMED(HttpStatus.UNAUTHORIZED, "AUTH003", "JWT 토큰이 올바르지 않은 형식입니다."),
 
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ACCOUNT4001", "가계부를 찾을 수 없습니다."),
+    userPreference_NOT_FOUND(HttpStatus.NOT_FOUND, "CALENDAR4001", "유저설정이 존재하지 않습니다."),
+    HIGHLIGHT_DISABLED(HttpStatus.NOT_FOUND, "ACCOUNT4002", "하이라이트 설정이 false입니다."),
     ALREADY_LIKE(HttpStatus.BAD_REQUEST, "LIKE4001", "이미 좋아요를 누르셨습니다."),
     ALREADY_CHEER(HttpStatus.BAD_REQUEST, "CHEER4001", "이미 응원해요를 누르셨습니다."),
 
@@ -38,6 +40,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     MEMBER_MISSION_ALREADY_IN_CHALLENGING(HttpStatus.CONFLICT, "MEMBER_MISSION4002", "이미 진행 중인 미션입니다."),
     MEMBER_MISSION_NOT_CHALLENGING(HttpStatus.BAD_REQUEST, "MEMBERMISSION4003", "회원이 도전 중인 미션이 아닙니다."),
+
+    USER_PREFERENCE_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_PREFERENCE4001", "유저 설정을 찾을 수 없습니다."),
 
     FOOD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "FOOD_CATEGORY4001", "음식 카테고리가 없습니다."),
 
@@ -53,11 +57,15 @@ public enum ErrorStatus implements BaseErrorCode {
 
     CATEGORY_TYPE_ERROR(HttpStatus.BAD_REQUEST,"CATEGORY4001", "카테고리의 타입 문자열이 잘못되었습니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"CATEGORY4002", "카테고리를 찾을 수 없습니다."),
-    SUBCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4002", "서브카테고리가 존재하지 않습니다. "),
+    SUBCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4003", "서브카테고리가 존재하지 않습니다. "),
+    SUBCATEGORY_HAS_ACCOUNT(HttpStatus.BAD_REQUEST,"CATEGORY4004", "가계부를 가진 서브 카테고리는 삭제할 수 없습니다."),
+    MAINCATEGORY_HAS_SUBCATEGORY(HttpStatus.BAD_REQUEST, "CATEGORY4005", "연관된 서브 카테고리가 존재하는 메인 카테고리는 삭제할 수 없습니다."),
+
     SUB_ASSET_NOT_FOUND(HttpStatus.NOT_FOUND, "ASSET4001", "서브자산이 존재하지 않습니다."),
 
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION4001", "조회할 알림 목록이 없습니다."),
     NOTIFICATION_ALREADY_READ(HttpStatus.BAD_REQUEST, "NOTIFICATION4002", "이미 읽음처리 된 알람입니다."),
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "RESOURCE4001", "존재하지 않는 리소스입니다."),
 
     FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW4001", "팔로우 되지 않은 사용자입니다."),
     ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우 된 사용자입니다."),

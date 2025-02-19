@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder
@@ -16,13 +17,15 @@ import org.hibernate.annotations.DynamicUpdate;
 public class UserPreference extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    Long id;
+    Boolean alramSwitch;
+    Boolean openSwitch;
+    Boolean highlightSwitch;
 
-    @Column(nullable = false)
-    private Boolean alramSwitch;
-
-    @Column(nullable = false)
-    private Boolean openSwitch;
+    Integer expenseAmount;
+    Integer incomeAmount;
+    String expenseColor;
+    String incomeColor;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

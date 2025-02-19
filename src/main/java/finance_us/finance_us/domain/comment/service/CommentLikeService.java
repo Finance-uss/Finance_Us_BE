@@ -31,6 +31,11 @@ public class CommentLikeService {
         // 댓글 유효성 검증
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(()-> new IllegalArgumentException("Comment not found"));
+        
+        // 삭제된 댓글 좋아요 불가
+        if (comment.isDeleted()) {
+            throw new IllegalStateException("Cannot like a deleted comment.");
+        }
 
         // 사용자 유효성 검증
         User user = userRepository.findById(userId)

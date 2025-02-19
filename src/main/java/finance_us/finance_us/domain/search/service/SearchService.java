@@ -64,6 +64,8 @@ public class SearchService {
                 .map(user -> new UserResponse(
                         user.getId(),
                         user.getName(),
+                        user.getImage(),
+                        user.getOne_liner(),
                         followRepository.existsByUserIdAndFollowingId(userId, user.getId())))
                 .collect(Collectors.toList());
 

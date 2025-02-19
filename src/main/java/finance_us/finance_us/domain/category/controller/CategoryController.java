@@ -41,7 +41,7 @@ public class CategoryController
         }
 
         Long userId = tokenProvider.extractUserIdFromToken(token);
-
+        log.info(categoryType.name());
         return ApiResponse.onSuccess(categoryService.getCategoryList(userId, categoryType));
     }
 
@@ -84,7 +84,7 @@ public class CategoryController
     public ApiResponse<?> deleteMainCategory(@RequestHeader("Authorization") String token, Long mainId)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
-        categoryService.deleteMainCategory(mainId);
+        categoryService.deleteMainCategory(mainId, userId);
         return ApiResponse.onSuccess("deleted : main_category");
     }
 
@@ -137,7 +137,7 @@ public class CategoryController
     public ApiResponse<?> updateSubAsset(@RequestHeader("Authorization") String token, @RequestBody CategoryRequestDto.UpdateRequestDto dto)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
-        categoryService.updateSubCategory(dto.getId(), dto.getName());
+        categoryService.updateSubAsset(dto.getId(), dto.getName());
         return ApiResponse.onSuccess("updated : sub_category");
     }
 
@@ -156,6 +156,7 @@ public class CategoryController
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
         categoryService.deleteSubAsset(subId);
+
         return ApiResponse.onSuccess("deleted : sub_asset");
     }
   
@@ -180,6 +181,19 @@ public class CategoryController
 
         return ApiResponse.onSuccess(categoryService.updateCategoryGoal(userId, dto.getType(), dto.getSubGoals()));
     }
+
+    @PostMapping("/api/mypage/init-test")
+    public ApiResponse<?> initTest(@RequestHeader("Authorization") String token)
+    {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        categoryService.initializeCategoryExpense(userId);
+        categoryService.initializeCategoryIncome(userId);
+        categoryService.initializeAsset(userId);
+
+        return ApiResponse.onSuccess("init success");
+    }
+
 
 }
 

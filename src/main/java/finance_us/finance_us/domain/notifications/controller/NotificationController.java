@@ -6,6 +6,7 @@ import finance_us.finance_us.domain.notifications.dto.UnreadNotificationsRespons
 import finance_us.finance_us.domain.notifications.service.NotificationService;
 import finance_us.finance_us.global.ApiResponse;
 import finance_us.finance_us.security.TokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class NotificationController {
     private final TokenProvider tokenProvider;
 
     @GetMapping
+    @Operation(summary = "읽지 않은 알림 조회 API(스크롤 포함)")
     public ApiResponse<NotificationListResponse> getNotifications(
             @RequestHeader("Authorization") String token,
             @RequestParam(required = false) Long lastNotificationId,
@@ -29,6 +31,7 @@ public class NotificationController {
     }
 
     @GetMapping("/unread")
+    @Operation(summary = "읽지 않은 알림 존재 여부 확인 API")
     public ApiResponse<UnreadNotificationsResponse> hasUnreadNotifications(
             @RequestHeader("Authorization") String token
     ){
@@ -37,6 +40,7 @@ public class NotificationController {
     }
 
     @PatchMapping("/{notificationId}")
+    @Operation(summary = "읽은 알림으로 변경하는 API")
     public ApiResponse<Void> markAsRead(
             @RequestHeader("Authorization") String token,
             @PathVariable Long notificationId

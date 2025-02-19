@@ -3,6 +3,7 @@ package finance_us.finance_us.domain.user.converter;
 import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
 import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.domain.user.entity.UserPreference;
 import finance_us.finance_us.domain.user.entity.status.Role;
 
 public class AuthConverter {
@@ -45,6 +46,8 @@ public class AuthConverter {
                 .email(user.getEmail())
                 .imgUrl(user.getImage())
                 .one_liner(user.getOne_liner())
+                .job(user.getJob().getDisplayName())
+                .age(user.getAge().getDisplayName())
                 .role(user.getRole())
                 .build();
 
@@ -61,6 +64,18 @@ public class AuthConverter {
                 // 이미지 URL 들어가야함.
                 .build();
 
+    }
+
+    public static AuthResponseDTO.UserPreferenceResponseDTO toUserPreferenceResponseDTO(UserPreference p){
+        return AuthResponseDTO.UserPreferenceResponseDTO.builder()
+                .alarmSwitch(p.getAlramSwitch())
+                .openSwitch(p.getOpenSwitch())
+                .highlightSwitch(p.getHighlightSwitch())
+                .expenseAmount(p.getExpenseAmount())
+                .incomeAmount(p.getIncomeAmount())
+                .expenseColor(p.getExpenseColor())
+                .incomeColor(p.getIncomeColor())
+                .build();
     }
 
 }

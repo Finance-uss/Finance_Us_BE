@@ -4,6 +4,8 @@ import finance_us.finance_us.domain.user.converter.AuthConverter;
 import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
 import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
 import finance_us.finance_us.domain.user.entity.User;
+import finance_us.finance_us.domain.user.entity.UserPreference;
+import finance_us.finance_us.domain.user.repository.UserPreferenceRepository;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final UserPreferenceRepository userPreferenceRepository;
     private final TokenProvider tokenProvider;
     private final DiscordWebhookService discordWebhookService;
 
@@ -122,4 +125,81 @@ public class AuthService {
         user.setAuthenticated(isApproved); // 승인 or 거절 반영
         userRepository.save(user);
     }
+    // 회원가입 시에 기본적으로 설정이 있어야 함.
+    public Long createUserPreference(Long userId)
+    {
+        var p = UserPreference.builder()
+                .alramSwitch(true)
+                .openSwitch(true)
+                .highlightSwitch(true)
+                .expenseAmount(100000)
+                .incomeAmount(100000)
+                .expenseColor("#FFB55D")
+                .incomeColor("#8396C3")
+                .user(User.builder().Id(userId).build())
+                .build();
+
+        return userPreferenceRepository.save(p).getId();
+    }
+    // 유저 선호도 불러오기
+    public AuthResponseDTO.UserPreferenceResponseDTO getUserPreference(String token){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        var userPreference = userPreferenceRepository
+                            .findByUserId(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_PREFERENCE_NOT_FOUND));
+
+        return AuthConverter.toUserPreferenceResponseDTO(userPreference);
+    }
+
+    public String updateUserPreference(String token, AuthRequestDTO.UserPreferenceRequestDTO dto)
+    {
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+        var userPreference = userPreferenceRepository.findByUserId(userId)
+                            .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PREFERENCE_NOT_FOUND));
+
+        String updateStr = "";
+        if(dto.getAlarmSwitch() != null) {
+            userPreference.setAlramSwitch(dto.getAlarmSwitch());
+            updateStr += "alarmSwitch ";
+        }
+        if(dto.getOpenSwitch() != null) {
+            userPreference.setOpenSwitch(dto.getOpenSwitch());
+            updateStr += "openSwitch ";
+        }
+        if(dto.getHighlightSwitch() != null) {
+            userPreference.setHighlightSwitch(dto.getHighlightSwitch());
+            updateStr += "highlightSwitch ";
+        }
+        if(dto.getExpenseAmount() != null) {
+            userPreference.setExpenseAmount(dto.getExpenseAmount());
+            updateStr += "expenseAmount ";
+        }
+        if(dto.getIncomeAmount() != null) {
+            userPreference.setIncomeAmount(dto.getIncomeAmount());
+            updateStr += "incomeAmount ";
+        }
+        if(dto.getExpenseColor() != null) {
+            userPreference.setExpenseColor(dto.getExpenseColor());
+            updateStr += "expenseColor ";
+        }
+        if(dto.getIncomeColor() != null) {
+            userPreference.setIncomeColor(dto.getIncomeColor());
+            updateStr += "incomeColor ";
+        }
+
+        userPreferenceRepository.save(userPreference);
+
+        return "updated field : " + updateStr;
+    }
+
+    public void authUserCheck(String token){
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        //사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if(!user.isAuthenticated()) throw new GeneralException(ErrorStatus._UNAUTHORIZED);
+
+    }
+
 }

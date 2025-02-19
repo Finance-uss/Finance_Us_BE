@@ -147,7 +147,7 @@ public class PostService {
     }
 
     // 특정 게시판의 게시글 목록 조회
-    public PostResponse.PostListByBoardDTO getPostsByPostType(String token, PostType postType, Long cursor, int size) {
+    public PostResponse.PostListByPostTypeDTO getPostsByPostType(String token, PostType postType, Long cursor, int size) {
         Long userId = tokenProvider.extractUserIdFromToken(token);
 
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "id"));
@@ -156,7 +156,7 @@ public class PostService {
         List<Long> postIds = posts.stream().map(Post::getId).toList();
 
         if (postIds.isEmpty()) {
-            return new PostResponse.PostListByBoardDTO(postType, List.of(), null);
+            return new PostResponse.PostListByPostTypeDTO(postType, List.of(), null);
         }
 
         Map<Long, Long> likeCountMap = postRepository.countLikesByPostIds(postIds)
@@ -170,8 +170,8 @@ public class PostService {
                         result -> (Long) result[1]
                 ));
 
-        List<PostResponse.PostListByBoardResponse> postListByBoardResponses = posts.stream()
-                .map(post -> new PostResponse.PostListByBoardResponse(
+        List<PostResponse.PostListByPostTypeResponse> postListByPostTypeResponses = posts.stream()
+                .map(post -> new PostResponse.PostListByPostTypeResponse(
                         post,
                         likeCountMap.getOrDefault(post.getId(), 0L),
                         commentCountMap.getOrDefault(post.getId(), 0L)
@@ -179,7 +179,7 @@ public class PostService {
 
         Long nextCursor = posts.size() < size ? null : posts.get(posts.size() - 1).getId();
 
-        return new PostResponse.PostListByBoardDTO(postType, postListByBoardResponses, nextCursor);
+        return new PostResponse.PostListByPostTypeDTO(postType, postListByPostTypeResponses, nextCursor);
     }
 
     // 특정 게시판의 특정 카테고리 목록 조회
@@ -210,8 +210,8 @@ public class PostService {
                         result -> (Long) result[1]
                 ));
 
-        List<PostResponse.PostListByBoardResponse> postListByBoardResponses = posts.stream()
-                .map(post -> new PostResponse.PostListByBoardResponse(
+        List<PostResponse.PostListByCategoryResponse> postListByCategoryResponses = posts.stream()
+                .map(post -> new PostResponse.PostListByCategoryResponse(
                         post,
                         likeCountMap.getOrDefault(post.getId(), 0L),
                         commentCountMap.getOrDefault(post.getId(), 0L)
@@ -219,7 +219,7 @@ public class PostService {
 
         Long nextCursor = posts.size() < size ? null : posts.get(posts.size() - 1).getId();
 
-        return new PostResponse.PostListByCategoryDTO(postType, category, postListByBoardResponses, nextCursor);
+        return new PostResponse.PostListByCategoryDTO(postType, category, postListByCategoryResponses, nextCursor);
     }
 
     // 특정 게시글 조회
@@ -229,12 +229,22 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(()-> new IllegalArgumentException("Post not found"));
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        boolean isLiked = postRepository.existsByPostAndUser(post, user);
+
+        boolean isMine = post.getUser().getId().equals(userId);
+
         return new PostResponse.PostByBoardDTO (
                 post.getId(),
                 post.getUser().getId(),
                 post.getUser().getName(),
                 post.getUser().getImage(), // 유저 프로필사진 url
                 post.getUser().getImageName(),
+                post.getUser().isAuthenticated(),
+                isLiked,
+                isMine,
                 post.getTitle(),
                 post.getContent(),
                 post.getPostType(),

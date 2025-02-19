@@ -3,6 +3,7 @@ package finance_us.finance_us.domain.account.entity;
 import finance_us.finance_us.domain.account.entity.status.AccountType;
 import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.category.entity.SubCategory;
+import finance_us.finance_us.domain.common.entity.BaseEntity;
 import finance_us.finance_us.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Account {
+public class Account extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

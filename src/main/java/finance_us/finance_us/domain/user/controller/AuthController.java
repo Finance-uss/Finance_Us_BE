@@ -1,5 +1,6 @@
 package finance_us.finance_us.domain.user.controller;
 
+import finance_us.finance_us.domain.category.service.CategoryService;
 import finance_us.finance_us.domain.user.converter.AuthConverter;
 import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
 import finance_us.finance_us.domain.user.dto.AuthResponseDTO;
@@ -34,6 +35,7 @@ public class AuthController {
     private final AuthService authService;
     private final MailService mailService;
     private final UserService userService;
+    private final CategoryService categoryService; // 카테고리/자산 초기화에 사용
 
     @PostMapping("/login")
     @Operation(summary = "사용자 로그인 API", description = "사용자가 이메일과 비밀번호를 사용하여 로그인합니다.")
@@ -66,7 +68,16 @@ public class AuthController {
         userService.nameCheck(signRequestDTO.getUsername());
 //        userService.mailCheck(signRequestDTO.getEmail());
         User user = AuthConverter.toUser(signRequestDTO, Role.USER);
-        return ApiResponse.onSuccess(authService.signUp(user));
+
+        // 카테고리와 자산을 초기화 해줍니다.
+        var userDTO = authService.signUp(user);
+        categoryService.initializeCategoryExpense(userDTO.getId());
+        categoryService.initializeCategoryIncome(userDTO.getId());
+        categoryService.initializeAsset(userDTO.getId());
+
+        authService.createUserPreference(userDTO.getId());
+
+        return ApiResponse.onSuccess(userDTO);
     }
 
     @PostMapping("/refresh")
@@ -130,6 +141,19 @@ public class AuthController {
     })
     public ApiResponse<AuthResponseDTO.UserResponseDTO> authUser(@RequestHeader("Authorization") String token, @RequestBody AuthRequestDTO.userAuthRequestDTO userAuthRequestDTO) {
         return ApiResponse.onSuccess(authService.authUser(token, userAuthRequestDTO));
+    }
+
+    @GetMapping("/user")
+    @Operation(summary = "사용자 인증 여부", description = "사용자의 인증 여부를 반환합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ApiResponse<String> authUserCheck (@RequestHeader("Authorization") String token) {
+        authService.authUserCheck(token);
+        return ApiResponse.onSuccess("인증된 사용자입니다.");
     }
 
     @PatchMapping("/user/verify")

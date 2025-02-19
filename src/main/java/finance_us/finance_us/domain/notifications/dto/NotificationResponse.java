@@ -17,15 +17,19 @@ public class NotificationResponse {
     private ResourceType resourceType;
     private Long resourceId;
     private Boolean isRead;
+    //리소스 제목 필드 추가
+    private String resourceTitle;
 
-    public static NotificationResponse fromEntity(Notification notification) {
+
+    public static NotificationResponse fromEntity(Notification notification, String resourceTitle) {
         return new NotificationResponse(
                 notification.getId(),
                 notification.getType(),
                 notification.getMessage(),
                 notification.getResourceType(),
                 notification.getResourceId(),
-                notification.getIsRead()
+                notification.getIsRead(),
+                resourceTitle
         );
     }
 }

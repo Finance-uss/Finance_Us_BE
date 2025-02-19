@@ -10,7 +10,6 @@ import finance_us.finance_us.domain.category.entity.SubAsset;
 import finance_us.finance_us.domain.category.entity.SubCategory;
 import finance_us.finance_us.domain.category.repository.SubAssetRepository;
 import finance_us.finance_us.domain.category.repository.SubCategoryRepository;
-import finance_us.finance_us.domain.follows.entity.Follow;
 import finance_us.finance_us.domain.follows.repository.FollowRepository;
 import finance_us.finance_us.domain.statistics.service.CategoryStatisticsService;
 import finance_us.finance_us.domain.statistics.service.PeriodStatisticsService;
@@ -193,9 +192,12 @@ public class AccountService {
 
     // 가계부 특정 팔로우 조회
     public FollowResponse getFollow(Long followingId, String token) {
-        tokenProvider.extractUserIdFromToken(token);
-        if (followingId == null) {
-            throw new GeneralException(ErrorStatus.INVALID_FOLLOW_DATA);
+        Long userId = tokenProvider.extractUserIdFromToken(token);
+
+        // 팔로우되어있는지 확인
+        boolean exists = followRepository.existsByUserIdAndFollowingId(userId, followingId);
+        if (!exists) {
+            throw new GeneralException(ErrorStatus.FOLLOW_NOT_FOUND);
         }
 
         // name 가져오기
@@ -248,7 +250,7 @@ public class AccountService {
                     account.getTitle(),
                     account.getAmount(),
                     account.getDate(),
-                    account.getSubCategory().getSubName(),
+                    account.getContent(),
                     account.getImageUrl(),
                     account.getTotalLike(),
                     account.getTotalCheer()

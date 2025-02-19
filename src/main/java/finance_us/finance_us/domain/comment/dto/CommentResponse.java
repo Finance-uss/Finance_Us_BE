@@ -42,6 +42,8 @@ public class CommentResponse {
         private Long userId;
         private String name;
         private Boolean isAuthenticated;
+        private Boolean isLiked;
+        private Boolean isMine;
         private String userImageUrl; // 댓글 작성자 프로필 사진 url
         private String userImageName;
         private String content;
