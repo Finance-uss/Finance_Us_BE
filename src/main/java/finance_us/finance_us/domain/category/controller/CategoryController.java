@@ -175,7 +175,7 @@ public class CategoryController
     }
 
     @PatchMapping("/api/mypage/goal-asset")
-    public ApiResponse<?> getGoalAsset(@RequestHeader("Authorization") String token, CategoryRequestDto.UpdateGoalDto dto)
+    public ApiResponse<?> getGoalAsset(@RequestHeader("Authorization") String token, @RequestBody CategoryRequestDto.UpdateGoalDto dto)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
         log.info("카테고리 목표 금액 수정 실행됨.");
