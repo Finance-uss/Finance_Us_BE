@@ -102,7 +102,7 @@ public class WebSecurityConfig {
                 "ws://13.209.210.46:8080",
                 "http://localhost:3000",
                 "https://financeus.netlify.app",
-                "http://3.34.46.75"
+                "https://financeusapi.shop"
         );
 
         config.setAllowedOrigins(allowedOrigins);
