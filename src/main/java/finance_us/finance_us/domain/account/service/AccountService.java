@@ -224,16 +224,15 @@ public class AccountService {
         // 소비량 계산
         Object expenseRate;
 
-        // 목표 금액이 null이거나 0일 경우
+        // 목표 금액 합산 ( null일 경우 패스)
         int totalGoal = subCategories.stream()
                 .map(SubCategory::getGoal)
                 .filter(Objects::nonNull) // null 값 제외
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        System.out.println("totalGoal"+totalGoal);
+        // 목표 금액이 0일 경우 
         if (totalGoal == 0) {
-            System.out.println("totalGoal"+totalGoal);
             expenseRate = "목표 금액이 설정되지 않았어요. 함께 응원하며 기다려볼까요?";
         } else {
             long totalAmount = accounts.stream()
