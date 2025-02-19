@@ -178,7 +178,7 @@ public class CategoryController
     public ApiResponse<?> getGoalAsset(@RequestHeader("Authorization") String token, CategoryRequestDto.UpdateGoalDto dto)
     {
         Long userId = tokenProvider.extractUserIdFromToken(token);
-
+        log.info("카테고리 목표 금액 수정 실행됨.");
         return ApiResponse.onSuccess(categoryService.updateCategoryGoal(userId, dto.getType(), dto.getSubGoals()));
     }
 

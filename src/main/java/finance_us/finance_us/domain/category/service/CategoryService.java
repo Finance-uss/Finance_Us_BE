@@ -243,6 +243,7 @@ public class CategoryService
 
         // 수정된 요소 반영
         subCategoryRepository.saveAll(updatedList);
+        log.info("카테고리 목표금액 저장됨.");
 
         return getGoalList(userId, type);
     }
