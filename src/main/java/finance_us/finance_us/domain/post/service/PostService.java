@@ -9,11 +9,13 @@ import finance_us.finance_us.domain.post.entity.status.Category;
 import finance_us.finance_us.domain.post.entity.status.PostType;
 import finance_us.finance_us.domain.post.repository.PostLikeRepository;
 import finance_us.finance_us.domain.post.repository.PostRepository;
+import finance_us.finance_us.domain.post.repository.PostScrapRepository;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.domain.user.repository.UserRepository;
 import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.security.TokenProvider;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,7 @@ public class PostService {
     private final TokenProvider tokenProvider;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
+    private final PostScrapRepository postScrapRepository;
 
     // 게시글 생성
     public Post createPost(String token, PostRequest.PostRequestDTO request) {
@@ -77,6 +80,7 @@ public class PostService {
     }
 
     // 게시글 삭제
+    @Transactional
     public void deletePost(String token, Long postId) {
         Long userId = tokenProvider.extractUserIdFromToken(token);
 
@@ -87,7 +91,11 @@ public class PostService {
         if (!post.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("You are not authorized to delete this post.");
         }
-
+        
+        // 1.삭제하려는 게시글의 좋아요 데이터 삭제
+        postLikeRepository.deleteByPost(post);
+        
+        // 2.게시글 삭제
         postRepository.delete(post);
     }
 
@@ -236,6 +244,8 @@ public class PostService {
 
         boolean isMine = post.getUser().getId().equals(userId);
 
+        boolean isScraped = postScrapRepository.existsByUserAndPost(user, post);
+
         return new PostResponse.PostByBoardDTO (
                 post.getId(),
                 post.getUser().getId(),
@@ -245,6 +255,7 @@ public class PostService {
                 post.getUser().isAuthenticated(),
                 isLiked,
                 isMine,
+                isScraped,
                 post.getTitle(),
                 post.getContent(),
                 post.getPostType(),
