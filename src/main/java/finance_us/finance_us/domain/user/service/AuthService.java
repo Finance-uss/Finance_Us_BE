@@ -111,7 +111,7 @@ public class AuthService {
         //사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
+        System.out.println(userAuthRequestDTO.getContent() + " "+userAuthRequestDTO.getImgUrl());
         discordWebhookService.sendAuthRequest(user, userAuthRequestDTO);
 
         return AuthConverter.toUserResponseDTO(user);
