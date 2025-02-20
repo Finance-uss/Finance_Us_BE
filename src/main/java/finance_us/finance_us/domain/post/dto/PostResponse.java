@@ -134,6 +134,7 @@ public class PostResponse {
         private Boolean isAuthenticated;
         private Boolean isLiked;
         private Boolean isMine;
+        private Boolean isScraped;
         private String title;
         private String content;
         private PostType postType;

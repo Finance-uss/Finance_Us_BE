@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface PostScrapRepository extends JpaRepository<PostScrap, Long> {
     void deleteByPostAndUser(Post post, User user);
     Optional<PostScrap> findByPostAndUser(Post post, User user);
+    boolean existsByUserAndPost(User user, Post post);
 }
