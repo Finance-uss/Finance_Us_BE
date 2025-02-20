@@ -1,6 +1,7 @@
 package finance_us.finance_us.domain.user.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import finance_us.finance_us.domain.user.dto.AuthRequestDTO;
 import finance_us.finance_us.domain.user.entity.User;
 import finance_us.finance_us.global.code.status.ErrorStatus;
@@ -25,10 +26,27 @@ public class DiscordWebhookService {
 
     public void sendAuthRequest(User user, AuthRequestDTO.userAuthRequestDTO requestDTO) {
         try {
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("user", Map.of("id", user.getId(), "name", user.getName()));
-            payload.put("requestDTO", Map.of("content", requestDTO.getContent(), "imgUrl", requestDTO.getImgUrl()));
+            // JSON 객체 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode payload = objectMapper.createObjectNode();
 
+            // user 정보 추가
+            ObjectNode userNode = objectMapper.createObjectNode();
+            userNode.put("id", user.getId());
+            userNode.put("name", user.getName());
+            payload.set("user", userNode);
+
+            // requestDTO 추가
+            ObjectNode requestNode = objectMapper.createObjectNode();
+            requestNode.put("content", requestDTO.getContent());
+
+            if (requestDTO.getImgUrl() != null && !requestDTO.getImgUrl().isEmpty()) {
+                requestNode.put("imgUrl", requestDTO.getImgUrl()); // 이미지가 있는 경우만 추가
+            }
+
+            payload.set("requestDTO", requestNode);
+
+            // HTTP 요청 전송
             ResponseEntity<String> response = restTemplate.postForEntity(nodeServerUrl + "/send-auth", payload, String.class);
 
         } catch (Exception e) {
