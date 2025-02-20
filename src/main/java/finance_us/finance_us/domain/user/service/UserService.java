@@ -9,18 +9,13 @@ import finance_us.finance_us.global.code.status.ErrorStatus;
 import finance_us.finance_us.global.exception.GeneralException;
 import finance_us.finance_us.global.file.S3FileService;
 import finance_us.finance_us.security.TokenProvider;
-import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
 
 
 @Service
@@ -170,7 +165,7 @@ public class UserService {
         user.setName("탈퇴한 사용자입니다.");
         user.setOne_liner(null);
         user.setEmail("deleted_" + userId); // 중복 방지
-        user.setPassword(UUID.randomUUID().toString()); // 랜덤한 비밀번호로 변경
+        user.setPassword("123456");
         user.setImageName(null);
         user.setImage(null);
         
