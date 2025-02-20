@@ -166,8 +166,8 @@ public class UserService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         user.setName("탈퇴한 사용자입니다.");
         user.setOne_liner(null);
-user.setEmail(null);
-     user.setPassword(null); 
+user.setEmail("탈퇴한 사용자입니다.");
+     user.setPassword("탈퇴한 사용자입니다."); 
 user.setImageName(null);
         user.setImage(null);
 
