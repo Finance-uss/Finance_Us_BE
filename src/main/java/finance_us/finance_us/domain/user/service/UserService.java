@@ -165,9 +165,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         user.setName("탈퇴한 사용자입니다.");
-        user.setAge(null);
         user.setOne_liner(null);
-        user.setJob(null);
 user.setEmail(null);
      user.setPassword(null); 
 user.setImageName(null);
