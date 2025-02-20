@@ -215,11 +215,11 @@ public class AccountService {
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
 
-        // 가계부 데이터 조회 (이번 달 + 공개 true)
+        // 가계부 데이터 조회 (이번 달 +expense+ 공개 true)
         List<Account> accounts = accountRepository.findAccountsByYearAndMonth(followingId, currentYear, currentMonth);
 
-        // 소분류 목표금액 조회
-        List<SubCategory> subCategories = subCategoryRepository.findByUserId(followingId);
+        // 소분류 목표금액 조회 (expense 기준)
+        List<SubCategory> subCategories = subCategoryRepository.findByUserIdAndIncomeAccounts(followingId);
 
         // 소비량 계산
         Object expenseRate;

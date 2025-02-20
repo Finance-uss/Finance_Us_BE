@@ -20,8 +20,13 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
     @Query(value = "SELECT * FROM sub_category WHERE user_id=:userId AND main_category_id=:mainCategoryId;", nativeQuery = true)
     public List<SubCategory> findByUserIdAndMainCategoryId(@Param("userId") Long userId, @Param("mainCategoryId") Long mainCategoryId);
 
-    @Query("SELECT s FROM SubCategory s WHERE s.user.id = :userId")
-    List<SubCategory> findByUserId(Long userId);
+    //expense 기준으로 조회
+    @Query("SELECT DISTINCT s FROM SubCategory s " +
+            "JOIN s.accounts a " +
+            "WHERE s.user.Id = :userId " +
+            "AND a.accountType = 'expense'")
+    List<SubCategory> findByUserIdAndIncomeAccounts( Long userId);
+
     // goal이 null이 아닌 값만 불러오기
     @Query(value = "SELECT s.* FROM main_category m INNER JOIN sub_category s ON m.id=s.main_category_id " +
                    "WHERE m.user_id=:userId AND m.category_type=:categoryType;", nativeQuery = true)
