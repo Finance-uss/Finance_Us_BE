@@ -166,13 +166,13 @@ public class UserService {
         Long userId = tokenProvider.extractUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-           
+
         user.setName("탈퇴한 사용자입니다.");
-    user.setOne_liner(null);
-    user.setEmail("deleted_" + userId + "@example.com"); // 중복 방지
-    user.setPassword(UUID.randomUUID().toString()); // 랜덤한 비밀번호로 변경
-    user.setImageName(null);
-    user.setImage(null);
+        user.setOne_liner(null);
+        user.setEmail("deleted_" + userId); // 중복 방지
+        user.setPassword(UUID.randomUUID().toString()); // 랜덤한 비밀번호로 변경
+        user.setImageName(null);
+        user.setImage(null);
         
         userRepository.save(user);
 
